@@ -1,8 +1,8 @@
 /*
  * emitter.c
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2006-05-09 12:03:50 +0800 (二, 09  5 2006) $
  *
  * Copyright (C) 2003 why the lucky stiff
  * 
@@ -16,9 +16,9 @@
 
 #define DEFAULT_ANCHOR_FORMAT "id%03d"
 
-const char hex_table[] = 
+const unsigned char hex_table[] = 
 "0123456789ABCDEF";
-static char b64_table[] =
+static unsigned char b64_table[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /*
@@ -58,8 +58,9 @@ syck_base64enc( const char *s, long len )
     return buff;
 }
 
+/* XXX - Changed by Audrey Tang to deal with \0 in decoded base64 buffers */
 char *
-syck_base64dec( const char *s, long len )
+syck_base64dec( const char *s, long len, long *out_len )
 {
     int a = -1,b = -1,c = 0,d;
     static int first = 1;
@@ -100,6 +101,8 @@ syck_base64dec( const char *s, long len )
     }
     *end = '\0';
     /*RSTRING(buf)->len = ptr - RSTRING(buf)->ptr;*/
+
+    *out_len = end - ptr;
     return ptr;
 }
 
@@ -120,6 +123,8 @@ syck_new_emitter(void)
     e->best_width = 80;
     e->style = scalar_none;
     e->stage = doc_open;
+    e->depth = 0;
+    e->max_depth = 512;
     e->indent = 2;
     e->level = -1;
     e->anchors = NULL;
@@ -564,13 +569,13 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
          cursor[0] == '&' || cursor[0] == '|' ||
          cursor[0] == '>' || cursor[0] == '\'' ||
          cursor[0] == '"' || cursor[0] == '#' ||
-         cursor[0] == '%' || cursor[0] == '@' ||
-         cursor[0] == '`' ) {
+         cursor[0] == '%' || cursor[0] == '@' || cursor[0] == '`' ||
+         cursor[0] == '&' || cursor[0] == '^' ) {
             flags |= SCAN_INDIC_S;
     }
     if ( ( cursor[0] == '-' || cursor[0] == ':' ||
            cursor[0] == '?' || cursor[0] == ',' ) &&
-           ( len == 1 || cursor[1] == ' ' || cursor[1] == '\n' ) )
+           ( cursor[1] == ' ' || cursor[1] == '\n' || cursor[1] == '\r' || len == 1 ) )
     {
             flags |= SCAN_INDIC_S;
     }
@@ -595,10 +600,12 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
     /* scan string */
     for ( i = 0; i < len; i++ ) {
 
-        if ( ! ( cursor[i] == 0x9 ||
-                 cursor[i] == 0xA ||
-                 cursor[i] == 0xD ||
-               ( cursor[i] >= 0x20 && cursor[i] <= 0x7E ) )
+        if ( ! ( (unsigned char)cursor[i] == 0x9 ||
+                 (unsigned char)cursor[i] == 0xA ||
+                 (unsigned char)cursor[i] == 0xD ||
+               ( (unsigned char)cursor[i] >= 0x20 &&
+                 (unsigned char)cursor[i] <= 0x7E ) ||
+                 (unsigned char)cursor[i] >= 0x80 )
         ) {
             flags |= SCAN_NONPRINT;
         }
@@ -672,11 +679,25 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     implicit = syck_match_implicit( str, len );
 
     /* quote strings which default to implicits */
+#ifdef PERL
+    if (
+            (
+                (strncmp( implicit, "bool", 4 ) == 0) || 
+                (strncmp( implicit, "null", 4 ) == 0)
+            )
+            &&
+            (force_style != scalar_plain)
+            &&
+            (len > 0)
+            ) {
+        force_style = (force_style == scalar_2quote) ? scalar_2quote : scalar_1quote;
+#else
     implicit = syck_taguri( YAML_DOMAIN, implicit, strlen( implicit ) );
     if ( syck_tagcmp( tag, implicit ) != 0 && syck_tagcmp( tag, "tag:yaml.org,2002:str" ) == 0 ) {
         force_style = scalar_2quote;
+#endif
     } else {
-        /* complex key */
+        /* complex key - Note: omitted from perl */
         if ( parent->status == syck_lvl_map && parent->ncount % 2 == 1 &&
              ( !( tag == NULL || 
              ( implicit != NULL && syck_tagcmp( tag, implicit ) == 0 && e->explicit_typing == 0 ) ) ) ) 
@@ -704,7 +725,7 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     /* Determine block style */
     if ( scan & SCAN_NONPRINT ) {
         force_style = scalar_2quote;
-    } else if ( scan & SCAN_WHITEEDGE ) {
+    } else if ( force_style != scalar_1quote && force_style != scalar_2quote_1 && ( scan & SCAN_WHITEEDGE ) ) {
         force_style = scalar_2quote;
     } else if ( force_style != scalar_fold && ( scan & SCAN_INDENTED ) ) {
         force_style = scalar_literal;
@@ -739,7 +760,7 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
 
     /* If the parent is an inline, double quote anything complex */
     if ( parent->status == syck_lvl_imap || parent->status == syck_lvl_iseq ) {
-        if ( force_style != scalar_plain && force_style != scalar_1quote ) {
+        if ( force_style != scalar_plain && force_style != scalar_1quote && force_style != scalar_2quote_1) {
             force_style = scalar_2quote;
         }
     }
@@ -749,6 +770,16 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
         keep_nl = NL_CHOMP;
     } else if ( scan & SCAN_MANYNL_E ) {
         keep_nl = NL_KEEP;
+    }
+
+    /* A key/value like C<foo: :bar> will be interpreted as ":bar" by Perl, but
+     * Ruby will treat it as the symbol :bar. For compatability with Ruby emit
+     * these with quotes.
+     */
+    if ( force_style == scalar_plain &&
+         strncmp( implicit, "str", 4 ) == 0 &&
+         str[0] == ':' ) {
+        force_style = scalar_literal;
     }
 
     /* Write the text node */
@@ -767,8 +798,13 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
             syck_emit_folded( e, force_width, keep_nl, str, len );
         break;
 
+        case scalar_2quote_1:
+            syck_emit_2quoted_1( e, force_width, str, len );
+        break;
+
         case scalar_literal:
-            syck_emit_literal( e, keep_nl, str, len );
+            /* syck_emit_literal( e, keep_nl, str, len ); */
+            syck_emit_2quoted( e, force_width, str, len );
         break;
 
         case scalar_plain:
@@ -783,7 +819,7 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
 }
 
 void
-syck_emitter_escape( SyckEmitter *e, const char *src, long len )
+syck_emitter_escape( SyckEmitter *e, const unsigned char *src, long len )
 {
     int i;
     for( i = 0; i < len; i++ )
@@ -848,7 +884,8 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
             break;
 
             default:
-                syck_emitter_write( e, mark, 1 );
+                syck_emitter_escape( e, (unsigned char *)mark, 1 );
+                /*syck_emitter_write( e, mark, 1 );*/
             break;
         }
         mark++;
@@ -888,10 +925,10 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
             case '\v': syck_emitter_write( e, "\\v",  2 ); break;
             case 0x1b: syck_emitter_write( e, "\\e",  2 ); break;
 
-            case '\n':
+            case '\n': /* Note: to disable for YAML.pm compat */
                 end = mark + 1;
                 syck_emitter_write( e, "\\n", 2 );
-                do_indent = 2;
+                do_indent = e->indent;
                 start = mark + 1;
                 if ( start < str + len && ( *start == ' ' || *start == '\n' ) ) {
                     do_indent = 0;
@@ -908,7 +945,7 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
             break;
 
             default:
-                syck_emitter_escape( e, mark, 1 );
+                syck_emitter_escape( e, (unsigned char*)mark, 1 );
             break;
         }
         mark++;
@@ -1267,6 +1304,11 @@ syck_emitter_mark_node( SyckEmitter *e, st_data_t n )
              */
             st_insert( e->anchors, (st_data_t)oid, (st_data_t)anchor_name );
         }
+
+        /* XXX - Flag added by BDRACO as the perl_syck.h now has a max_depth - XXX */
+        if (! e->permit_duplicate )
+            return 0;
+        /* XXX - Added by Audrey Tang to handle self-recursive structures - XXX */
     }
     return oid;
 }

@@ -1,8 +1,8 @@
 /*
  * syck.h
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005-11-14 07:43:56 +0800 (一, 14 11 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
@@ -17,13 +17,15 @@
 #define SYCK_YAML_MAJOR 1
 #define SYCK_YAML_MINOR 0
 
-#define SYCK_VERSION    "0.70"
+#define SYCK_VERSION    "0.71"
 #define YAML_DOMAIN     "yaml.org,2002"
 
 #ifdef HAVE_STDLIB_H
 # include <stdlib.h>
 #endif
-
+#ifdef HAVE_MALLOC_H
+# include <malloc.h>
+#endif
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
@@ -35,6 +37,7 @@
 #endif
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <ctype.h>
 #ifdef HAVE_ST_H
@@ -89,14 +92,16 @@ extern "C" {
 #define NL_CHOMP    40
 #define NL_KEEP     50
 
+#define EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES 1
+
 /*
  * Node definitions
  */
 #ifndef ST_DATA_T_DEFINED
-typedef long st_data_t;
+typedef uintptr_t st_data_t;
 #endif
 
-#define SYMID unsigned long
+#define SYMID uintptr_t
 
 typedef struct _syck_node SyckNode;
 
@@ -127,7 +132,8 @@ enum scalar_style {
     scalar_2quote,
     scalar_fold,
     scalar_literal,
-    scalar_plain
+    scalar_plain,
+    scalar_2quote_1 /* Added by Audrey Tang to support JSON's single quoting */
 };
 
 /*
@@ -344,6 +350,9 @@ struct _syck_emitter {
     SyckLevel *levels;
     int lvl_idx;
     int lvl_capa;
+    int max_depth;         /* Added with 0.71, from perl */
+    int depth;             /* Added with 0.71, from perl */
+    int permit_duplicate;  /* Added with 0.71, from perl */
     /* Pointer for extension's use */
     void *bonus;
 };
@@ -382,10 +391,11 @@ char *syck_match_implicit( const char *, size_t );
  * API prototypes
  */
 char *syck_strndup( const char *, long );
+int syck_str_is_unquotable_integer(char*, long);
 long syck_io_file_read( char *, SyckIoFile *, long, long );
 long syck_io_str_read( char *, SyckIoStr *, long, long );
 char *syck_base64enc( const char *, long );
-char *syck_base64dec( const char *, long );
+char *syck_base64dec( const char *, long, long * );
 SyckEmitter *syck_new_emitter( void );
 SYMID syck_emitter_mark_node( SyckEmitter *, st_data_t );
 void syck_emitter_ignore_id( SyckEmitter *, SYMID );
@@ -394,12 +404,13 @@ void syck_emitter_handler( SyckEmitter *, SyckEmitterHandler );
 void syck_free_emitter( SyckEmitter * );
 void syck_emitter_clear( SyckEmitter * );
 void syck_emitter_write( SyckEmitter *, const char *, long );
-void syck_emitter_escape( SyckEmitter *, const char *, long );
+void syck_emitter_escape( SyckEmitter *, const unsigned char *, long );
 void syck_emitter_flush( SyckEmitter *, long );
 void syck_emit( SyckEmitter *, st_data_t );
 void syck_emit_scalar( SyckEmitter *, const char *, enum scalar_style, int, int, char, const char *, long );
 void syck_emit_1quoted( SyckEmitter *, int, const char *, long );
 void syck_emit_2quoted( SyckEmitter *, int, const char *, long );
+void syck_emit_2quoted_1( SyckEmitter *, int, const char *, long );
 void syck_emit_folded( SyckEmitter *, int, char, const char *, long );
 void syck_emit_literal( SyckEmitter *, char, const char *, long );
 void syck_emit_seq( SyckEmitter *, const char *, enum seq_style );
@@ -467,7 +478,7 @@ long syck_seq_count( SyckNode * );
 /*
  * Lexer prototypes
  */
-void syckerror( void *, const char * );
+void syckerror( const char * );
 int syckparse( void * );
 
 #if defined(__cplusplus)

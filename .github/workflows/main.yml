@@ -1,0 +1,86 @@
+name: Github CI
+on:
+  push:
+    branches:
+      - master
+      - smoke/*
+      - gh/*
+    tags:
+      - '[0-9].*.*'
+      - '[0-9].*'
+  pull_request:
+    branches:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+#strategy:
+#  matrix:
+#    os: [ubuntu-14.04, ubuntu-18.04, ubuntu-20.04, ubuntu-latest]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: true
+      matrix:
+        CONFIGURE_ARGS:
+          -
+          - CFLAGS="-O2 -fno-omit-frame-pointer -fsanitize=address"
+          - CC="clang"
+          - --with-re2c
+          - --host=i686-linux-gnu
+    steps:
+    - name: checkout
+      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      with:
+        fetch-tags: true
+        fetch-depth: 1
+        submodules: recursive
+    - if: contains(matrix.CONFIGURE_ARGS, 'i686-linux-gnu')
+      name: setup gcc-multilib
+      run: |
+        sudo apt-get -y update
+        sudo apt-get -y install gcc-multilib
+    #- name: setup-python-libxml2
+    - if: contains(matrix.CONFIGURE_ARGS, 'with-re2c')
+      name: setup flex/bison/re2c
+      run: |
+        sudo apt-get -y update
+        sudo apt-get -y install flex bison re2c
+        rm lib/token.c lib/bytecode.c lib/implicit.c
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}-${{ matrix.CONFIGURE_ARGS }}
+    - run: ./bootstrap
+    #- if: contains(matrix.CONFIGURE_ARGS, '-fsanitize=address')
+    #  name: Fix kernel mmap rnd bits for -fsanitize=address
+    #  run: |
+    #    # echo "-fsanitize=address run-time broken in latest ubuntu image update from March 10, 2024"
+    #    # https://github.com/actions/runner-images/issues/9491
+    #    # Asan in llvm 14 provided in ubuntu 22.04 is incompatible with
+    #    # high-entropy ASLR in much newer kernels that GitHub runners are
+    #    # using leading to random crashes: https://reviews.llvm.org/D148280
+    #    sudo sysctl vm.mmap_rnd_bits=28
+    - run: ./configure ${{ matrix.CONFIGURE_ARGS }}
+    - run: make -j
+    - if: ${{ startsWith(github.ref, 'refs/heads/') }}
+      run: make -j check
+    - if: ${{ matrix.CONFIGURE_ARGS == '' }}
+      run: make distcheck
+    - if: contains(matrix.CONFIGURE_ARGS, '--enable-release') && startsWith(github.ref, 'refs/tags/')
+      name: Prep-Release
+      run: sha256sum libredwg-*.tar.* > dist.sha256
+    - if: ${{ matrix.CONFIGURE_ARGS == '' && startsWith(github.ref, 'refs/tags/') }}
+      name: Release
+      continue-on-error: true
+      uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+      with:
+        body_path: dist.sha256
+        files: |
+          dist.sha256
+          syck-*.tar.*

@@ -2,17 +2,15 @@
  * token.re
  *
  * $Author: why $
- * $Date: 2005-09-21 07:42:51 +0800 (三, 21  9 2005) $
+ * $Date: 2005-09-21 02:42:51 +0300 (Wed, 21 Sep 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 #include "syck.h"
-
-#if GRAM_FILES_HAVE_TAB_SUFFIX
-#include "gram.tab.h"
-#else
 #include "gram.h"
-#endif
+#include <assert.h>
+#include <string.h>
+#include <ctype.h>
 
 /*
  * Allocate quoted strings in chunks
@@ -73,7 +71,7 @@
                 if ( reset == 1 ) YYPOS(0); \
                 return YAML_IOPEN; \
             } \
-        } 
+        }
 
 /*
  * Nice little macro to ensure closure of levels.
@@ -197,12 +195,7 @@
     NEWLINE(indent); \
     while ( indent < YYCURSOR ) \
     { \
-        if ( *indent == '\t' ) \
-        { \
-            syckerror("TAB found in your indentation, please remove"); \
-            return 0; \
-        } \
-        else if ( is_newline( indent++ ) ) \
+        if ( is_newline( ++indent ) ) \
         { \
             NEWLINE(indent); \
         } \
@@ -249,7 +242,7 @@ int is_newline( char *ptr );
 int newline_len( char *ptr );
 int sycklex_yaml_utf8( YYSTYPE *, SyckParser * );
 int sycklex_bytecode_utf8( YYSTYPE *, SyckParser * );
-int syckwrap();
+int syckwrap(void);
 
 /*
  * My own re-entrant sycklex() using re2c.
@@ -259,6 +252,7 @@ int syckwrap();
 int
 sycklex( YYSTYPE *sycklval, SyckParser *parser )
 {
+    assert(parser);
     switch ( parser->input_type )
     {
         case syck_yaml_utf8:
@@ -286,7 +280,7 @@ sycklex_yaml_utf8( YYSTYPE *sycklval, SyckParser *parser )
 {
     int doc_level = 0;
     syck_parser_ptr = parser;
-    if ( YYCURSOR == NULL ) 
+    if ( YYCURSOR == NULL )
     {
         syck_parser_read( parser );
     }
@@ -307,7 +301,7 @@ SPC = " " ;
 TAB = "\t" ;
 SPCTAB = ( SPC | TAB ) ;
 ENDSPC = ( SPC+ | LF ) ;
-YINDENT = LF TAB* ( SPC | LF )* ;
+YINDENT = LF ( SPC | LF )* ;
 NULL = [\000] ;
 ANY = [\001-\377] ;
 ISEQO = "[" ;
@@ -318,7 +312,7 @@ CDELIMS = ( ISEQC | IMAPC ) ;
 ICOMMA = ( "," ENDSPC ) ;
 ALLX = ( ":" ENDSPC ) ;
 DIR = "%" YWORDP+ ":" YWORDP+ ;
-YBLOCK = [>|] [-+0-9]* ENDSPC ; 
+YBLOCK = [>|] [-+0-9]* ENDSPC ;
 HEX = [0-9A-Fa-f] ;
 ESCSEQ = ["\\abefnrtv0] ;
 
@@ -339,42 +333,42 @@ Header:
                         if ( lvl->status == syck_lvl_header )
                         {
                             YYPOS(3);
-                            goto Directive; 
+                            goto Directive;
                         }
                         else
                         {
                             ENSURE_YAML_IEND(lvl, -1);
                             YYPOS(0);
-                            return 0; 
+                            return 0;
                         }
                     }
 
 "..." ENDSPC        {   SyckLevel *lvl = CURRENT_LEVEL();
                         if ( lvl->status == syck_lvl_header )
                         {
-                            goto Header; 
+                            goto Header;
                         }
                         else
                         {
                             ENSURE_YAML_IEND(lvl, -1);
                             YYPOS(0);
-                            return 0; 
+                            return 0;
                         }
-                        return 0; 
+                        return 0;
                     }
 
-"#"                 {   eat_comments( parser ); 
+"#"                 {   eat_comments( parser );
                         goto Header;
                     }
 
 NULL                {   SyckLevel *lvl = CURRENT_LEVEL();
                         ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
-                        return 0; 
+                        return 0;
                     }
 
 YINDENT             {   GOBBLE_UP_YAML_INDENT( doc_level, YYTOKEN );
-                        goto Header; 
+                        goto Header;
                     }
 
 SPCTAB+             {   doc_level = YYCURSOR - YYLINEPTR;
@@ -382,7 +376,7 @@ SPCTAB+             {   doc_level = YYCURSOR - YYLINEPTR;
                     }
 
 ANY                 {   YYPOS(0);
-                        goto Document; 
+                        goto Document;
                     }
 
 */
@@ -430,39 +424,39 @@ YINDENT             {   /* Isolate spaces */
 ISEQO               {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         lvl = CURRENT_LEVEL();
                         ADD_LEVEL(lvl->spaces + 1, syck_lvl_iseq);
-                        return YYTOKEN[0]; 
+                        return YYTOKEN[0];
                     }
 
 IMAPO               {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         lvl = CURRENT_LEVEL();
                         ADD_LEVEL(lvl->spaces + 1, syck_lvl_imap);
-                        return YYTOKEN[0]; 
+                        return YYTOKEN[0];
                     }
 
 CDELIMS             {   POP_LEVEL();
-                        return YYTOKEN[0]; 
+                        return YYTOKEN[0];
                     }
 
 [:,] ENDSPC         {   if ( *YYTOKEN == ':' && lvl->status != syck_lvl_imap && lvl->status != syck_lvl_iseq )
                         {
                             lvl->status = syck_lvl_map;
                         }
-                        YYPOS(1); 
-                        return YYTOKEN[0]; 
+                        YYPOS(1);
+                        return YYTOKEN[0];
                     }
 
 [-?] ENDSPC         {   ENSURE_YAML_IOPEN(lvl, YYTOKEN - YYLINEPTR, 1);
                         FORCE_NEXT_TOKEN(YAML_IOPEN);
                         if ( *YYCURSOR == '#' || is_newline( YYCURSOR ) || is_newline( YYCURSOR - 1 ) )
                         {
-                            YYCURSOR--; 
+                            YYCURSOR--;
                             ADD_LEVEL((YYTOKEN + 1) - YYLINEPTR, syck_lvl_seq);
                         }
                         else /* spaces followed by content uses the space as indentation */
                         {
                             ADD_LEVEL(YYCURSOR - YYLINEPTR, syck_lvl_seq);
                         }
-                        return YYTOKEN[0]; 
+                        return YYTOKEN[0];
                     }
 
 "&" YWORDC+         {   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
@@ -489,14 +483,14 @@ CDELIMS             {   POP_LEVEL();
 "\""                {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto DoubleQuote; }
 
-YBLOCK              {   if ( is_newline( YYCURSOR - 1 ) ) 
+YBLOCK              {   if ( is_newline( YYCURSOR - 1 ) )
                         {
                             YYCURSOR--;
                         }
-                        goto ScalarBlock; 
+                        goto ScalarBlock;
                     }
 
-"#"                 {   eat_comments( parser ); 
+"#"                 {   eat_comments( parser );
                         goto Document;
                     }
 
@@ -504,11 +498,11 @@ SPCTAB+             {   goto Document; }
 
 NULL                {   ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
-                        return 0; 
+                        return 0;
                     }
 
 ANY                 {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
-                        goto Plain; 
+                        goto Plain;
                     }
 
 */
@@ -543,7 +537,7 @@ Plain:
         plvl = CURRENT_LEVEL();
         GET_TRUE_YAML_INDENT(parentIndent);
 
-Plain2: 
+Plain2:
         YYTOKEN = YYCURSOR;
 
 Plain3:
@@ -583,7 +577,7 @@ YINDENT             {   int indt_len, nl_count = 0;
                             }
                         }
 
-                        goto Plain2; 
+                        goto Plain2;
                     }
 
 ALLX                {   RETURN_IMPLICIT(); }
@@ -621,19 +615,19 @@ ISEQC               {   if ( plvl->status != syck_lvl_iseq )
                         RETURN_IMPLICIT();
                     }
 
-" #"                {   eat_comments( parser ); 
+" #"                {   eat_comments( parser );
                         RETURN_IMPLICIT();
                     }
 
 NULL                {   RETURN_IMPLICIT(); }
 
-SPCTAB              {   if ( qidx == 0 ) 
+SPCTAB              {   if ( qidx == 0 )
                         {
                             goto Plain2;
                         }
                         else
                         {
-                            goto Plain3; 
+                            goto Plain3;
                         }
                     }
 
@@ -692,11 +686,11 @@ YINDENT             {   int indt_len;
                             }
                         }
 
-                        goto SingleQuote2; 
+                        goto SingleQuote2;
                     }
 
 "''"                {   QUOTECAT(qstr, qcapa, qidx, '\'');
-                        goto SingleQuote2; 
+                        goto SingleQuote2;
                     }
 
 ( "'" | NULL )      {   SyckLevel *lvl;
@@ -719,11 +713,11 @@ YINDENT             {   int indt_len;
                         n->data.str->len = qidx;
                         n->data.str->style = scalar_1quote;
                         sycklval->nodeData = n;
-                        return YAML_PLAIN; 
+                        return YAML_PLAIN;
                     }
 
-ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1)); 
-                        goto SingleQuote2; 
+ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
+                        goto SingleQuote2;
                     }
 
 */
@@ -785,12 +779,12 @@ YINDENT             {   int indt_len;
                         }
 
                         keep_nl = 1;
-                        goto DoubleQuote2; 
+                        goto DoubleQuote2;
                     }
 
 "\\" ESCSEQ         {   char ch = *( YYCURSOR - 1 );
                         QUOTECAT(qstr, qcapa, qidx, escape_seq( ch ));
-                        goto DoubleQuote2; 
+                        goto DoubleQuote2;
                     }
 
 "\\x" HEX HEX       {   long ch;
@@ -799,12 +793,12 @@ YINDENT             {   int indt_len;
                         ch = strtol( chr_text, NULL, 16 );
                         free( chr_text );
                         QUOTECAT(qstr, qcapa, qidx, ch);
-                        goto DoubleQuote2; 
+                        goto DoubleQuote2;
                     }
 
 "\\" SPC* LF        {   keep_nl = 0;
                         YYCURSOR--;
-                        goto DoubleQuote2; 
+                        goto DoubleQuote2;
                     }
 
 ( "\"" | NULL )     {   SyckLevel *lvl;
@@ -827,11 +821,11 @@ YINDENT             {   int indt_len;
                         n->data.str->len = qidx;
                         n->data.str->style = scalar_2quote;
                         sycklval->nodeData = n;
-                        return YAML_PLAIN; 
+                        return YAML_PLAIN;
                     }
 
-ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1)); 
-                        goto DoubleQuote2; 
+ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
+                        goto DoubleQuote2;
                     }
 
 */
@@ -895,7 +889,7 @@ TransferMethod2:
                             }
                         }
 
-                        return YAML_TRANSFER; 
+                        return YAML_TRANSFER;
                     }
 
 /*
@@ -915,7 +909,7 @@ TransferMethod2:
                         goto TransferMethod2;
                     }
 
-ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1)); 
+ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto TransferMethod2;
                     }
 
@@ -966,7 +960,7 @@ ScalarBlock2:
 
 /*!re2c
 
-LF+ TAB* SPC*       {   char *pacer;
+YINDENT             {   char *pacer;
                         char *tok = YYTOKEN;
                         int indt_len = 0, nl_count = 0, fold_nl = 0, nl_begin = 0;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
@@ -1054,11 +1048,11 @@ LF+ TAB* SPC*       {   char *pacer;
                         }
                         goto ScalarBlock2;
                     }
-              
+
 
 NULL                {   YYCURSOR--;
                         POP_LEVEL();
-                        RETURN_YAML_BLOCK(); 
+                        RETURN_YAML_BLOCK();
                     }
 
 "---" ENDSPC        {   if ( YYTOKEN == YYLINEPTR )
@@ -1105,7 +1099,7 @@ Comment:
                         return;
                     }
 
-ANY                 {   goto Comment; 
+ANY                 {   goto Comment;
                     }
 
 */
@@ -1143,21 +1137,21 @@ newline_len( char *ptr )
 {
     if ( *ptr == '\n' )
         return 1;
-    
+
     if ( *ptr == '\r' && *( ptr + 1 ) == '\n' )
         return 2;
 
     return 0;
 }
 
-int 
-syckwrap()
+int
+syckwrap(void)
 {
     return 1;
 }
 
-void 
-syckerror( const char *msg )
+void
+syckerror( char *msg )
 {
     if ( syck_parser_ptr->error_handler == NULL )
         syck_parser_ptr->error_handler = syck_default_error_handler;

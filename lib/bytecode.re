@@ -1,18 +1,14 @@
 /*
  * bytecode.re
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005/09/20 05:21:06 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 #include "syck.h"
-
-#if GRAM_FILES_HAVE_TAB_SUFFIX
-#include "gram.tab.h"
-#else
 #include "gram.h"
-#endif
+#include <string.h>
 
 #define QUOTELEN 128
 
@@ -101,7 +97,7 @@ char *get_inline( SyckParser *parser );
                 if ( reset == 1 ) YYPOS(0); \
                 return YAML_IOPEN; \
             } \
-        } 
+        }
 
 /*
  * Nice little macro to ensure closure of levels.
@@ -138,7 +134,7 @@ sycklex_bytecode_utf8( YYSTYPE *sycklval, SyckParser *parser )
 {
     SyckLevel *lvl;
     syck_parser_ptr = parser;
-    if ( YYCURSOR == NULL ) 
+    if ( YYCURSOR == NULL )
     {
         syck_parser_read( parser );
     }
@@ -229,7 +225,7 @@ MAP     {   int complex = 0;
             {
                 complex = 1;
             }
-            ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_map); 
+            ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_map);
             CHK_NL(YYCURSOR);
             if ( complex )
             {
@@ -268,12 +264,12 @@ END     {   if ( lvl->status == syck_lvl_seq && lvl->ncount == 0 )
                 FORCE_NEXT_TOKEN( '}' );
                 return '{';
             }
-            
+
             POP_LEVEL();
             lvl = CURRENT_LEVEL();
             if ( lvl->status == syck_lvl_seq )
             {
-                FORCE_NEXT_TOKEN(YAML_INDENT);   
+                FORCE_NEXT_TOKEN(YAML_INDENT);
             }
             else if ( lvl->status == syck_lvl_map )
             {
@@ -290,7 +286,7 @@ END     {   if ( lvl->status == syck_lvl_seq && lvl->ncount == 0 )
             return YAML_IEND;
         }
 
-SCA     {   ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_str); 
+SCA     {   ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_str);
             goto Scalar;
         }
 
@@ -373,7 +369,7 @@ COM     {   goto Comment; }
 LF      {   CHK_NL(YYCURSOR);
             if ( lvl->status == syck_lvl_seq )
             {
-                return YAML_INDENT; 
+                return YAML_INDENT;
             }
             else if ( lvl->status == syck_lvl_map )
             {
@@ -460,11 +456,11 @@ LF NNL  {   CHK_NL(tok+1);
 
 LF NLZ  {   CHK_NL(tok+1);
             CAT(str, cap, idx, '\0');
-            goto Scalar2; 
+            goto Scalar2;
         }
 
 LF      {   YYCURSOR = tok;
-            goto ScalarEnd; 
+            goto ScalarEnd;
         }
 
 NULL    {   YYCURSOR = tok;
@@ -472,7 +468,7 @@ NULL    {   YYCURSOR = tok;
         }
 
 ANY     {   CAT(str, cap, idx, tok[0]);
-            goto Scalar2; 
+            goto Scalar2;
         }
 
 */
@@ -518,7 +514,7 @@ NULL        {   YYCURSOR = tok;
             }
 
 ANY         {   CAT(str, cap, idx, tok[0]);
-                goto Inline; 
+                goto Inline;
             }
 
 */

@@ -1,30 +1,24 @@
 /*
  * gram.y
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005/04/13 06:27:54 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 
 %start doc
-%pure-parser
-%parse-param {void* parser}
-%lex-param {void* parser}
-
+%define api.pure
 
 %{
 
-#define YYDEBUG 1
-#define YYERROR_VERBOSE 1
-#ifndef YYSTACK_USE_ALLOCA
-#define YYSTACK_USE_ALLOCA 0
-#endif
-
 #include "syck.h"
-#include "sycklex.h"
 
-void apply_seq_in_map( SyckParser *parser, SyckNode *n );
+void apply_seq_in_map( SyckParser *parser, SyckNode *n )
+	/*@*/;
+
+#define YYPARSE_PARAM   parser
+#define YYLEX_PARAM     parser
 
 #define NULL_NODE(parser, node) \
         SyckNode *node = syck_new_str( "", scalar_plain ); \

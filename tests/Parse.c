@@ -117,10 +117,12 @@ SyckParseString2Handler( SyckParser *p, SyckNode *n )
 }
 
 enum st_retval 
-ListAnchors( char *key, SyckNode *n, CuTest *tc )
+ListAnchors( const char *key, const void *_n, void *_tc )
 {
+    SyckNode *n = (SyckNode*)_n;
+    CuTest *tc = (CuTest*)_tc;
     char *sd = syck_strndup( n->data.str->ptr, n->data.str->len );
-    CuAssertStrEquals( tc, "test", key );
+    CuAssertStrEquals( tc, "test", (char*)key );
     CuAssertStrEquals( tc, "13", sd );
     free( sd );
     return ST_CONTINUE;

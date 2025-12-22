@@ -13,8 +13,8 @@
 //
 
 #include <string.h>
-#include "syck.h"
 #include "CuTest.h"
+#include "syck.h"
 
 /* YAML test node structures */
 #define T_STR 10
@@ -36,9 +36,7 @@ struct test_node end_node = { T_END };
  * equivalent set of test_node structs.
  */
 SYMID
-syck_copy_handler(p, n)
-    SyckParser *p;
-    SyckNode *n;
+syck_copy_handler(SyckParser *p, SyckNode *n)
 {
     int i = 0;
     struct test_node *tn = S_ALLOC_N( struct test_node, 1 );
@@ -98,9 +96,11 @@ syck_copy_handler(p, n)
     return syck_add_sym( p, (char *) tn );
 }
 
-int
-syck_free_copies( char *key, struct test_node *tn, char *arg )
+enum st_retval
+syck_free_copies( const char *key, const void *_tn, void *_arg )
 {
+    const struct test_node *tn = (const struct test_node *)_tn;
+    char *arg = (char*)_arg;
     if ( tn != NULL ) {
         switch ( tn->type ) {
             case T_STR:
@@ -183,10 +183,7 @@ void CuStreamCompare( CuTest* tc, char *yaml, struct test_node *stream ) {
  * Setup for testing N->Y->N.
  */
 void 
-test_output_handler( emitter, str, len )
-    SyckEmitter *emitter;
-    char *str;
-    long len;
+test_output_handler( SyckEmitter *emitter, char *str, long len )
 {
     CuString *dest = (CuString *)emitter->bonus;
     CuStringAppendLen( dest, str, len );

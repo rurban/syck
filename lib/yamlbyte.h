@@ -11,7 +11,9 @@
 
 /* define what a character is */
 typedef unsigned char yamlbyte_utf8_t;
+/*@-typeuse@*/
 typedef unsigned short yamlbyte_utf16_t;
+/*@=typeuse@*/
 #ifdef YAMLBYTE_UTF8
   #ifdef YAMLBYTE_UTF16
     #error Must only define YAMLBYTE_UTF8 or YAMLBYTE_UTF16
@@ -75,14 +77,16 @@ typedef void * yamlbyte_consumer_t;
 typedef void * yamlbyte_producer_t;
 
 /* push and pull APIs need a way to communicate results */
+/*@-enummemuse@*/
 typedef enum {
     YAMLBYTE_OK          = 0,     /* proceed                        */
     YAMLBYTE_E_MEMORY    = 'M',   /* could not allocate memory      */
     YAMLBYTE_E_READ      = 'R',   /* input stream read error        */
     YAMLBYTE_E_WRITE     = 'W',   /* output stream write error      */
     YAMLBYTE_E_OTHER     = '?',   /* some other error condition     */
-    YAMLBYTE_E_PARSE     = 'P'    /* parse error, check bytecodes   */
+    YAMLBYTE_E_PARSE     = 'P',   /* parse error, check bytecodes   */
 } yamlbyte_result_t;
+/*@=enummemuse@*/
  
 typedef const yamlbyte_char_t *yamlbyte_buff_t; 
 
@@ -99,12 +103,14 @@ typedef struct yaml_instruction {
 /* producer pushes the instruction with one bytecode event to the 
  * consumer; if the consumer's result is not YAMLBYTE_OK, then
  * the producer should stop */
+/*@-typeuse@*/
 typedef
   yamlbyte_result_t
    (*yamlbyte_push_t)(
      yamlbyte_consumer_t self,
      yamlbyte_inst_t  inst
    );
+/*@=typeuse@*/
 
 /* consumer pulls a bytecode instruction from the producer; in this
  * case the instruction (and is buffer) are owned by the producer and
@@ -112,12 +118,14 @@ typedef
  * if the instruction is NULL, then there are no more results; and
  * it is important to call the pull function till it returns NULL so 
  * that the producer can clean up its memory allocations */
+/*@-typeuse@*/
 typedef 
    yamlbyte_result_t
     (*yamlbyte_pull_t)(
       yamlbyte_producer_t self,
       yamlbyte_inst_t *inst   /* to be filled in by the producer */
     ); 
+/*@=typeuse@*/
 
 /*
  *  Buffer based API
@@ -126,12 +134,14 @@ typedef
 /* producer pushes a null terminated buffer filled with one or more
  * bytecode events to the consumer; if the consumer's result is not
  * YAMLBYTE_OK, then the producer should stop */
+/*@-typeuse@*/
 typedef
   yamlbyte_result_t
    (*yamlbyte_pushbuff_t)(
      yamlbyte_consumer_t self,
      yamlbyte_buff_t  buff
    );
+/*@=typeuse@*/
 
 /* consumer pulls bytecode events from the producer; in this case
  * the buffer is owned by the producer, and will remain valid till
@@ -139,12 +149,14 @@ typedef
  * is set to NULL, then there are no more results; it is important
  * to call the pull function till it returns NULL so that the
  * producer can clean up its memory allocations */
+/*@-typeuse@*/
 typedef 
    yamlbyte_result_t
     (*yamlbyte_pullbuff_t)(
       yamlbyte_producer_t self,
       yamlbyte_buff_t *buff   /* to be filled in by the producer */
     ); 
+/*@=typeuse@*/
 
 /* convert a pull interface to a push interface; the reverse process
  * requires threads and thus is language dependent */

@@ -1,8 +1,8 @@
 /*
  * yaml2byte.c
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005/09/19 06:12:54 $
  *
  * Copyright (C) 2003 why the lucky stiff, clark evans
  *
@@ -15,6 +15,7 @@
 #include "yamlbyte.h"
 
 #include <stdio.h>
+
 #define TRACE0(a)  \
     do { printf(a); printf("\n"); fflush(stdout); } while(0)
 #define TRACE1(a,b) \
@@ -29,12 +30,17 @@
 #define HASH ((long)0xCAFECAFE)
 typedef struct {
    long hash;
+/*@null@*/
    char *buffer;
    long length;
    long remaining;
    int  printed;
 } bytestring_t;
-bytestring_t *bytestring_alloc() {
+
+/*@null@*/
+bytestring_t *bytestring_alloc(void)
+	/*@*/
+{
     bytestring_t *ret; 
     /*TRACE0("bytestring_alloc()");*/
     ret = S_ALLOC(bytestring_t);
@@ -46,16 +52,18 @@ bytestring_t *bytestring_alloc() {
     ret->printed = 0;
     return ret;
 }
+
 void bytestring_append(bytestring_t *str, char code, 
-                       char *start, char *finish) 
+                       /*@null@*/ char *start, /*@null@*/ char *finish) 
+	/*@modifies str @*/
 {
     long grow;
     long length = 2;   /* CODE + LF */
     char *curr;
-    assert(str && HASH == str->hash);
+    assert(str != NULL && HASH == str->hash);
     /*TRACE0("bytestring_append()");*/
-    if(start) {
-        if(!finish)
+    if(start != NULL) {
+        if(finish == NULL)
             finish = start + strlen(start);
         length += (finish-start);
     }
@@ -63,13 +71,15 @@ void bytestring_append(bytestring_t *str, char code,
         grow = (length - str->remaining) + CHUNKSIZE;
         str->remaining += grow;
         str->length    += grow; 
+/*@-evalorder@*/
         str->buffer = S_REALLOC_N( str->buffer, char, str->length + 1 );
+/*@=evalorder@*/
         assert(str->buffer);
     }
     curr = str->buffer + (str->length - str->remaining);
     *curr = code;
     curr += 1;
-    if(start) 
+    if(start != NULL) 
         while(start < finish)
             *curr ++ = *start ++;
     *curr = '\n';
@@ -78,15 +88,18 @@ void bytestring_append(bytestring_t *str, char code,
     str->remaining = str->remaining - length;
     assert( (str->buffer + str->length) - str->remaining );
 }
-void bytestring_extend(bytestring_t *str, bytestring_t *ext)
+
+void bytestring_extend(bytestring_t *str, /*@null@*/ bytestring_t *ext)
+	/*@modifies str, ext @*/
 {
     char *from;
     char *curr;
     char *stop;
     long grow;
     long length;
-    assert(str && HASH == str->hash);
-    assert(ext && HASH == ext->hash);
+    assert(str != NULL && HASH == str->hash);
+    assert(ext != NULL && HASH == ext->hash);
+assert(ext->buffer != NULL);
     if(ext->printed) {
         assert(ext->buffer[0] ==YAMLBYTE_ANCHOR);
         curr = ext->buffer;
@@ -100,7 +113,9 @@ void bytestring_extend(bytestring_t *str, bytestring_t *ext)
             grow = (length - str->remaining) + CHUNKSIZE;
             str->remaining += grow;
             str->length    += grow; 
+/*@-evalorder@*/
             str->buffer = S_REALLOC_N( str->buffer, char, str->length + 1 );
+/*@=evalorder@*/
         }
         curr = str->buffer + (str->length - str->remaining);
         from = ext->buffer;
@@ -115,9 +130,7 @@ void bytestring_extend(bytestring_t *str, bytestring_t *ext)
 
 /* convert SyckNode into yamlbyte_buffer_t objects */
 SYMID
-syck_yaml2byte_handler(p, n)
-    SyckParser *p;
-    SyckNode *n;
+syck_yaml2byte_handler(SyckParser *p, SyckNode *n)
 {
     SYMID oid;
     long i;
@@ -130,8 +143,10 @@ syck_yaml2byte_handler(p, n)
     bytestring_t *sav = NULL;
     /*TRACE0("syck_yaml2byte_handler()");*/
     val = bytestring_alloc();
-    if(n->anchor) bytestring_append(val,YAMLBYTE_ANCHOR, n->anchor, NULL);
-    if ( n->type_id )
+assert(val != NULL);
+    if(n->anchor!= NULL )
+	bytestring_append(val,YAMLBYTE_ANCHOR, n->anchor, NULL);
+    if ( n->type_id != NULL )
     {
         if ( p->taguri_expansion )
         {
@@ -164,7 +179,7 @@ syck_yaml2byte_handler(p, n)
                     start = current + 1;
                     if(current > finish)
                     {
-                        break;
+                        /*@loopbreak@*/ break;
                     }
                     else if('\n' == ch )
                     {
@@ -212,13 +227,14 @@ syck_yaml2byte_handler(p, n)
 }
 
 char *
-syck_yaml2byte(const char *yamlstr)
+syck_yaml2byte(char *yamlstr)
 {
     SYMID oid;
     char *ret;
     bytestring_t *sav; 
 
     SyckParser *parser = syck_new_parser();
+assert(parser != NULL);
     syck_parser_str_auto( parser, yamlstr, NULL );
     syck_parser_handler( parser, syck_yaml2byte_handler );
     syck_parser_error_handler( parser, NULL );
@@ -227,6 +243,7 @@ syck_yaml2byte(const char *yamlstr)
     oid = syck_parse( parser );
 
     if ( syck_lookup_sym( parser, oid, (char **)&sav ) == 1 ) {
+assert(sav != NULL && sav->buffer != NULL);
         ret = S_ALLOC_N( char, strlen( sav->buffer ) + 3 );
         ret[0] = '\0';
         strcat( ret, "D\n" );
@@ -243,7 +260,7 @@ syck_yaml2byte(const char *yamlstr)
 
 #ifdef TEST_YBEXT
 #include <stdio.h>
-int main() {
+int main(int argc, char * argv[]) {
    char *yaml = "test: 1\nand: \"with new\\nline\\n\"\nalso: &3 three\nmore: *3";
    printf("--- # YAML \n");
    printf(yaml);

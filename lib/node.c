@@ -1,30 +1,35 @@
 /*
  * node.c
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005/09/16 18:59:53 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 
 #include "syck.h"
+#include <assert.h>
 
 /*
  * Node allocation functions
  */
 SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
+	/*@*/
 {
     SyckNode *s;
 
     s = S_ALLOC( SyckNode );
+    assert(s != NULL);
     s->kind = type;
     s->id = 0;
     s->type_id = NULL;
     s->anchor = NULL;
     s->shortcut = NULL;
 
+/*@-uniondef@*/
     return s;
+/*@=uniondef@*/
 }
 
 void
@@ -45,7 +50,7 @@ syck_free_node( SyckNode *n )
 }
 
 SyckNode *
-syck_alloc_map()
+syck_alloc_map(void)
 {
     SyckNode *n;
     struct SyckMap *m;
@@ -64,7 +69,7 @@ syck_alloc_map()
 }
 
 SyckNode *
-syck_alloc_seq()
+syck_alloc_seq(void)
 {
     SyckNode *n;
     struct SyckSeq *s;
@@ -82,7 +87,7 @@ syck_alloc_seq()
 }
 
 SyckNode *
-syck_alloc_str()
+syck_alloc_str(void)
 {
     SyckNode *n;
     struct SyckStr *s;
@@ -99,17 +104,18 @@ syck_alloc_str()
 }
 
 SyckNode *
-syck_new_str( const char *str, enum scalar_style style )
+syck_new_str( char *str, enum scalar_style style )
 {
     return syck_new_str2( str, strlen( str ), style );
 }
 
 SyckNode *
-syck_new_str2( const char *str, long len, enum scalar_style style )
+syck_new_str2( char *str, long len, enum scalar_style style )
 {
     SyckNode *n;
 
     n = syck_alloc_str();
+assert(n != NULL);
     n->data.str->ptr = S_ALLOC_N( char, len + 1 );
     n->data.str->len = len;
     n->data.str->style = style;
@@ -120,13 +126,13 @@ syck_new_str2( const char *str, long len, enum scalar_style style )
 }
 
 void
-syck_replace_str( SyckNode *n, const char *str, enum scalar_style style )
+syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
 {
     syck_replace_str2( n, str, strlen( str ), style );
 }
 
 void
-syck_replace_str2( SyckNode *n, const char *str, long len, enum scalar_style style )
+syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
 {
     if ( n->data.str != NULL ) 
     {
@@ -134,6 +140,7 @@ syck_replace_str2( SyckNode *n, const char *str, long len, enum scalar_style sty
         n->data.str->ptr = NULL;
         n->data.str->len = 0;
     }
+assert(n->data.str != NULL);
     n->data.str->ptr = S_ALLOC_N( char, len + 1 );
     n->data.str->len = len;
     n->data.str->style = style;
@@ -172,6 +179,7 @@ syck_new_map( SYMID key, SYMID value )
     SyckNode *n;
 
     n = syck_alloc_map();
+assert(n != NULL);
     syck_map_add( n, key, value );
 
     return n;
@@ -297,6 +305,7 @@ syck_new_seq( SYMID value )
     SyckNode *n;
 
     n = syck_alloc_seq();
+assert(n != NULL);
     syck_seq_add( n, value );
 
     return n;

@@ -1,3 +1,4 @@
+.gdbinit
 Makefile
 Makefile.in
 aclocal.m4
@@ -6,6 +7,8 @@ config.h
 config.h.in
 config.log
 config.status
+config/compile
+config/test-driver
 config/config.guess
 config/config.sub
 config/depcomp
@@ -33,7 +36,14 @@ tests/.libs/
 tests/*.o
 tests/Makefile
 tests/Makefile.in
+tests/test-suite.log
 tests/test-basic
+tests/test-basic.*
 tests/test-emit
+tests/test-emit.*
 tests/test-parse
+tests/test-parse.*
 tests/test-yts
+tests/test-yts.*
+TAGS
+syck-*

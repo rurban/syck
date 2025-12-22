@@ -2,20 +2,20 @@
  * syck.c
  *
  * $Author: why $
- * $Date: 2005-01-01 10:06:25 +0800 (六, 01  1 2005) $
+ * $Date: 2005/01/01 02:06:25 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "syck.h"
-
-void syck_parser_pop_level( SyckParser * );
 
 /*
  * Custom assert
  */
+#if DEBUG
 void 
 syck_assert( const char *file_name, unsigned line_num )
 {
@@ -25,6 +25,18 @@ syck_assert( const char *file_name, unsigned line_num )
     fflush( stderr );
     abort();
 }
+#endif
+
+/*@-modfilesys@*/
+/*@only@*/ /*@null@*/
+void *syck_vmefail(size_t size)
+{
+    fprintf(stderr, "memory alloc (%u bytes) returned NULL.\n", (unsigned)size);
+    exit(EXIT_FAILURE);
+    /*@notreached@*/
+    return NULL;
+}
+/*@=modfilesys@*/
 
 /*
  * Allocates and copies a string
@@ -62,7 +74,7 @@ syck_io_file_read( char *buf, SyckIoFile *file, long max_size, long skip )
 long
 syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
 {
-    const char *beg;
+    char *beg;
     long len = 0;
 
     ASSERT( str != NULL );
@@ -98,6 +110,7 @@ syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
 
 void
 syck_parser_reset_levels( SyckParser *p )
+	/*@modifies p @*/
 {
     while ( p->lvl_idx > 1 )
     {
@@ -116,6 +129,7 @@ syck_parser_reset_levels( SyckParser *p )
 
 void
 syck_parser_reset_cursor( SyckParser *p )
+	/*@modifies p @*/
 {
     if ( p->buffer == NULL )
     {
@@ -153,7 +167,7 @@ syck_parser_set_root_on_error( SyckParser *p, SYMID roer )
  * Allocate the parser
  */
 SyckParser *
-syck_new_parser()
+syck_new_parser(void)
 {
     SyckParser *p;
     p = S_ALLOC( SyckParser );
@@ -176,15 +190,16 @@ syck_new_parser()
 }
 
 int
-syck_add_sym( SyckParser *p, char *data )
+syck_add_sym( SyckParser *p, void *data )
 {
     SYMID id = 0;
     if ( p->syms == NULL )
     {
         p->syms = st_init_numtable();
     }
+    assert(p->syms != NULL);
     id = p->syms->num_entries + 1;
-    st_insert( p->syms, id, (st_data_t)data );
+    st_insert( p->syms, (st_data_t)id, (st_data_t)data );
     return id;
 }
 
@@ -192,12 +207,15 @@ int
 syck_lookup_sym( SyckParser *p, SYMID id, char **data )
 {
     if ( p->syms == NULL ) return 0;
-    return st_lookup( p->syms, id, (st_data_t *)data );
+    return st_lookup( p->syms, (st_data_t)id, (void *)data );
 }
 
-int
-syck_st_free_nodes( char *key, SyckNode *n, char *arg )
+enum st_retval
+syck_st_free_nodes( /*@unused@*/ const char *key, /*@only@*/ const void *record,
+		/*@unused@*/ void *arg )
+	/*@modifies record @*/
 {
+    SyckNode *n = (SyckNode *)record;
     if ( n != (void *)1 ) syck_free_node( n );
     n = NULL;
     return ST_CONTINUE;
@@ -205,20 +223,21 @@ syck_st_free_nodes( char *key, SyckNode *n, char *arg )
 
 void
 syck_st_free( SyckParser *p )
+	/*@modifies p @*/
 {
     /*
      * Free the anchor tables
      */
     if ( p->anchors != NULL )
     {
-        st_foreach( p->anchors, syck_st_free_nodes, 0 );
+        st_foreach( p->anchors, syck_st_free_nodes, NULL );
         st_free_table( p->anchors );
         p->anchors = NULL;
     }
 
     if ( p->bad_anchors != NULL )
     {
-        st_foreach( p->bad_anchors, syck_st_free_nodes, 0 );
+        st_foreach( p->bad_anchors, syck_st_free_nodes, NULL );
         st_free_table( p->bad_anchors );
         p->bad_anchors = NULL;
     }
@@ -287,6 +306,7 @@ syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler hdlr )
 
 void
 syck_parser_set_input_type( SyckParser *p, enum syck_parser_input input_type )
+	/*@modifies p @*/
 {
     ASSERT( p != NULL );
     p->input_type = input_type;
@@ -312,7 +332,7 @@ syck_parser_file( SyckParser *p, FILE *fp, SyckIoFileRead read )
 }
 
 void
-syck_parser_str( SyckParser *p, const char *ptr, long len, SyckIoStrRead read )
+syck_parser_str( SyckParser *p, char *ptr, long len, SyckIoStrRead read )
 {
     ASSERT( p != NULL );
     free_any_io( p );
@@ -333,7 +353,7 @@ syck_parser_str( SyckParser *p, const char *ptr, long len, SyckIoStrRead read )
 }
 
 void
-syck_parser_str_auto( SyckParser *p, const char *ptr, SyckIoStrRead read )
+syck_parser_str_auto( SyckParser *p, char *ptr, SyckIoStrRead read )
 {
     syck_parser_str( p, ptr, strlen( ptr ), read );
 }
@@ -400,6 +420,7 @@ free_any_io( SyckParser *p )
 
 long
 syck_move_tokens( SyckParser *p )
+	/*@modifies p @*/
 {
     long count, skip;
     ASSERT( p->buffer != NULL );
@@ -408,7 +429,7 @@ syck_move_tokens( SyckParser *p )
         return 0;
 
     skip = p->limit - p->token;
-    if ( skip < 0 )
+    if ( skip < 1 )
         return 0;
 
     if ( ( count = p->token - p->buffer ) )
@@ -427,6 +448,7 @@ syck_move_tokens( SyckParser *p )
 
 void
 syck_check_limit( SyckParser *p, long len )
+	/*@modifies p @*/
 {
     if ( p->cursor == NULL )
     {
@@ -489,34 +511,18 @@ syck_parse( SyckParser *p )
 
     syck_st_free( p );
     syck_parser_reset_levels( p );
+/*@-noeffect@*/
     syckparse( p );
+/*@=noeffect@*/
     return p->root;
 }
 
 void
-syck_default_error_handler( SyckParser *p, const char *msg )
+syck_default_error_handler( SyckParser *p, char *msg )
 {
-    printf( "Error at [Line %d, Col %ld]: %s\n",
+    printf( "Error at [Line %d, Col %ld]: %s\n", 
         p->linect,
-        (long)(p->cursor - p->lineptr),
+        p->cursor - p->lineptr,
         msg );
 }
 
-int syck_str_is_unquotable_integer(char* str, long len) {
-    int idx;
-
-    if(!str) return 0; /* Don't parse null strings */
-    if(len < 1) return 0; /* empty strings can't be numbers */
-    if(len > 9) return 0; /* Ints larger than 9 digits (32bit) might not portable. Force a string. */
-
-    if(str[0] == '0' && len == 1) return 1; /* 0 is unquoted. */
-    if(str[0] == '-') {str++; len --;} /* supress the leading '-' sign if detected for testing purposes only. */
-    if(str[0]  == '0') return 0; /* Octals need to be quoted or you lose data converting them to an integer. This also accidentally blocks -0 which probably needs to be quoted. */
-
-    /* Look for illegal characters */
-    for ( idx = 1; idx < len; idx++ ) {
-        if(!isdigit(str[idx])) return 0;
-    }
-
-    return 1;
-}

@@ -1,18 +1,14 @@
 /*
  * bytecode.re
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005/09/20 05:21:06 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 #include "syck.h"
-
-#if GRAM_FILES_HAVE_TAB_SUFFIX
-#include "gram.tab.h"
-#else
 #include "gram.h"
-#endif
+#include <string.h>
 
 #define QUOTELEN 128
 

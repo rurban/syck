@@ -1,13 +1,14 @@
 /*
  * handler.c
  *
- * $Author$
- * $Date$
+ * $Author: why $
+ * $Date: 2005/09/20 05:21:06 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 
 #include "syck.h"
+#include <assert.h>
 
 SYMID 
 syck_hdlr_add_node( SyckParser *p, SyckNode *n )
@@ -36,12 +37,14 @@ syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
     if ( p->bad_anchors != NULL )
     {
         SyckNode *bad;
-        if ( st_lookup( p->bad_anchors, (st_data_t)a, (st_data_t *)&bad ) )
+        if ( st_lookup( p->bad_anchors, (st_data_t)a, (void *)&bad ) )
         {
             if ( n->kind != syck_str_kind )
             {
                 n->id = bad->id;
+/*@-noeffectuncon@*/
                 (p->handler)( p, n );
+/*@=noeffectuncon@*/
             }
         }
     }
@@ -49,7 +52,8 @@ syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
     {
         p->anchors = st_init_strtable();
     }
-    if ( st_lookup( p->anchors, (st_data_t)a, (st_data_t *)&ntmp ) )
+    assert(p->anchors != NULL);
+    if ( st_lookup( p->anchors, (st_data_t)a, (void *)&ntmp ) )
     {
         if ( ntmp != (void *)1 )
         {
@@ -69,7 +73,8 @@ syck_hdlr_remove_anchor( SyckParser *p, char *a )
     {
         p->anchors = st_init_strtable();
     }
-    if ( st_delete( p->anchors, (st_data_t *)&atmp, (st_data_t *)&ntmp ) )
+assert(p->anchors != NULL);
+    if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
     {
         if ( ntmp != (void *)1 )
         {
@@ -81,12 +86,13 @@ syck_hdlr_remove_anchor( SyckParser *p, char *a )
 
 SyckNode *
 syck_hdlr_get_anchor( SyckParser *p, char *a )
+	/*@modifies p, a @*/
 {
     SyckNode *n = NULL;
 
     if ( p->anchors != NULL )
     {
-        if ( st_lookup( p->anchors, (st_data_t)a, (st_data_t *)&n ) )
+        if ( st_lookup( p->anchors, (st_data_t)a, (void *)&n ) )
         {
             if ( n != (void *)1 )
             {    
@@ -99,7 +105,8 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
                 {
                     p->bad_anchors = st_init_strtable();
                 }
-                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (st_data_t *)&n ) )
+assert(p->bad_anchors != NULL);
+                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n ) )
                 {
                     n = (p->bad_anchor_handler)( p, a );
                     st_insert( p->bad_anchors, (st_data_t)a, (st_data_t)n );
@@ -113,7 +120,7 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
         n = (p->bad_anchor_handler)( p, a );
     }
 
-    if ( n->anchor )
+    if ( n->anchor != NULL )
     {
         S_FREE( a );
     } 
@@ -144,7 +151,7 @@ syck_add_transfer( char *uri, SyckNode *n, int taguri )
 }
 
 char *
-syck_xprivate( char *type_id, int type_len )
+syck_xprivate( const char *type_id, int type_len )
 {
     char *uri = S_ALLOC_N( char, type_len + 14 );
     uri[0] = '\0';
@@ -166,7 +173,7 @@ syck_taguri( const char *domain, const char *type_id, int type_len )
 }
 
 int 
-syck_try_implicit( SyckNode *n )
+syck_try_implicit( /*@unused@*/ SyckNode *n )
 {
     return 1;
 }

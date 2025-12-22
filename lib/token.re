@@ -2,17 +2,15 @@
  * token.re
  *
  * $Author: why $
- * $Date: 2005-09-21 07:42:51 +0800 (三, 21  9 2005) $
+ * $Date: 2005-09-21 02:42:51 +0300 (Wed, 21 Sep 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 #include "syck.h"
-
-#if GRAM_FILES_HAVE_TAB_SUFFIX
-#include "gram.tab.h"
-#else
 #include "gram.h"
-#endif
+#include <assert.h>
+#include <string.h>
+#include <ctype.h>
 
 /*
  * Allocate quoted strings in chunks
@@ -197,12 +195,7 @@
     NEWLINE(indent); \
     while ( indent < YYCURSOR ) \
     { \
-        if ( *indent == '\t' ) \
-        { \
-            syckerror("TAB found in your indentation, please remove"); \
-            return 0; \
-        } \
-        else if ( is_newline( indent++ ) ) \
+        if ( is_newline( ++indent ) ) \
         { \
             NEWLINE(indent); \
         } \
@@ -249,7 +242,7 @@ int is_newline( char *ptr );
 int newline_len( char *ptr );
 int sycklex_yaml_utf8( YYSTYPE *, SyckParser * );
 int sycklex_bytecode_utf8( YYSTYPE *, SyckParser * );
-int syckwrap();
+int syckwrap(void);
 
 /*
  * My own re-entrant sycklex() using re2c.
@@ -259,6 +252,7 @@ int syckwrap();
 int
 sycklex( YYSTYPE *sycklval, SyckParser *parser )
 {
+    assert(parser);
     switch ( parser->input_type )
     {
         case syck_yaml_utf8:
@@ -307,7 +301,7 @@ SPC = " " ;
 TAB = "\t" ;
 SPCTAB = ( SPC | TAB ) ;
 ENDSPC = ( SPC+ | LF ) ;
-YINDENT = LF TAB* ( SPC | LF )* ;
+YINDENT = LF ( SPC | LF )* ;
 NULL = [\000] ;
 ANY = [\001-\377] ;
 ISEQO = "[" ;
@@ -966,7 +960,7 @@ ScalarBlock2:
 
 /*!re2c
 
-LF+ TAB* SPC*       {   char *pacer;
+YINDENT             {   char *pacer;
                         char *tok = YYTOKEN;
                         int indt_len = 0, nl_count = 0, fold_nl = 0, nl_begin = 0;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
@@ -1151,13 +1145,13 @@ newline_len( char *ptr )
 }
 
 int 
-syckwrap()
+syckwrap(void)
 {
     return 1;
 }
 
 void 
-syckerror( const char *msg )
+syckerror( char *msg )
 {
     if ( syck_parser_ptr->error_handler == NULL )
         syck_parser_ptr->error_handler = syck_default_error_handler;

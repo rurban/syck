@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/lib
+AM_CPPFLAGS = -I$(top_srcdir)/lib
 LDFLAGS = -L$(top_builddir)/lib
 
 TESTS = test-basic test-parse test-yts test-emit

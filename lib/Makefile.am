@@ -1,15 +1,17 @@
-INCLUDES = -I$(top_srcdir)
-REC = re2c
-AM_YFLAGS = -d -t -v -p syck
+AUTOMAKE_OPTIONS = 1.4 foreign
+
+AM_CPPFLAGS = -I$(top_srcdir)
+
+LEXLIB = @LEXLIB@
 SUFFIXES = .re
-AM_CFLAGS = -fPIC
 
-.re.c:
-	$(REC) -i $< > $@.new && mv $@.new $@
+YACC = bison
+AM_YFLAGS = -d -t -v -p syck
 
-lib_LTLIBRARIES = libsyck.la
-lib_LIBRARIES = libsyck.a
-include_HEADERS = syck.h syck_st.h
+#lib_LTLIBRARIES = libsyck.la
+#include_HEADERS = syck.h syck_st.h
+noinst_LTLIBRARIES = libsyck.la
+noinst_HEADERS = syck.h syck_st.h
 
 libsyck_a_SOURCES = \
 	emitter.c \
@@ -17,6 +19,7 @@ libsyck_a_SOURCES = \
 	node.c \
 	syck.c \
 	syck_st.c \
+	gram.c \
 	gram.y \
 	bytecode.re \
 	yaml2byte.c \
@@ -27,3 +30,53 @@ libsyck_la_CFLAGS = $(AM_CFLAGS)
 libsyck_la_LDFLAGS = -version-info $(SYCK_SO_VERSION)
 libsyck_la_SOURCES = $(libsyck_a_SOURCES)
 
+REC = @REC@
+.re.c:
+	$(REC) $< > $@.new && mv $@.new $@
+
+LINT = splint
+
+SYCK_SPLINT_SRCS = \
+	emitter.c \
+	handler.c \
+	node.c \
+	syck.c \
+	syck_st.c \
+	gram.c \
+	bytecode.c \
+	yaml2byte.c \
+	token.c \
+	implicit.c
+
+gram.c:	gram.y
+	$(YACC) $(AM_YFLAGS) -o $@ $<
+	-@if test -f gram.c; then \
+	{ echo "/*@-globs -mods -modnomods -moduncon -modunconnomods @*/";\
+	  echo "/*@-noeffect -noeffectuncon @*/";\
+	  echo "/*@-nullassign @*/";\
+	  echo "/*@-readonlytrans @*/";\
+	  echo "/*@-uniondef @*/";\
+	  echo "/*@-warnlintcomments @*/";\
+	  cat gram.c;\
+	  echo "/*@=warnlintcomments @*/";\
+	  echo "/*@=uniondef @*/";\
+	  echo "/*@=readonlytrans @*/";\
+	  echo "/*@=nullassign @*/";\
+	  echo "/*@=noeffect =noeffectuncon @*/";\
+	  echo "/*@=globs =mods =modnomods =moduncon =modunconnomods @*/";\
+	} > _gram.c ;\
+	  mv -f _gram.c gram.c; \
+	  sed -i 's,int syckparse (void),int syckparse (void*),' gram.h; \
+	  sed -i 's,^yyparse (void),yyparse (void *parser),' gram.c; \
+	  sed -i 's/yylex (\&yylval)/yylex (\&yylval, parser)/' gram.c; \
+	fi
+
+BUILT_SOURCES = gram.c gram.h
+
+.PHONY: sources
+sources:
+	@echo $(SYCK_SPLINT_SRCS:%=syck/lib/%)
+
+.PHONY: lint
+lint:
+	$(LINT) $(DEFS) $(AM_CPPFLAGS) $(SYCK_SPLINT_SRCS)

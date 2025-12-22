@@ -1,13 +1,14 @@
 /*
  * implicit.re
  *
- * $Author: indeyets $
- * $Date: 2007-10-24 23:56:48 +0400 (ср, 24 окт 2007) $
+ * $Author: why $
+ * $Date: 2005/11/13 23:43:56 $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 
 #include "syck.h"
+#include <string.h>
 
 #define YYCTYPE     char
 #define YYCURSOR    cursor
@@ -44,9 +45,9 @@ try_tag_implicit( SyckNode *n, int taguri )
 
 char *syck_match_implicit( const char *str, size_t len )
 {
-    const char *cursor, *limit, *marker;
-    cursor = str;
-    limit = str + len;
+    char *marker;
+    const char *cursor = str;
+    const char *limit = str + len;
 
 /*!re2c
 

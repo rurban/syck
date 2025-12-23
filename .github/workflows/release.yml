@@ -1,0 +1,43 @@
+name: Github CI
+on:
+  push:
+    tags:
+      - '[0-9].*.*'
+      - '[0-9].*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: true
+    steps:
+    - name: checkout
+      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      with:
+        fetch-tags: true
+        fetch-depth: 1
+        submodules: recursive
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}-
+    - run: ./bootstrap
+    - run: ./configure
+    - run: make -j
+    - run: make -j check
+    - run: make distcheck
+    - name: Prep-Release
+      run: sha256sum syck-*.tar.* > dist.sha256
+    - name: Release
+      continue-on-error: true
+      uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
+      with:
+        body_path: dist.sha256
+        files: |
+          dist.sha256
+          syck-*.tar.*

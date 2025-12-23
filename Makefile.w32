@@ -17,7 +17,7 @@ all: $(BUILD_DIR) $(TARGET)
 SOURCE_FILES= \
 	lib\bytecode.c \
 	lib\emitter.c \
-	lib\gram.y \
+	lib\gram.c \
 	lib\handler.c \
 	lib\implicit.c \
 	lib\node.c \
@@ -37,7 +37,7 @@ SRCS=$(SOURCE_FILES) $(HEADER_FILES)
 OBJS=\
 	$(BUILD_DIR)\bytecode.obj \
 	$(BUILD_DIR)\emitter.obj \
-	$(BUILD_DIR)\gram.tab.obj \
+	$(BUILD_DIR)\gram.obj \
 	$(BUILD_DIR)\handler.obj \
 	$(BUILD_DIR)\implicit.obj \
 	$(BUILD_DIR)\node.obj \
@@ -46,9 +46,9 @@ OBJS=\
 	$(BUILD_DIR)\token.obj \
 	$(BUILD_DIR)\yaml2byte.obj
 
-lib\gram.tab.c: lib\gram.y
+lib\gram.c: lib\gram.y
 	$(BISON) -d -t -v -p syck -o $@ $**
-	
+
 {lib\}.c{$(BUILD_DIR)\}.obj::
 	$(CL) $(CFLAGS) $<
 

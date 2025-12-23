@@ -26,6 +26,25 @@ AM_PROG_LEX([noyywrap])
 AC_CHECK_PROGS(YACC, 'bison')
 if test "$YACC" != "bison"; then
   AC_MSG_ERROR([bison not found])
+else
+  AC_MSG_CHECKING([bison version])
+  [YACC_VERSION=`"$YACC" --version | head -n1 2>&1 | sed 's,bison (GNU Bison) ,,'`]
+  AC_MSG_RESULT([$YACC_VERSION])
+  AC_MSG_CHECKING([whether we already can %define api.pure])
+  cat <<_ACEOF >_test.y
+%define api.pure full  /* fails on Bison < 3.0 */
+%%
+start: /* empty */ ;
+%%
+int main(void) { return 0; }
+_ACEOF
+  if $YACC _test.y; then
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no, patching lib/gram.y])
+    sed -i.orig 's/^%define api.pure/%pure-parser/' lib/gram.y
+  fi
+  rm -f _test.y _test.tab.c test.tab.h 2>/dev/null
 fi
 AC_CHECK_PROGS(REC, 're2c')
 if test "$REC" != "re2c"; then

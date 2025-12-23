@@ -20,14 +20,14 @@ libsyck_a_SOURCES = \
 	syck.c \
 	syck_st.c \
 	gram.c \
-	gram.y \
-	bytecode.re \
-	yaml2byte.c \
-	token.re \
-	implicit.re
-EXTRA_DIST = bytecode.c \
+	bytecode.c \
 	token.c \
-	implicit.c
+	implicit.c \
+	yaml2byte.c
+EXTRA_DIST = bytecode.re \
+	token.re \
+	implicit.re \
+	gram.y
 
 libsyck_la_CFLAGS = $(AM_CFLAGS)
 libsyck_la_LDFLAGS = -version-info $(SYCK_SO_VERSION)

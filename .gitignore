@@ -22,8 +22,6 @@ lib/.libs/
 lib/Makefile
 lib/Makefile.in
 lib/*.o
-lib/gram.c
-lib/gram.h
 lib/gram.output
 lib/libsyck.a
 lib/libsyck.la

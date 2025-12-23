@@ -9,5 +9,5 @@ EXTRA_DIST = m4/ax_append_compile_flags.m4 \
 	m4/ax_check_compile_flag.m4 \
 	m4/ax_gcc_func_attribute.m4 \
 	m4/ax_require_defined.m4
-doc_DIST = README README.BYTECODE README.EXT CHANGELOG TODO RELEASE
+dist_doc_DATA = README README.BYTECODE README.EXT ChangeLog TODO RELEASE AUTHORS
 

@@ -5,14 +5,13 @@ AM_CPPFLAGS = -I$(top_srcdir)
 LEXLIB = @LEXLIB@
 SUFFIXES = .re
 
-YACC = bison
+YACC = @YACC@
 AM_YFLAGS = -d -t -v -p syck
 
-#lib_LTLIBRARIES = libsyck.la
-#include_HEADERS = syck.h syck_st.h
-noinst_LTLIBRARIES = libsyck.la
-noinst_HEADERS = syck.h syck_st.h yamlbyte.h
-CLEANFILES = token.c implicit.c bytecode.c
+lib_LTLIBRARIES = libsyck.la
+include_HEADERS = syck.h syck_st.h
+noinst_HEADERS = yamlbyte.h gram.h
+DISTCLEANFILES = token.c implicit.c bytecode.c
 
 libsyck_a_SOURCES = \
 	emitter.c \

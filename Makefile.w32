@@ -7,7 +7,7 @@ MAKE_LIB=lib.exe
 BISON=bison.exe 
 BUILD_DIR=build
 
-CFLAGS=/Ox /Ob2 /Oi /Ot /Oy /GL /D "WIN32" /D "NDEBUG" /D "_LIB" /D "HAVE_CONFIG_H" /D "_CRT_SECURE_NO_WARNINGS" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Fo"$(BUILD_DIR)\\" /Fd"$(BUILD_DIR)\syck.pdb" /W3 /nologo /c /Zi /TC 
+CFLAGS=/Ox /Ob2 /Oi /Ot /Oy /GL /D "WIN32" /D "NDEBUG" /D "_LIB" /U "HAVE_CONFIG_H" /D "_CRT_SECURE_NO_WARNINGS" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /I "lib" /Fo"$(BUILD_DIR)\\" /Fd"$(BUILD_DIR)\syck.pdb" /W3 /nologo /c /Zi /TC 
 LDFLAGS=/OUT:"$(BUILD_DIR)\syck.lib" /NOLOGO /LTCG
 
 TARGET=$(BUILD_DIR)\syck.lib

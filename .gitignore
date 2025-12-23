@@ -46,4 +46,6 @@ tests/test-parse.*
 tests/test-yts
 tests/test-yts.*
 TAGS
-syck-*
+/NEWS
+/INSTALL
+/syck-*

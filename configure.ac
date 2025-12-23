@@ -1,7 +1,8 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT(syck, 0.70)
+AC_INIT([syck],[0.70],[rurban@cpan.org],[],
+        [https://github.com/rurban/syck/])
 AC_CONFIG_AUX_DIR(config)
-AC_PREREQ(2.50)
+AC_PREREQ([2.50])
 
 LT_INIT
 # CURRENT:REVISION:AGE
@@ -10,7 +11,7 @@ LT_INIT
 # Bump CURRENT and reset AGE and REVISION if there's ABI changes.
 AC_SUBST([SYCK_SO_VERSION], [0:55:0])
 
-AM_INIT_AUTOMAKE([1.14])
+AM_INIT_AUTOMAKE([1.14 gnu])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
@@ -20,10 +21,10 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_AWK
 AM_PROG_LEX([noyywrap])
-#AC_PROG_LIBTOOL
+#LT_INIT
 
-AC_CHECK_PROGS(YACC, 'bison -y')
-if test "$YACC" != "bison -y"; then
+AC_CHECK_PROGS(YACC, 'bison')
+if test "$YACC" != "bison"; then
   AC_MSG_ERROR([bison not found])
 fi
 AC_CHECK_PROGS(REC, 're2c')
@@ -34,7 +35,9 @@ fi
 # Checks for libraries.
 
 # Checks for header files.
-AC_HEADER_STDC
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS(alloca.h stdlib.h string.h sal.h)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)

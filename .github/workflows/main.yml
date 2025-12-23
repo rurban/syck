@@ -43,7 +43,7 @@ jobs:
           - --host=i686-linux-gnu
     steps:
     - name: checkout
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         fetch-depth: 1
         submodules: recursive
@@ -75,7 +75,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: checkout
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         fetch-depth: 1
         submodules: recursive
@@ -83,10 +83,11 @@ jobs:
       with:
         create-symlink: true
         key: ${{ github.job }}-${{ matrix.os }}
-    - name: deps
+    - name: prep
       run: |
-        brew install automake autoconf libtool
+        brew install automake autoconf libtool bison
     - run: autoreconf -fi
+      # their bison was too old
     - run: ./configure
     - run: make -j
     - run: make -j check
@@ -95,7 +96,7 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: checkout
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         fetch-depth: 1
         submodules: recursive
@@ -103,8 +104,10 @@ jobs:
       with:
         create-symlink: false
         key: ${{ github.job }}-${{ matrix.os }}
+    - uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
+      with:
+        arch: x86_amd64
     - name: nmake
       shell: cmd
       run: |
-        C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat
-        nmake /F Makefile.w32
+        nmake -F Makefile.w32 BISON=rem

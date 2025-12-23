@@ -1,0 +1,59 @@
+_why the lucky stiff <why@whytheluckystiff.net>
+	Original author and maintainer
+
+Alexey Zakhlestin <indeyets@gmail.com>
+	Next maintainer
+	php-syck maintainer
+        build system fixes, added tests
+        php exception support, 5.2 compat
+
+Reini Urban <rurban@cpan.org>
+	Next maintainer
+        Modernized the build system
+
+Uwe L. Korn <uwelk@xhochy.com>
+	YACC fixes, shared lib, and more
+
+Remi Collet <fedora@famillecollet.com>
+	Fix PHP 5.4 syntax
+
+Audrey Tang <audreyt@audreyt.org>
+       Support non-zero-delimited base64 strings, and \0 in buffers.
+       Support recursion safety
+
+Nick Koston <bdraco@gmail.com>
+	Support recursion safety and permit_duplicate fixes.
+
+Rasmus Andersson <rasmus@notion.se>
+       XCode build fixes
+
+David Sauer <david@nur-mal-so-am-ran.de>
+	fix README
+	added "bootstrap" to the installation
+
+Gwendal Roué <gr@pierlis.com>
+	New pbxproj XCode project, fixed obsolete Cocoa APIs
+
+Stas Malyshev
+	Added win32 support
+
+James Montgomerie <jamie@th.ingsmadeoutofotherthin.gs>
+	cocoa cleanup and fixes, Eucalyptus support
+
+Jimi Dini <indy@Nirvana.lan>
+	PHP 0.9.3 ext
+        fixed grammars
+
+Leo P <junk@slact.net>
+	ext/io and lua fixes
+
+Thomas Jollans <thomas@jollans.com>
+       early build system fixes
+
+Aleksey Yeschenko <aleksey@yeschenko.com>
+Clark Evans <info@clarkevans.com>
+cowlibob <james@cowlibob.co.uk>
+nobody <nobody@absoluteoblivion.unk>
+shinichiro.h <shinichiro.hamaji@gmail.com>
+Will Thimbleby <will@thimbleby.net>
+Zachary P. Landau <kapheine@divineinvasion.net>

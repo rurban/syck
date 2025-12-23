@@ -34,9 +34,19 @@ libsyck_la_CFLAGS = $(AM_CFLAGS)
 libsyck_la_LDFLAGS = -version-info $(SYCK_SO_VERSION)
 libsyck_la_SOURCES = $(libsyck_a_SOURCES)
 
+.c.i:
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -E -o $@ $<
+
 REC = @REC@
 .re.c:
 	if test -n "$(REC)"; then $(REC) $< > $@.new && mv $@.new $@; fi
+
+# emacs flymake-mode
+check-syntax:
+	test -n "$(CHK_SOURCES)" && \
+	  nice $(COMPILE) -I. -O0 -o /dev/null -S $(CHK_SOURCES)
+.PHONY: check-syntax
 
 LINT = splint
 

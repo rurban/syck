@@ -16,6 +16,7 @@
 #define SYCK_VERSION    "0.61"
 #define YAML_DOMAIN     "yaml.org,2002"
 
+#include "config.h"
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -39,11 +40,7 @@ extern "C" {
   void syck_assert( const char *file_name, unsigned line_num )
 	/*@globals fileSystem @*/
 	/*@modifies fileSystem @*/;
-# define ASSERT(f) \
-    if ( f ) \
-        {}   \
-    else     \
-        syck_assert( __FILE__, __LINE__ )
+# define ASSERT(f) if ( !f ) syck_assert( __FILE__, __LINE__ )
 #else
 # define ASSERT(f)
 #endif
@@ -75,15 +72,71 @@ extern "C" {
 #define S_MEMMOVE(p1,p2,type,n) memmove((p1), (p2), sizeof(type)*(n))
 #define S_MEMCMP(p1,p2,type,n) memcmp((p1), (p2), sizeof(type)*(n))
 
+/*
+ * Compiler attribs
+ */
+#if defined(HAVE_FUNC_ATTRIBUTE_NONNULL) && !defined(__cplusplus)
+/* g++ has some problem with this attribute */
+#  define __attribute__nonnull__(a)         __attribute__((__nonnull__(a)))
+#  define HAVE_NONNULL
+#else
+#  define __attribute__nonnull__(a)
+#  undef HAVE_NONNULL
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_NORETURN
+#  ifdef _MSC_VER
+#    define __attribute__noreturn__         __declspec(noreturn)
+#  else
+#    define __attribute__noreturn__         __attribute__((__noreturn__))
+#  endif
+#else
+#  define __attribute__noreturn__
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_PURE
+#  define __attribute__pure__               __attribute__((__pure__))
+#else
+#  define __attribute__pure__
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_CONST
+#  define __attribute__const__              __attribute__((__const__))
+#else
+#  define __attribute__const__
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_UNUSED
+#  define __attribute__unused__             __attribute__((__unused__))
+#  define UNUSED(a)
+#else
+#  define __attribute__unused__
+#  ifdef __clang__
+#    define UNUSED(a) (void)(a)
+#  else
+#    define UNUSED(a) /*@-noeffect*/if (0) (void)(a)/*@=noeffect*/
+#  endif
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_WARN_UNUSED_RESULT
+#  define __attribute__warn_unused_result__ __attribute__((__warn_unused_result__))
+#elif defined(_MSC_VER) && _MSC_VER > 1600 && defined(HAVE_SAL_H)
+#  define __attribute__warn_unused_result__ _Check_return_
+#else
+#  define __attribute__warn_unused_result__
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_RETURNS_NONNULL
+#  define __attribute__returns_nonnull__    __attribute__((returns_nonnull))
+#else
+#  define __attribute__returns_nonnull__
+#endif
+#define SHIM(a) /*@unused@*/ a __attribute__unused__
+    
+/*
+ * Node definitions
+ */
+
 #define BLOCK_FOLD  10
 #define BLOCK_LIT   20
 #define BLOCK_PLAIN 30
 #define NL_CHOMP    40
 #define NL_KEEP     50
 
-/*
- * Node definitions
- */
 #ifndef ST_DATA_T_DEFINED
 typedef void * st_data_t;
 #endif

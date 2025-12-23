@@ -61,7 +61,7 @@ int st_delete_safe(st_table *table, const void **key, /*@out@*/ const void **val
 		char *never)
 	/*@modifies table, *key, *value @*/;
 void st_foreach(st_table *table,
-		enum st_retval (*func) (const char *key, const void *record, void *arg),
+		enum st_retval (*func) (const char *key, void *record, void *arg),
 		/*@null@*/ void *arg)
 	/*@modifies table @*/;
 void st_cleanup_safe(st_table *table, char *never)

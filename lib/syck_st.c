@@ -3,6 +3,7 @@
 /* static	char	sccsid[] = "@(#) st.c 5.1 89/12/14 Crucible"; */
 
 #include "syck_st.h"
+#include "syck.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -170,11 +171,11 @@ static int
 new_size(int size)
 	/*@*/
 {
-    int i;
+    unsigned long i;
 
 #if 0
     for (i=3; i<31; i++) {
-	if ((1<<i) > size) return 1<<i;
+	if ((1<<i) > (unsigned long)size) return 1<<i;
     }
     return -1;
 #else
@@ -494,15 +495,16 @@ st_delete_safe(st_table *table, const void **key, const void **value, char *neve
 }
 
 static enum st_retval
-delete_never(/*@unused@*/ const char *key, const void *value, void *never)
+delete_never(SHIM(const char *key), void *value, void *never)
 {
+    UNUSED(key);
     if (value == never) return ST_DELETE;
     return ST_CONTINUE;
 }
 
 void
 st_foreach(st_table *table,
-		enum st_retval (*func)(const char *key, const void *record, void *arg),
+		enum st_retval (*func)(const char *key, void *record, void *arg),
 		void *arg)
 {
     st_table_entry *ptr, *last, *tmp;
@@ -512,7 +514,7 @@ st_foreach(st_table *table,
     for(i = 0; i < table->num_bins; i++) {
 	last = 0;
 	for(ptr = table->bins[i]; ptr != 0;) {
-	    retval = (*func)(ptr->key, ptr->record, arg);
+	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = ptr;

@@ -35,11 +35,17 @@ fi
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(alloca.h stdlib.h string.h)
+AC_CHECK_HEADERS(alloca.h stdlib.h string.h sal.h)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 
 # Checks for typedefs, structures, and compiler characteristics.
+AX_GCC_FUNC_ATTRIBUTE(returns_nonnull)
+AX_GCC_FUNC_ATTRIBUTE(noreturn)
+AX_GCC_FUNC_ATTRIBUTE(malloc)
+AX_GCC_FUNC_ATTRIBUTE(pure)
+AX_GCC_FUNC_ATTRIBUTE(warn_unused_result)
+AX_GCC_FUNC_ATTRIBUTE(unused)
 
 # Checks for library functions.
 AC_FUNC_MALLOC

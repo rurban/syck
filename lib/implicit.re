@@ -14,7 +14,7 @@
 #define YYCURSOR    cursor
 #define YYMARKER    marker
 #define YYLIMIT     limit
-#define YYFILL(n)
+#define YYFILL(n)   {}
 
 void
 try_tag_implicit( SyckNode *n, int taguri )
@@ -34,7 +34,9 @@ try_tag_implicit( SyckNode *n, int taguri )
             tid = "map";
         break;
     }
-    if ( n->type_id != NULL ) S_FREE( n->type_id );
+    if ( n->type_id != NULL ) {
+       S_FREE( n->type_id );
+    }
     if ( taguri == 1 )
     {
         n->type_id = syck_taguri( YAML_DOMAIN, tid, strlen( tid ) );
@@ -155,7 +157,7 @@ syck_tagcmp( const char *tag1, const char *tag2 )
 char *
 syck_type_id_to_uri( char *type_id )
 {
-    char *cursor, *limit, *marker;
+    char *cursor, *limit, *marker = NULL;
 
     cursor = type_id;
     limit = type_id + strlen( type_id );

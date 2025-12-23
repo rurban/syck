@@ -71,9 +71,7 @@ void bytestring_append(bytestring_t *str, char code,
         grow = (length - str->remaining) + CHUNKSIZE;
         str->remaining += grow;
         str->length    += grow; 
-/*@-evalorder@*/
-        str->buffer = S_REALLOC_N( str->buffer, char, str->length + 1 );
-/*@=evalorder@*/
+        S_REALLOC_N( str->buffer, char, str->length + 1 );
         assert(str->buffer);
     }
     curr = str->buffer + (str->length - str->remaining);
@@ -113,9 +111,7 @@ assert(ext->buffer != NULL);
             grow = (length - str->remaining) + CHUNKSIZE;
             str->remaining += grow;
             str->length    += grow; 
-/*@-evalorder@*/
-            str->buffer = S_REALLOC_N( str->buffer, char, str->length + 1 );
-/*@=evalorder@*/
+            S_REALLOC_N( str->buffer, char, str->length + 1 );
         }
         curr = str->buffer + (str->length - str->remaining);
         from = ext->buffer;

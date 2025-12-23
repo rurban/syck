@@ -211,11 +211,13 @@ syck_lookup_sym( SyckParser *p, SYMID id, char **data )
 }
 
 enum st_retval
-syck_st_free_nodes( /*@unused@*/ const char *key, /*@only@*/ const void *record,
-		/*@unused@*/ void *arg )
-	/*@modifies record @*/
+syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
+                    SHIM(void *arg) )
+/*@modifies record @*/
 {
     SyckNode *n = (SyckNode *)record;
+    UNUSED(key);
+    UNUSED(arg);
     if ( n != (void *)1 ) syck_free_node( n );
     n = NULL;
     return ST_CONTINUE;

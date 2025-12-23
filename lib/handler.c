@@ -139,7 +139,6 @@ syck_add_transfer( char *uri, SyckNode *n, int taguri )
     {
         S_FREE( n->type_id );
     }
-
     if ( taguri == 0 )
     {
         n->type_id = uri;
@@ -173,8 +172,9 @@ syck_taguri( const char *domain, const char *type_id, int type_len )
 }
 
 int 
-syck_try_implicit( /*@unused@*/ SyckNode *n )
+syck_try_implicit( SHIM(SyckNode *n) )
 {
+    UNUSED(n);
     return 1;
 }
 

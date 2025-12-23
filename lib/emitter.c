@@ -139,10 +139,12 @@ syck_new_emitter(void)
 }
 
 enum st_retval
-syck_st_free_anchors( /*@unused@*/ const char *key, /*@only@*/ const void *name,
-                      /*@unused@*/ void *arg )
+syck_st_free_anchors( SHIM(const char *key), /*@only@*/ void *name,
+                      SHIM(void *arg) )
 /*@modifies name @*/
 {
+    UNUSED(key);
+    UNUSED(arg);
     S_FREE( name );
     return ST_CONTINUE;
 }
@@ -298,7 +300,7 @@ syck_emitter_write( SyckEmitter *e, char *str, long len )
      * Flush if at end of buffer
      */
     at = e->marker - e->buffer;
-    if ( len + at >= e->bufsize )
+    if ( (size_t)(len + at) >= e->bufsize )
     {
         syck_emitter_flush( e, 0 );
 	for (;;) {
@@ -331,7 +333,7 @@ syck_emitter_flush( SyckEmitter *e, long check_room )
      */
     if ( check_room > 0 )
     {
-        if ( e->bufsize > ( e->marker - e->buffer ) + check_room )
+        if ( e->bufsize > ( e->marker - e->buffer ) + (size_t)check_room )
         {
             return;
         }
@@ -376,11 +378,10 @@ syck_emit( SyckEmitter *e, st_data_t n )
     {
         if ( e->use_version == 1 )
         {
-            char *header = S_ALLOC_N( char, 64 );
-            S_MEMZERO( header, char, 64 );
-            sprintf( header, "--- %%YAML:%d.%d ", SYCK_YAML_MAJOR, SYCK_YAML_MINOR );
+            char header[64] = {0};
+            snprintf( header, sizeof(header)-1,
+                      "--- %%YAML:%d.%d ", SYCK_YAML_MAJOR, SYCK_YAML_MINOR );
             syck_emitter_write( e, header, strlen( header ) );
-            S_FREE( header );
         }
         else
         {
@@ -479,7 +480,7 @@ void syck_emit_tag( SyckEmitter *e, char *tag, char *ignore )
             char *subd = tag + 4;
             while ( *subd != ':' && *subd != '\0' ) subd++;
             if ( *subd == ':' ) {
-                if ( subd - tag > ( strlen( YAML_DOMAIN ) + 5 ) &&
+                if ( subd - tag > (long)( strlen( YAML_DOMAIN ) + 5 ) &&
                      strncmp( subd - strlen( YAML_DOMAIN ), YAML_DOMAIN, strlen( YAML_DOMAIN ) ) == 0 ) {
                     syck_emitter_write( e, tag + 4, subd - strlen( YAML_DOMAIN ) - ( tag + 4 ) - 1 );
                     syck_emitter_write( e, "/", 1 );

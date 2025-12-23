@@ -74,8 +74,9 @@ TestSyckReadString( CuTest *tc )
 // 2. Test parsing a simple string and handler
 // 
 SYMID
-SyckParseStringHandler( SyckParser *p, SyckNode *n )
+SyckParseStringHandler( SHIM(SyckParser *p), SyckNode *n )
 {
+    UNUSED(p);
     if ( n->kind != syck_str_kind )
         return 100;
 
@@ -105,8 +106,9 @@ TestSyckParseString( CuTest *tc )
 // 3.  
 //
 SYMID
-SyckParseString2Handler( SyckParser *p, SyckNode *n )
+SyckParseString2Handler( SHIM(SyckParser *p), SyckNode *n )
 {
+    UNUSED(p);
     if ( n->kind != syck_str_kind )
         return 100;
 
@@ -117,7 +119,7 @@ SyckParseString2Handler( SyckParser *p, SyckNode *n )
 }
 
 enum st_retval 
-ListAnchors( const char *key, const void *_n, void *_tc )
+ListAnchors( const char *key, void *_n, void *_tc )
 {
     SyckNode *n = (SyckNode*)_n;
     CuTest *tc = (CuTest*)_tc;
@@ -141,9 +143,10 @@ TestSyckParseString2( CuTest *tc )
 }
 
 void 
-TestSyckParseMap( CuTest *tc )
+TestSyckParseMap( SHIM(CuTest *tc) )
 {
     SyckParser *parser;
+    UNUSED(tc);
     parser = syck_new_parser();
     syck_parser_handler( parser, SyckParseStringHandler );
     syck_parser_str_auto( parser, "\ntest: 1\nand: 2\nor:\n  test: 1\n  and: 2\n  fourdepth:\n    deep: 1\nlast: end", NULL );
@@ -152,9 +155,10 @@ TestSyckParseMap( CuTest *tc )
 }
 
 void 
-TestSyckParseFold( CuTest *tc )
+TestSyckParseFold( SHIM(CuTest *tc) )
 {
     SyckParser *parser;
+    UNUSED(tc);
     parser = syck_new_parser();
     syck_parser_handler( parser, SyckParseStringHandler );
     syck_parser_str_auto( parser, "\ntest: |\n   deep: 1\nlast: end\n  \n", NULL );
@@ -163,9 +167,10 @@ TestSyckParseFold( CuTest *tc )
 }
 
 void 
-TestSyckParseMultidoc( CuTest *tc )
+TestSyckParseMultidoc( SHIM(CuTest *tc) )
 {
     SyckParser *parser;
+    UNUSED(tc);
     parser = syck_new_parser();
     syck_parser_handler( parser, SyckParseStringHandler );
     syck_parser_str_auto( parser, "---\ntest: |\n   deep: 1\n---\nlast: end\n  \n", NULL );

@@ -15,17 +15,18 @@
 // 1. Test the buffering -- print 10 bytes at a time
 //
 void
-TestSyckEmit_Output( SyckEmitter *e, char *str, long len )
+TestSyckEmit_Output( SHIM(SyckEmitter *e), char *str, long len )
 {
-    // char *tmp = syck_strndup( str, len );
-    // printf( "OUT: %s [%d]\n", tmp, len );
-    // S_FREE( tmp );
+    char *tmp = syck_strndup( str, len );
+    printf( "OUT: %s [%ld]\n", tmp, len );
+    S_FREE( tmp );
 }
 
 void 
-TestSyckEmit( CuTest *tc )
+TestSyckEmit( SHIM(CuTest *tc) )
 {
     SyckEmitter *emitter;
+    UNUSED(tc);
 
     emitter = syck_new_emitter();
     emitter->bufsize = 10;
@@ -67,15 +68,15 @@ SyckGetSuite()
 
 int main(void)
 {
-	CuString *output = CuStringNew();
-	CuSuite* suite = SyckGetSuite();
+    CuString *output = CuStringNew();
+    CuSuite* suite = SyckGetSuite();
     int count;
 
-	CuSuiteRun(suite);
-	CuSuiteSummary(suite, output);
-	CuSuiteDetails(suite, output);
+    CuSuiteRun(suite);
+    CuSuiteSummary(suite, output);
+    CuSuiteDetails(suite, output);
 
-	printf("%s\n", output->buffer);
+    printf("%s\n", output->buffer);
     count = suite->failCount;
 
     CuStringFree( output );

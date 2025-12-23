@@ -585,6 +585,8 @@ void syck_parser_error_handler( SyckParser *p, /*@null@*/ SyckErrorHandler )
 	/*@modifies p @*/;
 void syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler )
 	/*@modifies p @*/;
+void syck_parser_set_input_type( SyckParser *p, enum syck_parser_input input_type )
+        /*@modifies p @*/;
 void syck_parser_file( SyckParser *p, FILE *, SyckIoFileRead )
 	/*@modifies p @*/;
 void syck_parser_str( SyckParser *p, char *, long, /*@null@*/ SyckIoStrRead )

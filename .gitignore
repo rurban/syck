@@ -17,6 +17,8 @@ config/ltmain.sh
 config/missing
 config/ylwrap
 configure
+ext/ruby/config.save
+ext/ruby/ext
 lib/.deps/
 lib/.libs/
 lib/Makefile

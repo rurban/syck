@@ -5,6 +5,35 @@
 #ifndef ST_INCLUDED
 #define ST_INCLUDED
 
+#ifdef IN_OLD_EXT_RUBY
+// rename all st_ names to use our syck_st.h, not ruby's new API
+#undef st_is_member
+#undef st_init_table_with_size
+#define st_retval        	syck_st_retval
+#define ST_CONTINUE       	syck_ST_CONTINUE
+#define ST_STOP	       	        syck_ST_STOP
+#define ST_DELETE       	syck_ST_DELETE
+#define st_is_member		syck_st_is_member
+#define st_table_entry        	syck_st_table_entry
+#define st_table         	syck_st_table
+#define st_hash_type         	syck_st_hash_type
+#define st_init_table_with_size syck_st_init_table_with_size
+#define st_init_table           syck_st_init_table
+#define st_init_numtable 	syck_st_init_numtable
+#define st_init_numtable_with_size syck_st_init_numtable_with_size
+#define st_init_strtable 	syck_st_init_strtable
+#define st_init_strtable_with_size syck_st_init_strtable_with_size
+#define st_free_table         	syck_st_free_table
+#define st_lookup         	syck_st_lookup
+#define st_insert         	syck_st_insert
+#define st_add_direct         	syck_st_add_direct
+#define st_copy         	syck_st_copy
+#define st_delete         	syck_st_delete
+#define st_delete_safe         	syck_st_delete_safe
+#define st_foreach         	syck_st_foreach
+#define st_cleanup_safe         syck_st_cleanup_safe
+#endif
+
 typedef struct st_table st_table;
 
 struct st_hash_type {
@@ -22,9 +51,13 @@ struct st_table {
     struct st_table_entry **bins;
 };
 
-#define st_is_member(table,key) st_lookup(table,key,(char **)0)
-
+#ifndef IN_OLD_EXT_RUBY
 enum st_retval {ST_CONTINUE, ST_STOP, ST_DELETE};
+#else
+enum syck_st_retval {syck_ST_CONTINUE, syck_ST_STOP, syck_ST_DELETE};
+#endif
+
+#define st_is_member(table,key) st_lookup(table,key,(char **)0)
 
 /*@null@*/
 st_table *st_init_table(struct st_hash_type *type)

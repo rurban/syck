@@ -1,1 +1,4 @@
+MANIFEST
 rubyext.c
+extconf.rb
+

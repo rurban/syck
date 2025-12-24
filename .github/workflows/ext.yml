@@ -1,0 +1,144 @@
+name: Ext CI
+on:
+  push:
+    branches:
+      - master
+      - smoke/*
+      - gh/*
+    paths-ignore:
+      - README
+      - README.BYTECODE
+      - README.EXT
+      - CHANGELOG
+      - COPYING
+      - TODO
+      - RELEASE
+  pull_request:
+    branches:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  #cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ruby:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    #strategy:
+    #  fail-fast: true
+    steps:
+    - name: setup
+      run: |
+        sudo apt update -y
+        sudo apt install -y ruby-dev
+    - name: checkout
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        fetch-depth: 1
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}
+    - run: ./bootstrap
+    - run: ./configure
+    - run: |
+        cd ext/ruby && \
+        ruby install.rb config && \
+        ruby install.rb setup
+      continue-on-error: true
+  php:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    #strategy:
+    #  fail-fast: true
+    steps:
+    - name: setup
+      run: |
+        sudo apt update -y
+        sudo apt install -y php-dev
+    - name: checkout
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        fetch-depth: 1
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}
+    - run: ./bootstrap
+    - run: ./configure --prefix=`pwd`/inst
+    - run: make -j -s && sudo make install
+    - run: |
+        cd ext/php && \
+        phpize && \
+        ./configure --with-syck=../../inst && \
+        make && \
+        make test
+      continue-on-error: true
+  lua:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    #strategy:
+    #  fail-fast: true
+    steps:
+    - name: setup
+      run: |
+        sudo apt update -y
+        sudo apt install -y lua5.4 liblua5.4-dev
+    - name: checkout
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        fetch-depth: 1
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}
+    - run: ./bootstrap
+    - run: ./configure
+    - run: make -j -s && sudo make install
+    - run: cd ext/lua && make && make test
+      continue-on-error: true
+  cocoa:
+    runs-on: macos-latest
+    timeout-minutes: 5
+    #strategy:
+    #  fail-fast: true
+    steps:
+    - name: checkout
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        fetch-depth: 1
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}
+    - name: setup
+      run: |
+        brew install automake autoconf libtool bison
+    - run: autoreconf -fi
+    - run: ./configure
+    - run: make -j -s && sudo make install
+    - run: cd ext/cocoa && xcodebuild clean build -project YAML.xcodeproj
+      continue-on-error: true
+  yamlbyte:
+    runs-on: macos-latest
+    timeout-minutes: 5
+    #strategy:
+    #  fail-fast: true
+    steps:
+    - name: checkout
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        fetch-depth: 1
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}
+    - run: ./bootstrap
+    - run: ./configure
+    - run: make -j -s && sudo make install
+    - run: cd ext/yamlbyte && make
+      

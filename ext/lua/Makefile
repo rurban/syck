@@ -3,10 +3,10 @@
 PREFIX=/usr/local
 
 # System's libraries directory (where binary libraries are installed)
-LUA_LIBDIR= $(PREFIX)/lib/lua/5.1
+LUA_LIBDIR= $(PREFIX)/lib/lua/5.4
 
 # System's lua directory (where Lua libraries are installed)
-LUA_DIR= $(PREFIX)/share/lua/5.1
+LUA_DIR= $(PREFIX)/share/lua/5.4
 
 LUAINC= $(PREFIX)/include
 LUALIB= $(PREFIX)/lib
@@ -30,7 +30,7 @@ install:
 uninstall:
 	rm -f $(LUA_DIR)/yaml.lua
 	rm -f $(LUA_LIBDIR)/syck.so 
-	
+
 test: $t
 	$(LUABIN)/lua test.lua 
 	@echo "built and tested successfully. run make install to install, or just move the libs manually"
@@ -40,5 +40,5 @@ $T:	$(OBJS)
 
 clean:
 	rm -f $(OBJS) $T core core.* a.out test.dump
-	
+
 ready:

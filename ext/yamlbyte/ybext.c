@@ -114,9 +114,7 @@ void bytestring_extend(bytestring_t *str, bytestring_t *ext)
 
 /* convert SyckNode into yamlbyte_buffer_t objects */
 SYMID
-  yb_handler(p, n)
-    SyckParser *p;
-    SyckNode *n;
+yb_handler(SyckParser *p, SyckNode *n)
 {
     SYMID oid;
     long i;
@@ -212,10 +210,10 @@ syck_bytecode(char *yamlstr)
 #include <stdio.h>
 int main() {
    char *yaml = "test: 1\nand: \"with new\\nline\\n\"\nalso: &3 three\nmore: *3";
-   printf("--- # YAML \n");
-   printf(yaml);
-   printf("\n...\n");
-   printf(syck_bytecode(yaml));
+   puts("--- # YAML \n");
+   puts(yaml);
+   puts("\n...\n");
+   puts(syck_bytecode(yaml));
    return 0;
 }
 #endif

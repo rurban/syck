@@ -137,8 +137,8 @@ jobs:
       with:
         create-symlink: true
         key: ${{ github.job }}
-    - run: ./bootstrap
-    - run: ./configure
-    - run: make -j -s && sudo make install
+    - run: |
+        ./bootstrap
+        ./configure && \
+        make
     - run: cd ext/yamlbyte && make
-

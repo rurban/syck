@@ -16,11 +16,22 @@
 
 ## Syck 0.70
 
+[ ] check the !! shorthand
+[ ] check if the %YAML 1.0 directive is allowed (space not :
+    for forward compat)
+[ ] check if a ^ prefixed tag is allowed (but ignored)
+[x] memory leaks are GONE
+[ ] Security extemsions from perl: max recursion depth.
+[ ] Policies from perl: allow/disallow duplicate keys
+[ ] perl symbol quoting rules
+
+## Syck 0.80
+
 [-] YPath integrated into Syck's core
 [-] Implicits can be collections with YPath matching
 [-] UTF-16 and -32 support.
 
-## Syck 0.80
+## Syck 0.90
 
 [-] Python extension with complete hooks.
 [-] YAML 1.1 support.

@@ -1,12 +1,12 @@
 released: { name: Syck, version: 0.70 }
-for: [ Ruby, PHP, Python ]
+for: [ Ruby, PHP, Python, Perl ]
 by: why the lucky stiff
 about: >
 
-  Syck is a YAML parser, an extension for scripting
+  Syck is a YAML 1.0 parser, an extension for scripting
   languages, written in C.  
 
-  So what is YAML?  YAML is a new language for data.
+  So what is YAML?  YAML is a simple language for data, similar to JSON.
   Describe objects in plain text.  Load the data into
   your scripting language as arrays, dictionaries,
   classes, or primitives.
@@ -15,16 +15,21 @@ links:
   YAML: http://www.yaml.org/
   YAML Cookbook: http://yaml4r.sf.net/cookbook/
   YAML Type Repository: http://yaml.org/type/
-  YAML Specification: http://yaml.org/spec/
+  YAML Specification: http://yaml.org/spec/1.0/index.html
   Syck: http://www.whytheluckystiff.net/syck/
   Syck Benchmarks: http://www.whytheluckystiff.net/arch/2003/03/19
 
 status: >
 
-  Syck is about 95% compliant with the YAML spec.  Largely, small
-  issues remain.
+  Syck is about 95% compliant with the old YAML 2002 pre-1.0 spec.
+  Largely, small issues remain.
+  The latest YAML updates after 1.0 added more support
+  for tags (i.e. types, classes) and anchors which led to various
+  security problems when decoding these.
+  Hence many distros still prefer the old 1.0 spec, or need to white
+  list allowed classes.
 
-  The extensions are quite usable.  Ruby, PHP and Python
+  The extensions are quite usable.  Ruby, PHP, Perl and Python
   can load from a string containing YAML.
 
   Ruby has support for stream loading, type handling, YPath, Okay.
@@ -34,7 +39,8 @@ status: >
 benchmarks: >
 
   Syck is quite speedy, although not as swift as most language's
-  native serialization.
+  native serialization. It is much faster than the libyaml-based
+  serializers.
 
   Syck runs at about:
 
@@ -47,7 +53,7 @@ benchmarks: >
 
 installation: >
 
-  Syck contains working extensions for the Ruby, PHP, and Python
+  Syck contains working extensions for the Ruby, PHP, Perl and Python
   languages.  Each requires compilation of the libsyck library,
   followed by compilation of the extension.
 

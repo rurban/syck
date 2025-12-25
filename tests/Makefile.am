@@ -1,13 +1,12 @@
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 AM_LDFLAGS = -L$(top_builddir)/lib
+LIBS = -lsyck
+CUSRC = CuTest.c CuTest.h
 
 TESTS = test-basic test-parse test-yts test-emit
 noinst_PROGRAMS = test-basic test-parse test-yts test-emit
-test_basic_SOURCES = Basic.c CuTest.c CuTest.h
-test_basic_LDADD = -lsyck
-test_parse_SOURCES = Parse.c CuTest.c CuTest.h
-test_parse_LDADD = -lsyck
-test_yts_SOURCES = YTS.c CuTest.c CuTest.h
-test_yts_LDADD = -lsyck
-test_emit_SOURCES = Emit.c CuTest.c CuTest.h
-test_emit_LDADD = -lsyck
+
+test_basic_SOURCES = Basic.c $(CUSRC)
+test_parse_SOURCES = Parse.c $(CUSRC)
+test_yts_SOURCES = YTS.c $(CUSRC)
+test_emit_SOURCES = Emit.c $(CUSRC)

@@ -1118,7 +1118,8 @@ void YtsSpecificationExamples_24(CuTest *tc) {
   struct test_node map[] = {
       {T_STR, 0, "not-date", NULL},
       {T_STR, "tag:yaml.org,2002:str", "2002-04-28", NULL},
-      {T_STR, "!!str", "2002", NULL},
+      {T_STR, 0, "not-int", NULL},
+      {T_STR, "tag:yaml.org,2002:str", "2002", NULL},
       {T_STR, 0, "picture", NULL},
       {T_STR, "tag:yaml.org,2002:binary",
        "R0lGODlhDAAMAIQAAP//9/"
@@ -1137,6 +1138,7 @@ void YtsSpecificationExamples_24(CuTest *tc) {
 
                   /* YAML document */
                   "not-date: !str 2002-04-28\n"
+                  "not-int: !!str 2002\n"
                   "picture: !binary |\n"
                   " R0lGODlhDAAMAIQAAP//9/X\n"
                   " 17unp5WZmZgAAAOfn515eXv\n"

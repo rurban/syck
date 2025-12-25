@@ -176,6 +176,10 @@ TAG ":" DNSNAMERE "," TAGDATE ":"    {   return syck_strndup( type_id, strlen( t
 
 XPRIVATE ":"    {   return syck_strndup( type_id, strlen( type_id ) ); }
 
+"!str"          {   return syck_taguri( YAML_DOMAIN, "str", 5 ); }
+"!int"          {   return syck_taguri( YAML_DOMAIN, "int", 5 ); }
+"!seq"          {   return syck_taguri( YAML_DOMAIN, "seq", 5 ); }
+"!map"          {   return syck_taguri( YAML_DOMAIN, "map", 5 ); }
 "!"             {   return syck_xprivate( type_id + 1, strlen( type_id ) - 1 ); }
 
 DNSNAMERE "/"   {   char *domain = S_ALLOC_N( char, ( YYCURSOR - type_id ) + 15 );

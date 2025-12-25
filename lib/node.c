@@ -15,7 +15,7 @@
  */
 SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
-	/*@*/
+               /*@*/
 {
     SyckNode *s;
 

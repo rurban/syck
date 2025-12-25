@@ -39,7 +39,7 @@ libsyck_la_SOURCES = $(libsyck_a_SOURCES)
 
 REC = @REC@
 .re.c:
-	if test -n "$(REC)"; then $(REC) $< > $@.new && mv $@.new $@; fi
+	if test -n "$(REC)"; then $(REC) $< | sed -e's,"<stdout>","$@",' >$@.new && mv $@.new $@; fi
 
 # emacs flymake-mode
 check-syntax:

@@ -497,6 +497,18 @@ void syck_emit_tag( SyckEmitter *e, char *tag, char *ignore )
         }
         syck_emitter_write( e, " ", 1 );
 
+    /* global tag shorthand: !!str is tag:yaml.org,2002:str. also int seq map.
+       abbrevate it to !str */
+    } else if ( strncmp( tag, "!!", 2 ) == 0 &&
+                ((strncmp( &tag[2], "str", 3 ) == 0) ||
+                 (strncmp( &tag[2], "int", 3 ) == 0) ||
+                 (strncmp( &tag[2], "seq", 3 ) == 0) ||
+                 (strncmp( &tag[2], "map", 3 ) == 0)) )
+   {
+        int taglen = strlen( tag );
+        syck_emitter_write( e, "!", 1 );
+        syck_emitter_write( e, &tag[1], taglen - 1 );
+        syck_emitter_write( e, " ", 1 );
     /* private types */
     } else if ( strncmp( tag, "x-private:", 10 ) == 0 ) {
         syck_emitter_write( e, "!!", 2 );

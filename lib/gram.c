@@ -89,15 +89,15 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n )
 #define YYPARSE_PARAM   parser
 #define YYLEX_PARAM     parser
 
-#define NULL_NODE(parser, node) \
-        SyckNode *node = syck_new_str( "", scalar_plain ); \
-        if ( ((SyckParser *)parser)->taguri_expansion == 1 ) \
-        { \
-            node->type_id = syck_taguri( YAML_DOMAIN, "null", 4 ); \
-        } \
-        else \
-        { \
-            node->type_id = syck_strndup( "null", 4 ); \
+#define NULL_NODE(parser, node)                                   \
+        SyckNode *node = syck_new_str( "", scalar_plain );        \
+        if ( ((SyckParser *)parser)->taguri_expansion == 1 )      \
+        {                                                         \
+            node->type_id = syck_taguri( YAML_DOMAIN, "null", 4 );\
+        }                                                         \
+        else                                                      \
+        {                                                         \
+            node->type_id = syck_strndup( "null", 4 );            \
         }
 
 #line 98 "gram.c"

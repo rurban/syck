@@ -19,6 +19,11 @@ config/ylwrap
 configure
 ext/ruby/config.save
 ext/ruby/ext
+ext/yamlbyte/.libs/
+ext/yamlbyte/ybext
+ext/yamlbyte/ybext.lo
+ext/yamlbyte/ybext.o
+ext/yamlbyte/ybext.trs
 lib/.deps/
 lib/.libs/
 lib/Makefile

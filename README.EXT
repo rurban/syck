@@ -329,7 +329,7 @@ The loading process is:
   Assign a callback function as an error handler.  The
   SyckErrorHandler signature looks like this:
 
-   void error_handler( SyckParser *p, char *str )
+   void error_handler( SyckParser *p, const char *str )
 
  void
  syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler h ) 
@@ -337,7 +337,7 @@ The loading process is:
   Assign a callback function as a bad anchor handler.
   The SyckBadAnchorHandler signature looks like this:
 
-   SyckNode *bad_anchor_handler( SyckParser *p, char *anchor )
+   SyckNode *bad_anchor_handler( SyckParser *p, const char *anchor )
 
  void
  syck_parser_file( SyckParser *p, FILE *f, SyckIoFileRead r )

@@ -235,8 +235,8 @@ typedef struct _syck_str SyckIoStr;
 typedef struct _syck_level SyckLevel;
 
 typedef SYMID (*SyckNodeHandler)(SyckParser *p, SyckNode *n);
-typedef void (*SyckErrorHandler)(SyckParser *p, char *);
-typedef SyckNode * (*SyckBadAnchorHandler)(SyckParser *p, char *);
+typedef void (*SyckErrorHandler)(SyckParser *p, const char *);
+typedef SyckNode * (*SyckBadAnchorHandler)(SyckParser *p, const char *);
 typedef long (*SyckIoFileRead)(char *, SyckIoFile *, long, long); 
 typedef long (*SyckIoStrRead)(char *, SyckIoStr *, long, long);
 
@@ -608,7 +608,7 @@ long syck_parser_readlen( SyckParser *p, long )
 SYMID syck_parse( SyckParser *p )
 	/*@globals fileSystem @*/
 	/*@modifies p, fileSystem @*/;
-void syck_default_error_handler( SyckParser *p, char * )
+void syck_default_error_handler( SyckParser *p, const char * )
 	/*@globals fileSystem @*/
 	/*@modifies p, fileSystem @*/;
 SYMID syck_yaml2byte_handler( SyckParser *p, SyckNode *n )
@@ -681,7 +681,7 @@ long syck_seq_count( SyckNode *seq )
 /*
  * Lexer prototypes
  */
-void syckerror( char *msg )
+void syckerror( const char *msg )
 	/*@*/;
 int syckparse( void * )
 	/*@globals fileSystem @*/

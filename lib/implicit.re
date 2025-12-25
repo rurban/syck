@@ -125,11 +125,11 @@ syck_tagcmp( const char *tag1, const char *tag2 )
         char *tmp1 = syck_strndup( tag1, strlen( tag1 ) );
         char *tmp2 = syck_strndup( tag2, strlen( tag2 ) );
         othorpe = strstr( tmp1, "#" );
-		if ( othorpe != NULL ) {
+        if ( othorpe != NULL ) {
             othorpe[0] = '\0';
         }
         othorpe = strstr( tmp2, "#" );
-		if ( othorpe != NULL ) {
+        if ( othorpe != NULL ) {
             othorpe[0] = '\0';
         }
         i = strcmp( tmp1, tmp2 );
@@ -160,6 +160,13 @@ TAG ":" DNSNAMERE "," TAGDATE ":"    {   return syck_strndup( type_id, strlen( t
 
 XPRIVATE ":"    {   return syck_strndup( type_id, strlen( type_id ) ); }
 
+"!str"          {   return syck_taguri( YAML_DOMAIN, "str", 5 ); }
+"!int"          {   return syck_taguri( YAML_DOMAIN, "int", 5 ); }
+"!seq"          {   return syck_taguri( YAML_DOMAIN, "seq", 5 ); }
+"!map"          {   return syck_taguri( YAML_DOMAIN, "map", 5 ); }
+"!bool"         {   return syck_taguri( YAML_DOMAIN, "bool", 6 ); }
+"!null"         {   return syck_taguri( YAML_DOMAIN, "null", 6 ); }
+"!float"        {   return syck_taguri( YAML_DOMAIN, "float", 7 ); }
 "!"             {   return syck_xprivate( type_id + 1, strlen( type_id ) - 1 ); }
 
 DNSNAMERE "/"   {   char *domain = S_ALLOC_N( char, ( YYCURSOR - type_id ) + 15 );

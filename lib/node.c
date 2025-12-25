@@ -16,7 +16,7 @@
 __attribute__malloc__
 static SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
-	/*@*/
+               /*@*/
 {
     SyckNode *s;
 

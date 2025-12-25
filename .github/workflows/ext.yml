@@ -54,7 +54,6 @@ jobs:
         cd ext/ruby && \
         ruby tests/basic.rb && \
         cd yts && ruby yts.rb
-      continue-on-error: true
   php:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -74,13 +73,15 @@ jobs:
     - run: ./bootstrap
     - run: ./configure --prefix=`pwd`/inst
     - run: make -j -s && sudo make install
-    - run: |
+    - name: build
+      run: |
         cd ext/php && \
         phpize && \
         ./configure --with-syck=../../inst && \
-        make && \
-        make test
-      continue-on-error: true
+        make
+    - name: test
+      run: |
+        cd ext/php && make test
   lua:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -100,8 +101,10 @@ jobs:
     - run: ./bootstrap
     - run: ./configure
     - run: make -j -s && sudo make install
-    - run: cd ext/lua && make && make test
-      continue-on-error: true
+    - name: build
+      run: cd ext/lua && make
+    - name: test
+      run: cd ext/lua && make test
   cocoa:
     runs-on: macos-latest
     timeout-minutes: 5
@@ -120,7 +123,8 @@ jobs:
     - run: autoreconf -fi
     - run: ./configure
     - run: make -j -s && sudo make install
-    - run: cd ext/cocoa && xcodebuild clean build -project YAML.xcodeproj
+    - name: build
+      run: cd ext/cocoa && xcodebuild clean build -project YAML.xcodeproj
   yamlbyte:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -133,4 +137,7 @@ jobs:
         ./bootstrap
         ./configure && \
         make
-    - run: cd ext/yamlbyte && make && make check
+    - name: build
+      run: cd ext/yamlbyte && make
+    - name: test
+      run: cd ext/yamlbyte && make test

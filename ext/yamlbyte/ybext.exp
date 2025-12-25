@@ -1,0 +1,31 @@
+--- # YAML 
+
+test: 1
+and: "with new\nline\n"
+also: &3 three
+more: *3
+
+...
+
+M
+Ttag:yaml.org,2002:str
+Stest
+Ttag:yaml.org,2002:int
+S1
+Ttag:yaml.org,2002:str
+Sand
+Ttag:yaml.org,2002:str
+Swith new
+N
+Cline
+N
+Ttag:yaml.org,2002:str
+Salso
+A3
+Ttag:yaml.org,2002:str
+Sthree
+Ttag:yaml.org,2002:str
+Smore
+R3
+E
+

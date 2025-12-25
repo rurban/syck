@@ -133,4 +133,4 @@ jobs:
         ./bootstrap
         ./configure && \
         make
-    - run: cd ext/yamlbyte && make
+    - run: cd ext/yamlbyte && make && make check

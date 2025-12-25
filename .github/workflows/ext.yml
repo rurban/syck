@@ -40,20 +40,18 @@ jobs:
     - name: setup
       run: |
         sudo apt update -y
-        sudo apt install -y ruby-dev
+        sudo apt install -y ruby-dev rake rake-compiler
     - run: ./bootstrap
     - run: ./configure
     - name: build
       run: |
         cd ext/ruby && \
-        ruby install.rb config && \
-        ruby install.rb setup && \
-        sudo ruby install.rb install
+        rake compile && \
+        sudo rake install
     - name: test
       run: |
         cd ext/ruby && \
-        ruby tests/basic.rb && \
-        cd yts && ruby yts.rb
+        rake test
   php:
     runs-on: ubuntu-latest
     timeout-minutes: 5

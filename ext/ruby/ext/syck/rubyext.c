@@ -6,14 +6,23 @@
  * $Date$
  *
  * Copyright (C) 2003-2005 why the lucky stiff
+ * Copyright (C) 2025 Reini Urban
  */
 
+#ifndef IN_OLD_EXT_RUBY
 #define IN_OLD_EXT_RUBY
+#endif
 #include "ruby/ruby.h"
 #include "ruby/encoding.h"
 #include "syck.h"
 #include <sys/types.h>
 #include <time.h>
+
+#ifndef RUBY_NO_TAINT_SUPPORT
+#if RUBY_API_VERSION_CODE < 20700
+#define RUBY_NO_TAINT_SUPPORT
+#endif
+#endif
 
 typedef struct RVALUE {
     union {
@@ -45,6 +54,34 @@ typedef struct {
    long remaining;
    int  printed;
 } bytestring_t;
+
+static void syck_mark_parser(void *);
+void rb_syck_free_parser(void *);
+static void syck_mark_emitter(void *);
+void rb_syck_free_emitter(void *);
+static void syck_node_mark(SyckNode *n);
+static void rb_syck_free_node(void *);
+
+#ifdef RTYPEDDATA_P
+static const rb_data_type_t syck_parser_type = {
+    "syck/parser",
+    { syck_mark_parser, rb_syck_free_parser, 0 },
+    NULL, NULL,
+    RUBY_TYPED_FREE_IMMEDIATELY
+};
+static const rb_data_type_t syck_emitter_type = {
+    "syck/emitter",
+    { syck_mark_emitter, rb_syck_free_emitter, NULL },
+    NULL, NULL,
+    RUBY_TYPED_FREE_IMMEDIATELY
+};
+static const rb_data_type_t syck_node_type = {
+    "syck/node",
+    { (void (*)(void *))syck_node_mark, rb_syck_free_node, NULL },
+    NULL, NULL,
+    RUBY_TYPED_FREE_IMMEDIATELY
+};
+#endif
 
 #define RUBY_DOMAIN   "ruby.yaml.org,2002"
 
@@ -102,14 +139,13 @@ VALUE
 rb_syck_compile(VALUE self, VALUE port)
 {
     SYMID oid;
-    int taint;
     char *ret;
     VALUE bc;
     bytestring_t *sav = NULL;
     void *data = NULL;
 
     SyckParser *parser = syck_new_parser();
-    taint = syck_parser_assign_io(parser, &port);
+    int taint = syck_parser_assign_io(parser, &port);
     syck_parser_handler( parser, syck_yaml2byte_handler );
     syck_parser_error_handler( parser, NULL );
     syck_parser_implicit_typing( parser, 0 );
@@ -128,7 +164,9 @@ rb_syck_compile(VALUE self, VALUE port)
     syck_free_parser( parser );
 
     bc = rb_str_new2( ret );
+#ifndef RUBY_NO_TAINT_SUPPORT
     if ( taint )      OBJ_TAINT( bc );
+#endif
     return bc;
 }
 
@@ -174,7 +212,9 @@ syck_parser_assign_io(SyckParser *parser, VALUE *pport)
     int taint = Qtrue;
     VALUE tmp, port = *pport;
     if (!NIL_P(tmp = rb_check_string_type(port))) {
+#ifndef RUBY_NO_TAINT_SUPPORT
         taint = OBJ_TAINTED(port); /* original taintedness */
+#endif
         port = tmp;
         syck_parser_str( parser, RSTRING_PTR(port), RSTRING_LEN(port), NULL );
     }
@@ -637,8 +677,6 @@ yaml_org_handler( SyckNode *n, VALUE *ref )
     return transferred;
 }
 
-static void syck_node_mark( SyckNode *n );
-
 /*
  * {native mode} node handler
  * - Converts data into native Ruby types
@@ -657,8 +695,13 @@ rb_syck_load_handler(SyckParser *p, SyckNode *n)
     /*
      * Create node, 
      */
-    obj = rb_funcall( resolver, s_node_import, 1, Data_Wrap_Struct( cNode, syck_node_mark, NULL, n ) );
-
+#ifdef RTYPEDDATA_P
+    obj = rb_funcall( resolver, s_node_import, 1,
+                      TypedData_Wrap_Struct( cNode, &syck_node_type, n ) );
+#else
+    obj = rb_funcall( resolver, s_node_import, 1,
+                      Data_Wrap_Struct( cNode, syck_node_mark, NULL, n ) );
+#endif
     /*
      * ID already set, let's alter the symbol table to accept the new object
      */
@@ -669,7 +712,9 @@ rb_syck_load_handler(SyckParser *p, SyckNode *n)
         obj = n->id;
     }
 
+#ifndef RUBY_NO_TAINT_SUPPORT
     if ( bonus->taint)      OBJ_TAINT( obj );
+#endif
     if ( bonus->proc != 0 ) rb_funcall(bonus->proc, s_call, 1, obj);
 
     rb_hash_aset(bonus->data, INT2FIX(RHASH_SIZE(bonus->data)), obj);
@@ -714,7 +759,11 @@ void
 syck_set_model(VALUE p, VALUE input, VALUE model)
 {
     SyckParser *parser;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(p, SyckParser, &syck_parser_type, parser);
+#else
     Data_Get_Struct(p, SyckParser, parser);
+#endif
     syck_parser_handler( parser, rb_syck_load_handler );
     /* WARN: gonna be obsoleted soon!! */
     if ( model == sym_generic )
@@ -751,8 +800,9 @@ syck_st_mark_nodes( const char *key, void *n, void *arg )
  * mark parser nodes
  */
 static void
-syck_mark_parser(SyckParser *parser)
+syck_mark_parser(void *_parser)
 {
+    SyckParser *parser = (SyckParser *)_parser;
     struct parser_xtra *bonus = (struct parser_xtra *)parser->bonus;
     rb_gc_mark_maybe(parser->root);
     rb_gc_mark_maybe(parser->root_on_error);
@@ -774,8 +824,9 @@ syck_mark_parser(SyckParser *parser)
  * Free the parser and any bonus attachment.
  */
 void
-rb_syck_free_parser(SyckParser *p)
+rb_syck_free_parser(void *_p)
 {
+    SyckParser *p = (SyckParser *)_p;
     S_FREE( p->bonus );
     syck_free_parser(p);
 }
@@ -793,8 +844,11 @@ syck_parser_s_alloc(VALUE class)
     parser->bonus = S_ALLOC( struct parser_xtra );
     S_MEMZERO( parser->bonus, struct parser_xtra, 1 );
 
+#ifdef RTYPEDDATA_P
+    pobj = TypedData_Wrap_Struct( class, &syck_parser_type, parser );
+#else
     pobj = Data_Wrap_Struct( class, syck_mark_parser, rb_syck_free_parser, parser );
-
+#endif
     syck_parser_set_root_on_error( parser, Qnil );
 
     return pobj;
@@ -830,7 +884,11 @@ syck_parser_bufsize_set(VALUE self, VALUE size)
 
     if ( rb_respond_to( size, s_to_i ) ) {
         int n = NUM2INT(rb_funcall(size, s_to_i, 0));
+#ifdef RTYPEDDATA_P
+        TypedData_Get_Struct(self, SyckParser, &syck_parser_type, parser);
+#else
         Data_Get_Struct(self, SyckParser, parser);
+#endif
         parser->bufsize = n;
     }
     return self;
@@ -844,7 +902,11 @@ syck_parser_bufsize_get(VALUE self)
 {
     SyckParser *parser;
 
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(self, SyckParser, &syck_parser_type, parser);
+#else
     Data_Get_Struct(self, SyckParser, parser);
+#endif
     return INT2FIX( parser->bufsize );
 }
 
@@ -862,7 +924,11 @@ syck_parser_load(int argc, VALUE *argv, VALUE self)
 
     input = rb_hash_aref( rb_attr_get( self, s_options ), sym_input );
     model = rb_hash_aref( rb_attr_get( self, s_options ), sym_model );
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(self, SyckParser, &syck_parser_type, parser);
+#else
     Data_Get_Struct(self, SyckParser, parser);
+#endif
     syck_set_model( self, input, model );
 
     bonus = (struct parser_xtra *)parser->bonus;
@@ -889,7 +955,11 @@ syck_parser_load_documents(int argc, VALUE *argv, VALUE self)
 
     input = rb_hash_aref( rb_attr_get( self, s_options ), sym_input );
     model = rb_hash_aref( rb_attr_get( self, s_options ), sym_model );
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(self, SyckParser, &syck_parser_type, parser);
+#else
     Data_Get_Struct(self, SyckParser, parser);
+#endif
     syck_set_model( self, input, model );
     
     bonus = (struct parser_xtra *)parser->bonus;
@@ -975,7 +1045,11 @@ syck_resolver_node_import(VALUE self, VALUE node)
     SyckNode *n;
     VALUE obj = Qnil;
     int i = 0;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(node, SyckNode, &syck_node_type, n);
+#else
     Data_Get_Struct(node, SyckNode, n);
+#endif
 
     switch (n->kind)
     {
@@ -1266,7 +1340,11 @@ syck_defaultresolver_node_import(VALUE self, VALUE node)
 {
     SyckNode *n;
     VALUE obj;
-    Data_Get_Struct( node, SyckNode, n );
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(node, SyckNode, &syck_node_type, n);
+#else
+    Data_Get_Struct(node, SyckNode, n);
+#endif
     if ( !yaml_org_handler( n, &obj ) )
     {
         obj = rb_funcall( self, s_transfer, 2, rb_str_new2( n->type_id ), obj );
@@ -1283,7 +1361,11 @@ syck_genericresolver_node_import(VALUE self, VALUE node)
     SyckNode *n;
     int i = 0;
     VALUE t = Qnil, obj = Qnil, v = Qnil, style = Qnil;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(node, SyckNode, &syck_node_type, n);
+#else
     Data_Get_Struct(node, SyckNode, n);
+#endif
 
     if ( n->type_id != NULL )
     {
@@ -1450,7 +1532,12 @@ VALUE
 syck_scalar_alloc(VALUE class)
 {
     SyckNode *node = syck_alloc_str();
-    VALUE obj = Data_Wrap_Struct( class, syck_node_mark, syck_free_node, node );
+    VALUE obj;
+#ifdef RTYPEDDATA_P
+    obj = TypedData_Wrap_Struct( class, &syck_node_type, node );
+#else
+    obj = Data_Wrap_Struct( class, syck_node_mark, syck_free_node, node );
+#endif
     node->id = obj;
     return obj;
 }
@@ -1475,7 +1562,11 @@ VALUE
 syck_scalar_style_set(VALUE self, VALUE style)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( NIL_P( style ) )
     {
@@ -1513,7 +1604,11 @@ VALUE
 syck_scalar_value_set(VALUE  self, VALUE val)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     StringValue( val );
     node->data.str->ptr = syck_strndup( RSTRING_PTR(val), RSTRING_LEN(val) );
@@ -1533,7 +1628,11 @@ syck_seq_alloc(VALUE class)
     SyckNode *node;
     VALUE obj;
     node = syck_alloc_seq();
+#ifdef RTYPEDDATA_P
+    obj = TypedData_Wrap_Struct( class, &syck_node_type, node );
+#else
     obj = Data_Wrap_Struct( class, syck_node_mark, syck_free_node, node );
+#endif
     node->id = obj;
     return obj;
 }
@@ -1544,8 +1643,12 @@ syck_seq_alloc(VALUE class)
 VALUE
 syck_seq_initialize(VALUE self, VALUE type_id, VALUE val, VALUE style)
 {
-    SyckNode *node;
+    SyckNode *node; /* unused */
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     rb_iv_set( self, "@kind", sym_seq );
     rb_funcall( self, s_type_id_set, 1, type_id );
@@ -1561,7 +1664,11 @@ VALUE
 syck_seq_value_set(VALUE self, VALUE val)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     val = rb_check_array_type( val );
     if ( !NIL_P( val ) ) {
@@ -1585,7 +1692,11 @@ syck_seq_add_m(VALUE self, VALUE val)
 {
     SyckNode *node;
     VALUE emitter = rb_ivar_get( self, s_emitter );
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( rb_respond_to( emitter, s_node_export ) ) {
         val = rb_funcall( emitter, s_node_export, 1, val );
@@ -1603,7 +1714,11 @@ VALUE
 syck_seq_style_set(VALUE self, VALUE style)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( style == sym_inline )
     {
@@ -1627,7 +1742,11 @@ syck_map_alloc(VALUE class)
     SyckNode *node;
     VALUE obj;
     node = syck_alloc_map();
+#ifdef RTYPEDDATA_P
+    obj = TypedData_Wrap_Struct( class, &syck_node_type, node );
+#else
     obj = Data_Wrap_Struct( class, syck_node_mark, syck_free_node, node );
+#endif
     node->id = obj;
     return obj;
 }
@@ -1639,7 +1758,11 @@ VALUE
 syck_map_initialize(VALUE self, VALUE type_id, VALUE val, VALUE style)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( !NIL_P( val ) )
     {
@@ -1673,7 +1796,11 @@ VALUE
 syck_map_value_set(VALUE self, VALUE val)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( !NIL_P( val ) )
     {
@@ -1706,7 +1833,11 @@ syck_map_add_m(VALUE self, VALUE key, VALUE val)
 {
     SyckNode *node;
     VALUE emitter = rb_ivar_get( self, s_emitter );
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( rb_respond_to( emitter, s_node_export ) ) {
         key = rb_funcall( emitter, s_node_export, 1, key );
@@ -1725,7 +1856,11 @@ VALUE
 syck_map_style_set(VALUE self, VALUE style)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     if ( style == sym_inline )
     {
@@ -1758,8 +1893,13 @@ syck_node_init_copy(VALUE copy, VALUE orig)
         rb_raise( rb_eTypeError, "wrong argument type" );
     }
 
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( orig, SyckNode, &syck_node_type, orig_n );
+    TypedData_Get_Struct( copy, SyckNode, &syck_node_type, copy_n );
+#else
     Data_Get_Struct( orig, SyckNode, orig_n );
     Data_Get_Struct( copy, SyckNode, copy_n );
+#endif
     MEMCPY( copy_n, orig_n, SyckNode, 1 );
     return copy;
 }
@@ -1772,7 +1912,11 @@ VALUE
 syck_node_type_id_set(VALUE self, VALUE type_id)
 {
     SyckNode *node;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, node );
+#else
     Data_Get_Struct( self, SyckNode, node );
+#endif
 
     S_FREE( node->type_id );
 
@@ -1794,8 +1938,13 @@ syck_node_transform(VALUE self)
     VALUE t;
     SyckNode *n = NULL;
     SyckNode *orig_n;
-    Data_Get_Struct(self, SyckNode, orig_n);
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct( self, SyckNode, &syck_node_type, orig_n );
+    t = TypedData_Wrap_Struct( cNode, &syck_node_type, 0 );
+#else
+    Data_Get_Struct( self, SyckNode, orig_n );
     t = Data_Wrap_Struct( cNode, syck_node_mark, syck_free_node, 0 );
+#endif
 
     switch (orig_n->kind)
     {
@@ -1848,7 +1997,11 @@ void
 rb_syck_emitter_handler(SyckEmitter *e, st_data_t data)
 {
     SyckNode *n;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct((VALUE)data, SyckNode, &syck_node_type, n);
+#else
     Data_Get_Struct((VALUE)data, SyckNode, n);
+#endif
 
     switch (n->kind)
     {
@@ -1909,7 +2062,11 @@ syck_out_mark(VALUE emitter, VALUE node)
 {
     SyckEmitter *emitterPtr;
     struct emitter_xtra *bonus;
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(emitter, SyckEmitter, &syck_emitter_type, emitterPtr );
+#else
     Data_Get_Struct(emitter, SyckEmitter, emitterPtr);
+#endif
     bonus = (struct emitter_xtra *)emitterPtr->bonus;
     rb_ivar_set( node, s_emitter, emitter );
     /* syck_emitter_mark_node( emitterPtr, (st_data_t)node ); */
@@ -1918,12 +2075,18 @@ syck_out_mark(VALUE emitter, VALUE node)
     }
 }
 
+static void rb_syck_free_node(void *node)
+{
+    syck_free_node((SyckNode *)node);
+}
+
 /*
  * Mark emitter values.
  */
 static void
-syck_mark_emitter(SyckEmitter *emitter)
+syck_mark_emitter(void *_emitter)
 {
+    SyckEmitter *emitter = (SyckEmitter *)_emitter;
     struct emitter_xtra *bonus = (struct emitter_xtra *)emitter->bonus;
     rb_gc_mark( bonus->oid  );
         rb_gc_mark( bonus->data );
@@ -1934,8 +2097,9 @@ syck_mark_emitter(SyckEmitter *emitter)
  * Free the emitter and any bonus attachment.
  */
 void
-rb_syck_free_emitter(SyckEmitter *e)
+rb_syck_free_emitter(void *_e)
 {
+    SyckEmitter *e = (SyckEmitter *)_e;
     S_FREE( e->bonus );
     syck_free_emitter(e);
 }
@@ -1953,7 +2117,12 @@ syck_emitter_s_alloc(VALUE class)
     emitter->bonus = S_ALLOC( struct emitter_xtra );
     S_MEMZERO( emitter->bonus, struct emitter_xtra, 1 );
 
-    pobj = Data_Wrap_Struct( class, syck_mark_emitter, rb_syck_free_emitter, emitter );
+#ifdef RTYPEDDATA_P
+    pobj = TypedData_Wrap_Struct( class, &syck_emitter_type, emitter );
+#else
+    pobj = Data_Wrap_Struct( class, syck_mark_emitter, rb_syck_free_emitter, emitter);
+#endif
+
     syck_emitter_handler( emitter, rb_syck_emitter_handler );
     syck_output_handler( emitter, rb_syck_output_handler );
 
@@ -1980,7 +2149,11 @@ syck_emitter_reset(int argc, VALUE *argv, VALUE self)
     SyckEmitter *emitter;
     struct emitter_xtra *bonus;
 
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(self, SyckEmitter, &syck_emitter_type, emitter );
+#else
     Data_Get_Struct(self, SyckEmitter, emitter);
+#endif
     bonus = (struct emitter_xtra *)emitter->bonus;
 
     bonus->oid = Qnil;
@@ -2026,7 +2199,11 @@ syck_emitter_emit(int argc, VALUE *argv, VALUE self)
     rb_ivar_set(self, s_level, INT2FIX(level));
 
     rb_scan_args(argc, argv, "1&", &oid, &proc);
+#ifdef RTYPEDDATA_P
+    TypedData_Get_Struct(self, SyckEmitter, &syck_emitter_type, emitter );
+#else
     Data_Get_Struct(self, SyckEmitter, emitter);
+#endif
     bonus = (struct emitter_xtra *)emitter->bonus;
 
     /* Calculate anchors, normalize nodes, build a simpler symbol table */

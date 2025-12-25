@@ -73,8 +73,8 @@ static VALUE syck_node_transform( VALUE );
  * handler prototypes
  */
 SYMID rb_syck_load_handler _((SyckParser *, SyckNode *));
-void rb_syck_err_handler _((SyckParser *, char *));
-SyckNode * rb_syck_bad_anchor_handler _((SyckParser *, char *));
+void rb_syck_err_handler _((SyckParser *, const char *));
+SyckNode * rb_syck_bad_anchor_handler _((SyckParser *, const char *));
 void rb_syck_output_handler _((SyckEmitter *, char *, long));
 void rb_syck_emitter_handler _((SyckEmitter *, st_data_t));
 int syck_parser_assign_io _((SyckParser *, VALUE *));
@@ -680,7 +680,7 @@ rb_syck_load_handler(SyckParser *p, SyckNode *n)
  * friendly errors.
  */
 void
-rb_syck_err_handler(SyckParser *p, char *msg)
+rb_syck_err_handler(SyckParser *p, const char *msg)
 {
     char *endl = p->cursor;
 
@@ -699,7 +699,7 @@ rb_syck_err_handler(SyckParser *p, char *msg)
  * provide bad anchor object to the parser.
  */
 SyckNode *
-rb_syck_bad_anchor_handler(SyckParser *p, char *a)
+rb_syck_bad_anchor_handler(SyckParser *p, const char *a)
 {
     VALUE anchor_name = rb_str_new2( a );
     SyckNode *badanc = syck_new_map( rb_str_new2( "name" ), anchor_name );

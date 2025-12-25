@@ -114,7 +114,6 @@ jobs:
     - run: ./configure
     - run: make -j -s && sudo make install
     - run: cd ext/cocoa && xcodebuild clean build -project YAML.xcodeproj
-      continue-on-error: true
   yamlbyte:
     runs-on: ubuntu-latest
     timeout-minutes: 5

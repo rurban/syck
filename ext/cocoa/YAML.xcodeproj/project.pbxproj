@@ -35,7 +35,7 @@
 		3D4F854707D53496005BA429 /* SyckInput.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = SyckInput.m; path = src/SyckInput.m; sourceTree = SOURCE_ROOT; };
 		3D4F854907D5349E005BA429 /* main.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = main.c; path = src/main.c; sourceTree = SOURCE_ROOT; };
 		3D4F854D07D534F3005BA429 /* YAML_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = YAML_Prefix.pch; sourceTree = SOURCE_ROOT; };
-		3D95980B07BB7B03008E7093 /* libsyck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsyck.a; path = ../../lib/libsyck.a; sourceTree = SOURCE_ROOT; };
+		3D95980B07BB7B03008E7093 /* libsyck.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsyck.a; path = ../../lib/.libs/libsyck.a; sourceTree = SOURCE_ROOT; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* YAML.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = YAML.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -230,7 +230,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "export YACC=\"\" # yacc/bison with Xcode 3.2.4 is broken\ncd ../.. || exit $?\nNARCHS=0\nLIPO_INFILES=\n\nfor ARCH in $ARCHS; do\n  CFLAGS=\"$CFLAGS -arch $ARCH\" ./configure || exit $?\n  make clean || exit $?\n  make || exit $?\n  mv -f lib/libsyck.a lib/libsyck-$ARCH.a\n  LIPO_INFILES=\"$LIPO_INFILES lib/libsyck-$ARCH.a\"\n  NARCHS=$(expr $NARCHS + 1)\ndone\n\nmkdir -p \"$DERIVED_FILE_DIR/libsyck\" || exit $?\nDST_PATH=\"$DERIVED_FILE_DIR/libsyck/libsyck.a\"\nif [ $NARCHS -gt 1 ]; then\n  lipo $LIPO_INFILES -output \"$DST_PATH\" -create || exit $?\nelse\n  mv -f lib/libsyck-$ARCH.a \"$DST_PATH\"\nfi\necho \"Created $ARCHS libsyck.a at $DST_PATH\"\n";
+			shellScript = "export YACC=\"\" # yacc/bison with Xcode 3.2.4 is broken\ncd ../.. || exit $?\nNARCHS=0\nLIPO_INFILES=\n\nfor ARCH in $ARCHS; do\n  CFLAGS=\"$CFLAGS -arch $ARCH\" ./configure || exit $?\n  make clean || exit $?\n  make || exit $?\n  mv -f lib/.libs/libsyck.a lib/.libs/libsyck-$ARCH.a\n  LIPO_INFILES=\"$LIPO_INFILES lib/.libs/libsyck-$ARCH.a\"\n  NARCHS=$(expr $NARCHS + 1)\ndone\n\nmkdir -p \"$DERIVED_FILE_DIR/libsyck\" || exit $?\nDST_PATH=\"$DERIVED_FILE_DIR/libsyck/libsyck.a\"\nif [ $NARCHS -gt 1 ]; then\n  lipo $LIPO_INFILES -output \"$DST_PATH\" -create || exit $?\nelse\n  mv -f lib/.libs/libsyck-$ARCH.a \"$DST_PATH\"\nfi\necho \"Created $ARCHS libsyck.a at $DST_PATH\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

@@ -30,7 +30,8 @@ installation: >
   Once Racc is installed, run the install.rb script in this
   distribution:
 
-     ruby install.rb
+     ruby install.rb config setup
+     sudo ruby install.rb install
 
   To run the included unit tests:
 

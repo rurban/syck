@@ -200,7 +200,7 @@ syck_emitter_pop_level( SyckEmitter *e )
     if ( e->lvl_idx <= 1 ) return;
 
     e->lvl_idx -= 1;
-    free( e->levels[e->lvl_idx].domain );
+    S_FREE( e->levels[e->lvl_idx].domain );
 }
 
 void 
@@ -422,7 +422,7 @@ assert(anchor_name != NULL);
             }
 
             syck_emitter_write( e, an, strlen( anchor_name ) + 2 );
-            free( an );
+            S_FREE( an );
 
             x = 1;
             st_insert( e->anchored, (st_data_t)anchor_name, (st_data_t)x );
@@ -433,7 +433,7 @@ assert(anchor_name != NULL);
             char *an = S_ALLOC_N( char, strlen( anchor_name ) + 2 );
             sprintf( an, "*%s", anchor_name );
             syck_emitter_write( e, an, strlen( anchor_name ) + 1 );
-            free( an );
+            S_FREE( an );
 
             goto end_emit;
         }
@@ -520,7 +520,7 @@ void syck_emit_indent( SyckEmitter *e )
         spcs[0] = '\n'; spcs[lvl->spaces + 1] = '\0';
         for ( i = 0; i < lvl->spaces; i++ ) spcs[i+1] = ' ';
         syck_emitter_write( e, spcs, lvl->spaces + 1 );
-        free( spcs );
+        S_FREE( spcs );
     }
 }
 

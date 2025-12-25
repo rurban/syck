@@ -97,13 +97,13 @@ static char gEncodingTable[ 64 ] = {
         unsigned long		ixtext;
         unsigned long		lentext;
         unsigned char		ch;
-        unsigned char		inbuf [4], outbuf [3];
-        short				ixinbuf;
-        NSData				*base64Data;
-		unsigned char		*preprocessed, *decodedBytes;
-		unsigned long		preprocessedLength, decodedLength;
-		short				ctcharsinbuf = 3;
-		BOOL				notDone = YES;
+        unsigned char		inbuf [4], outbuf [4];
+        short			ixinbuf;
+        NSData			*base64Data;
+	unsigned char		*preprocessed, *decodedBytes;
+	unsigned long		preprocessedLength, decodedLength;
+	short			ctcharsinbuf = 3;
+	BOOL			notDone = YES;
 
         // Convert the string to ASCII data.
         base64Data = [ inBase64String dataUsingEncoding:NSASCIIStringEncoding ];
@@ -192,14 +192,14 @@ static char gEncodingTable[ 64 ] = {
     */
         
     const unsigned char	*bytes = [ self bytes ];
-	unsigned char		*encodedData;
-	unsigned long		encodedLength;
+    unsigned char		*encodedData;
+    unsigned long		encodedLength;
     unsigned long		ixtext;
     unsigned long		lengthData;
-    long				ctremaining;
-    unsigned char		inbuf [4], outbuf [3];
-    short				i;
-    short				charsonline = 0, ctcopy;
+    long			ctremaining;
+    unsigned char		inbuf [4], outbuf [4];
+    short			i;
+    short			charsonline = 0, ctcopy;
     unsigned long		ix;
     NSString			*result = nil;
 

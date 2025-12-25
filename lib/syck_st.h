@@ -7,13 +7,37 @@
 
 #ifdef IN_OLD_EXT_RUBY
 // rename all st_ names to use our syck_st.h, not ruby's new API
-#undef st_is_member
+//#undef st_is_member
+#undef st_retval
+#undef ST_CONTINUE
+#undef ST_STOP
+#undef ST_DELETE
+#undef st_table_entry
+#undef st_table
+#undef st_hash_type
 #undef st_init_table_with_size
+#undef st_init_table
+#undef st_init_numtable
+#undef st_init_numtable_with_size
+#undef st_init_strtable
+#undef st_init_strtable_with_size
+#undef st_free_table
+#undef st_lookup
+#undef st_insert
+#undef st_add_direct
+#undef st_copy
+#undef st_delete
+#undef st_delete_safe
+#undef st_foreach
+#undef st_cleanup_safe
+//#undef st_numcmp
+//#undef st_numhash
+
 #define st_retval        	syck_st_retval
 #define ST_CONTINUE       	syck_ST_CONTINUE
 #define ST_STOP	       	        syck_ST_STOP
 #define ST_DELETE       	syck_ST_DELETE
-#define st_is_member		syck_st_is_member
+//#define st_is_member		syck_st_is_member
 #define st_table_entry        	syck_st_table_entry
 #define st_table         	syck_st_table
 #define st_hash_type         	syck_st_hash_type
@@ -32,6 +56,8 @@
 #define st_delete_safe         	syck_st_delete_safe
 #define st_foreach         	syck_st_foreach
 #define st_cleanup_safe         syck_st_cleanup_safe
+//#define st_numcmp	        syck_ST_NUMCMP
+//#define st_numhash	        syck_ST_NUMHASH
 #endif
 
 typedef struct st_table st_table;
@@ -57,6 +83,7 @@ enum st_retval {ST_CONTINUE, ST_STOP, ST_DELETE};
 enum syck_st_retval {syck_ST_CONTINUE, syck_ST_STOP, syck_ST_DELETE};
 #endif
 
+#undef st_is_member
 #define st_is_member(table,key) st_lookup(table,key,(char **)0)
 
 /*@null@*/
@@ -100,9 +127,13 @@ void st_foreach(st_table *table,
 void st_cleanup_safe(st_table *table, char *never)
 	/*@modifies table @*/;
 
+#undef ST_NUMCMP
+#undef ST_NUMHASH
 #define ST_NUMCMP	((int (*)()) 0)
 #define ST_NUMHASH	((int (*)()) -2)
 
+#undef st_numcmp
+#undef st_numhash
 #define st_numcmp	ST_NUMCMP
 #define st_numhash	ST_NUMHASH
 

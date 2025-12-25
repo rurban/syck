@@ -313,7 +313,7 @@ TAG     {   char *qstr;
                 int qidx = strlen( qstr );
                 if ( qstr[1] == '\0' )
                 {
-                    free( qstr );
+                    S_FREE( qstr );
                     return YAML_ITRANSFER;
                 }
 
@@ -328,7 +328,7 @@ TAG     {   char *qstr;
                     sycklval->name[0] = '\0';
                     strcat( sycklval->name, lvl->domain );
                     strncat( sycklval->name, qstr + 2, qidx - 2 );
-                    free( qstr );
+                    S_FREE( qstr );
                 }
                 else
                 {
@@ -342,20 +342,20 @@ TAG     {   char *qstr;
 
                     if ( carat < qend )
                     {
-                        free( lvl->domain );
+                        S_FREE( lvl->domain );
                         lvl->domain = syck_strndup( qstr + 1, carat - ( qstr + 1 ) );
                         sycklval->name = S_ALLOC_N( char, ( qend - carat ) + strlen( lvl->domain ) );
                         sycklval->name[0] = '\0';
                         strcat( sycklval->name, lvl->domain );
                         strncat( sycklval->name, carat + 1, ( qend - carat ) - 1 );
-                        free( qstr );
+                        S_FREE( qstr );
                     }
                     else
                     {
                         sycklval->name = S_ALLOC_N( char, strlen( qstr ) );
                         sycklval->name[0] = '\0';
                         S_MEMCPY( sycklval->name, qstr + 1, char, strlen( qstr ) );
-                        free( qstr );
+                        S_FREE( qstr );
                     }
                 }
                 return YAML_TRANSFER;

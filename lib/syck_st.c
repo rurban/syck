@@ -510,8 +510,8 @@ delete_never(SHIM(const char *key), void *value, void *never)
 
 void
 st_foreach(st_table *table,
-		enum st_retval (*func)(const char *key, void *record, void *arg),
-		void *arg)
+           enum st_retval (*func)(const char *key, void *record, void *arg),
+           void *arg)
 {
     st_table_entry *ptr, *last, *tmp;
     enum st_retval retval;

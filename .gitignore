@@ -17,8 +17,9 @@ config/ltmain.sh
 config/missing
 config/ylwrap
 configure
-ext/ruby/config.save
+ext/ruby/Gemfile.lock
 ext/ruby/ext
+ext/ruby/pkg
 ext/yamlbyte/.libs/
 ext/yamlbyte/ybext
 ext/yamlbyte/ybext.lo

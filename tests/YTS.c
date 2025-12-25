@@ -925,6 +925,10 @@ static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
   TestNode map[] = {
       {T_STR, 0, "not-date", NULL, 0},
       {T_STR, "tag:yaml.org,2002:str", "2002-04-28", NULL, 0},
+      {T_STR, 0, "not-int", NULL, 0},
+      {T_STR, "tag:yaml.org,2002:str", "2002", NULL, 0},
+      {T_STR, 0, "forced-float", NULL, 0},
+      {T_STR, "tag:yaml.org,2002:float", "2002", NULL, 0},
       {T_STR, 0, "picture", NULL, 0},
       {T_STR, "tag:yaml.org,2002:binary",
        "R0lGODlhDAAMAIQAAP//9/"
@@ -942,15 +946,16 @@ static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
   CuStreamCompare(tc,
 
                   /* YAML document */
-                  "not-date: !str 2002-04-28\n"
-                  "\n"
-                  "picture: !binary |\n"
+                  "not-date: !!str 2002-04-28\n"
+                  "not-int: !!str 2002\n"
+                  "forced-float: !!float 2002\n"
+                  "picture: !!binary |\n"
                   " R0lGODlhDAAMAIQAAP//9/X\n"
                   " 17unp5WZmZgAAAOfn515eXv\n"
                   " Pz7Y6OjuDg4J+fn5OTk6enp\n"
                   " 56enmleECcgggoBADs=\n"
                   "\n"
-                  "application specific tag: !!something |\n"
+                  "application specific tag: !something |\n"
                   " The semantics of the tag\n"
                   " above may be different for\n"
                   " different documents.\n",

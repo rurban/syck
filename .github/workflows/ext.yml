@@ -43,10 +43,17 @@ jobs:
         sudo apt install -y ruby-dev
     - run: ./bootstrap
     - run: ./configure
-    - run: |
+    - name: build
+      run: |
         cd ext/ruby && \
         ruby install.rb config && \
-        ruby install.rb setup
+        ruby install.rb setup && \
+        sudo ruby install.rb install
+    - name: test
+      run: |
+        cd ext/ruby && \
+        ruby tests/basic.rb && \
+        cd yts && ruby yts.rb
       continue-on-error: true
   php:
     runs-on: ubuntu-latest

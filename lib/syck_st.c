@@ -177,6 +177,9 @@ new_size(int size)
     for (i=3; i<31; i++) {
 	if ((1<<i) > (unsigned long)size) return 1<<i;
     }
+    fprintf(stderr, "st_table: hash table size %d too large", size);
+    fflush(stderr);
+    exit(EXIT_FAILURE);
     return -1;
 #else
     int newsize;
@@ -188,6 +191,9 @@ new_size(int size)
 	if (newsize > size) return primes[i];
     }
     /* Ran out of polynomials */
+    fprintf(stderr, "st_table: hash table size %d too large", size);
+    fflush(stderr);
+    exit(EXIT_FAILURE);
     return -1;			/* should raise exception */
 #endif
 }

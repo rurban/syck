@@ -33,6 +33,7 @@ __attribute__noreturn__
 void syck_vmefail(size_t size)
 {
     fprintf(stderr, "memory alloc (%u bytes) returned NULL.\n", (unsigned)size);
+    fflush( stderr );
     exit(EXIT_FAILURE);
     /*@notreached@*/
 }

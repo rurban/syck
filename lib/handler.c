@@ -159,6 +159,8 @@ syck_xprivate( const char *type_id, int type_len )
     return uri;
 }
 
+__attribute__malloc__
+__attribute__warn_unused_result__
 char *
 syck_taguri( const char *domain, const char *type_id, int type_len )
 {

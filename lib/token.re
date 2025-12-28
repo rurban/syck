@@ -545,10 +545,8 @@ Plain3:
 /*!re2c
 
 YINDENT             {   int indt_len, nl_count = 0;
-                        SyckLevel *lvl;
                         char *tok = YYTOKEN;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
-                        lvl = CURRENT_LEVEL();
 
                         if ( indt_len <= parentIndent )
                         {

@@ -30,12 +30,11 @@ void syck_assert( const char *file_name, unsigned line_num )
 /*@-modfilesys@*/
 /*@only@*/ /*@null@*/
 __attribute__noreturn__
-void *syck_vmefail(size_t size)
+void syck_vmefail(size_t size)
 {
     fprintf(stderr, "memory alloc (%u bytes) returned NULL.\n", (unsigned)size);
     exit(EXIT_FAILURE);
     /*@notreached@*/
-    return NULL;
 }
 /*@=modfilesys@*/
 

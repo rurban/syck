@@ -487,6 +487,7 @@ __attribute__warn_unused_result__
 char *syck_xprivate( const char *type_id, int type_len )
 	/*@*/;
 /*@null@*/
+__attribute__malloc__
 __attribute__warn_unused_result__
 char *syck_taguri( const char *domain, const char *type_id, int type_len )
 	/*@*/;
@@ -510,7 +511,7 @@ void try_tag_implicit( SyckNode *n, int taguri )
 /*@observer@*/
 __attribute__warn_unused_result__
 __attribute__returns_nonnull__
-char *syck_match_implicit( const char *str, size_t len )
+const char *syck_match_implicit( const char *str, size_t len )
 	/*@*/;
 
 /*

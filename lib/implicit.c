@@ -22,7 +22,7 @@
 void
 try_tag_implicit( SyckNode *n, int taguri )
 {
-    char *tid = "";
+    const char *tid = "";
     switch ( n->kind )
     {
         case syck_str_kind:
@@ -48,10 +48,10 @@ try_tag_implicit( SyckNode *n, int taguri )
     }
 }
 
-char *syck_match_implicit( const char *str, size_t len )
+const char *syck_match_implicit( const char *str, size_t len )
 {
     char *marker;
-    const char *cursor = str;
+    char *cursor = (char *)str;
     const char *limit = str + len;
 
 

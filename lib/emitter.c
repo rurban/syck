@@ -680,7 +680,7 @@ void syck_emit_scalar( SyckEmitter *e, char *tag, enum scalar_style force_style,
     }
 
     scan = syck_scan_scalar( force_width, str, len );
-    implicit = syck_match_implicit( str, len );
+    implicit = (char *)syck_match_implicit( str, len );
 
     /* quote strings which default to implicits */
     implicit = syck_taguri( YAML_DOMAIN, implicit, strlen( implicit ) );

@@ -105,6 +105,7 @@ syck_base64dec( char *s, long len )
 /*
  * Allocate an emitter
  */
+__attribute__malloc__
 SyckEmitter *
 syck_new_emitter(void)
 {

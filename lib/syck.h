@@ -35,11 +35,12 @@ extern "C" {
 #endif
 
 /*
- * Memory Allocation
+ * Memory Allocation (using ruby's xmalloc with ext/ruby)
  */
 
 #if DEBUG
-  void syck_assert( const char *file_name, unsigned line_num )
+__attribute__noreturn__
+void syck_assert( const char *file_name, unsigned line_num )
 	/*@globals fileSystem @*/
 	/*@modifies fileSystem @*/;
 # define ASSERT(f) if ( !f ) syck_assert( __FILE__, __LINE__ )
@@ -54,6 +55,7 @@ extern "C" {
 #if !defined(xmalloc)
 #define	xmalloc(_n)	malloc(_n)
 #define	xrealloc(_p,_n) realloc((_p), (_n))
+#define	xfree(_n)       free((_n))
 #endif
 
 #define ALLOC_CT 8
@@ -62,9 +64,9 @@ extern "C" {
 #define S_ALLOC(type) (type*)xmalloc(sizeof(type))
 #define S_REALLOC_N(var,type,n) (var)=(type*)xrealloc((char*)(var),sizeof(type)*(n))
 #ifndef CU_TEST_H    
-#define S_FREE(n) free((void *)n); n = NULL;
+#define S_FREE(n) xfree((void *)n); n = NULL;
 #else
-#define S_FREE(n) free((void *)n);
+#define S_FREE(n) xfree((void *)n);
 #endif
 
 #define S_ALLOCA_N(type,n) (type*)alloca(sizeof(type)*(n))
@@ -75,7 +77,7 @@ extern "C" {
 #define S_MEMCMP(p1,p2,type,n) memcmp((p1), (p2), sizeof(type)*(n))
 
 /*
- * Compiler attribs
+ * Compiler attributes
  */
 #if defined(HAVE_FUNC_ATTRIBUTE_NONNULL) && !defined(__cplusplus)
 /* g++ has some problem with this attribute */
@@ -103,6 +105,11 @@ extern "C" {
 #  define __attribute__const__              __attribute__((__const__))
 #else
 #  define __attribute__const__
+#endif
+#ifdef HAVE_FUNC_ATTRIBUTE_MALLOC
+#  define __attribute__malloc__              __attribute__((__malloc__))
+#else
+#  define __attribute__malloc__
 #endif
 #ifdef HAVE_FUNC_ATTRIBUTE_UNUSED
 #  define __attribute__unused__             __attribute__((__unused__))
@@ -461,36 +468,48 @@ struct _syck_emitter_node {
 /*
  * Handler prototypes
  */
+__attribute__warn_unused_result__
 SYMID syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 	/*@modifies n @*/;
+__attribute__warn_unused_result__
 SyckNode *syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
 	/*@modifies p, n @*/;
 void syck_hdlr_remove_anchor( SyckParser *p, char *a )
 	/*@modifies p, a @*/;
+__attribute__warn_unused_result__
+__attribute__returns_nonnull__
 SyckNode *syck_hdlr_get_anchor( SyckParser *p, char *a )
 	/*@modifies p, a @*/;
 void syck_add_transfer( /*@only@*/ char *uri, SyckNode *n, int taguri )
 	/*@modifies n, uri @*/;
 /*@null@*/
+__attribute__warn_unused_result__
 char *syck_xprivate( const char *type_id, int type_len )
 	/*@*/;
 /*@null@*/
+__attribute__warn_unused_result__
 char *syck_taguri( const char *domain, const char *type_id, int type_len )
 	/*@*/;
+__attribute__warn_unused_result__
 int syck_tagcmp( /*@null@*/ const char *tag1, /*@null@*/ const char *tag2 )
 	/*@*/;
+__attribute__warn_unused_result__
 int syck_add_sym( SyckParser *p, void *data )
 	/*@modifies p @*/;
-int syck_lookup_sym( SyckParser *p, SYMID, char **data )
+int syck_lookup_sym( SyckParser *p, SYMID, char **out )
 	/*@modifies *data @*/;
+__attribute__warn_unused_result__
 int syck_try_implicit( SyckNode *n )
 	/*@*/;
 /*@null@*/
+__attribute__warn_unused_result__
 char *syck_type_id_to_uri( char *type_id )
 	/*@*/;
 void try_tag_implicit( SyckNode *n, int taguri )
 	/*@modifies n @*/;
 /*@observer@*/
+__attribute__warn_unused_result__
+__attribute__returns_nonnull__
 char *syck_match_implicit( const char *str, size_t len )
 	/*@*/;
 
@@ -498,22 +517,31 @@ char *syck_match_implicit( const char *str, size_t len )
  * API prototypes
  */
 /*@null@*/
+__attribute__malloc__
+__attribute__warn_unused_result__
 char *syck_strndup( const char *buf, long len )
 	/*@*/;
 long syck_io_file_read( char *buf, SyckIoFile *file, long max_size, long skip )
 	/*@globals fileSystem @*/
 	/*@modifies buf, file, fileSystem @*/;
+__attribute__warn_unused_result__
 long syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
 	/*@modifies buf, str @*/;
 /*@null@*/
+__attribute__warn_unused_result__
 char *syck_base64enc( char *, long )
 	/*@*/;
 /*@null@*/
+__attribute__warn_unused_result__
 char *syck_base64dec( char *, long )
 	/*@*/;
 /*@null@*/
+__attribute__malloc__
+__attribute__warn_unused_result__
+__attribute__returns_nonnull__
 SyckEmitter *syck_new_emitter(void)
 	/*@*/;
+__attribute__warn_unused_result__
 SYMID syck_emitter_mark_node( SyckEmitter *e, st_data_t )
 	/*@modifies e @*/;
 void syck_emitter_ignore_id( SyckEmitter *e, SYMID )
@@ -556,8 +584,12 @@ void syck_emit_tag( SyckEmitter *e, /*@null@*/ char *tag, /*@null@*/ char *ignor
 	/*@modifies e @*/;
 void syck_emit_indent( SyckEmitter *e )
 	/*@modifies e @*/;
+__attribute__warn_unused_result__
+__attribute__returns_nonnull__
 SyckLevel *syck_emitter_current_level( SyckEmitter *e )
 	/*@*/;
+__attribute__warn_unused_result__
+__attribute__returns_nonnull__
 SyckLevel *syck_emitter_parent_level( SyckEmitter *e )
 	/*@*/;
 void syck_emitter_pop_level( SyckEmitter *e )
@@ -567,6 +599,9 @@ void syck_emitter_add_level( SyckEmitter *e, int, enum syck_level_status )
 void syck_emitter_reset_levels( SyckEmitter *e )
 	/*@modifies e @*/;
 /*@null@*/
+__attribute__malloc__
+__attribute__warn_unused_result__
+__attribute__returns_nonnull__
 SyckParser *syck_new_parser(void)
 	/*@*/;
 void syck_free_parser( SyckParser *p )
@@ -577,6 +612,7 @@ void syck_parser_implicit_typing( SyckParser *p, int )
 	/*@modifies p @*/;
 void syck_parser_taguri_expansion( SyckParser *p, int )
 	/*@modifies p @*/;
+__attribute__warn_unused_result__
 int syck_scan_scalar( int, char *, long )
 	/*@*/;
 void syck_parser_handler( SyckParser *p, SyckNodeHandler )
@@ -593,6 +629,7 @@ void syck_parser_str( SyckParser *p, char *, long, /*@null@*/ SyckIoStrRead )
 	/*@modifies p @*/;
 void syck_parser_str_auto( SyckParser *p, char *, /*@null@*/ SyckIoStrRead )
 	/*@modifies p @*/;
+__attribute__returns_nonnull__
 SyckLevel *syck_parser_current_level( SyckParser *p )
 	/*@*/;
 void syck_parser_add_level( SyckParser *p, int, enum syck_level_status )
@@ -621,12 +658,15 @@ char *syck_yaml2byte( char *yamlstr )
 /*
  * Allocation prototypes
  */
+__attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_map(void)
 	/*@*/;
+__attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_seq(void)
 	/*@*/;
+__attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_str(void)
 	/*@*/;
@@ -635,9 +675,13 @@ void syck_free_node( SyckNode *n )
 void syck_free_members( SyckNode *n )
 	/*@modifies n @*/;
 /*@null@*/
+__attribute__malloc__
+__attribute__warn_unused_result__
 SyckNode *syck_new_str( char *str, enum scalar_style style )
 	/*@*/;
 /*@null@*/
+__attribute__malloc__
+__attribute__warn_unused_result__
 SyckNode *syck_new_str2( char *str, long len, enum scalar_style style )
 	/*@*/;
 void syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
@@ -650,6 +694,8 @@ void syck_str_blow_away_commas( SyckNode *n )
 char *syck_str_read( SyckNode *n )
 	/*@*/;
 /*@null@*/
+__attribute__malloc__
+__attribute__warn_unused_result__
 SyckNode *syck_new_map( SYMID key, SYMID value )
 	/*@*/;
 void syck_map_empty( SyckNode *n )

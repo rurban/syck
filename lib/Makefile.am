@@ -11,7 +11,7 @@ AM_YFLAGS = -d -t -v -p syck
 lib_LTLIBRARIES = libsyck.la
 include_HEADERS = syck.h syck_st.h
 noinst_HEADERS = yamlbyte.h gram.h
-DISTCLEANFILES = token.c implicit.c bytecode.c
+DISTCLEANFILES = gram.c gram.h token.c implicit.c bytecode.c
 
 libsyck_a_SOURCES = \
 	emitter.c \
@@ -39,7 +39,13 @@ libsyck_la_SOURCES = $(libsyck_a_SOURCES)
 
 REC = @REC@
 .re.c:
-	if test -n "$(REC)"; then $(REC) $< > $@.new && mv $@.new $@; fi
+	if test -n "$(REC)"; then \
+	  $(REC) --no-generation-date $< | sed -e's,"<stdout>","$@",' > $@.new && \
+	  chmod +w $@ || true;\
+	  echo "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */" > $@; \
+	  cat $@.new >>$@;\
+	  chmod -w $@;\
+	fi
 
 # emacs flymake-mode
 check-syntax:
@@ -56,15 +62,18 @@ SYCK_SPLINT_SRCS = \
 	syck.c \
 	syck_st.c \
 	gram.c \
-	bytecode.c \
 	yaml2byte.c \
+	bytecode.c \
 	token.c \
 	implicit.c
 
 gram.c:	gram.y
-	$(YACC) $(AM_YFLAGS) -o $@ $<
+	-chmod +w gram.c gram.h
+	$(YACC) $(AM_YFLAGS) -o gram.c $<
 	-@if test -f gram.c; then \
-	{ echo "/*@-globs -mods -modnomods -moduncon -modunconnomods @*/";\
+	{ \
+	  echo "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */";\
+	  echo "/*@-globs -mods -modnomods -moduncon -modunconnomods @*/";\
 	  echo "/*@-noeffect -noeffectuncon @*/";\
 	  echo "/*@-nullassign @*/";\
 	  echo "/*@-readonlytrans @*/";\
@@ -78,13 +87,16 @@ gram.c:	gram.y
 	  echo "/*@=noeffect =noeffectuncon @*/";\
 	  echo "/*@=globs =mods =modnomods =moduncon =modunconnomods @*/";\
 	} > _gram.c ;\
-	  mv -f _gram.c gram.c; \
+	  mv _gram.c gram.c;\
 	  sed -i 's,int syckparse (void),int syckparse (void*),' gram.h; \
 	  sed -i 's,^yyparse (void),yyparse (void *parser),' gram.c; \
 	  sed -i 's/yylex (\&yylval)/yylex (\&yylval, parser)/' gram.c; \
+	  chmod -w gram.c gram.h; \
 	fi
 
-BUILT_SOURCES = gram.c gram.h
+BUILT_SOURCES = gram.c gram.h bytecode.c \
+	token.c \
+	implicit.c
 
 .PHONY: sources
 sources:

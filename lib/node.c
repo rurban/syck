@@ -13,6 +13,7 @@
 /*
  * Node allocation functions
  */
+__attribute__malloc__
 SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
 	/*@*/
@@ -49,6 +50,7 @@ syck_free_node( SyckNode *n )
     S_FREE( n );
 }
 
+__attribute__malloc__
 SyckNode *
 syck_alloc_map(void)
 {
@@ -86,6 +88,7 @@ syck_alloc_seq(void)
     return n;
 }
 
+__attribute__malloc__
 SyckNode *
 syck_alloc_str(void)
 {
@@ -109,6 +112,7 @@ syck_new_str( char *str, enum scalar_style style )
     return syck_new_str2( str, strlen( str ), style );
 }
 
+__attribute__malloc__
 SyckNode *
 syck_new_str2( char *str, long len, enum scalar_style style )
 {

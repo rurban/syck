@@ -16,8 +16,8 @@
  * Custom assert
  */
 #if DEBUG
-void 
-syck_assert( const char *file_name, unsigned line_num )
+__attribute__noreturn__
+void syck_assert( const char *file_name, unsigned line_num )
 {
     fflush( NULL );
     fprintf( stderr, "\nAssertion failed: %s, line %u\n",
@@ -29,6 +29,7 @@ syck_assert( const char *file_name, unsigned line_num )
 
 /*@-modfilesys@*/
 /*@only@*/ /*@null@*/
+__attribute__noreturn__
 void *syck_vmefail(size_t size)
 {
     fprintf(stderr, "memory alloc (%u bytes) returned NULL.\n", (unsigned)size);
@@ -166,6 +167,7 @@ syck_parser_set_root_on_error( SyckParser *p, SYMID roer )
 /*
  * Allocate the parser
  */
+__attribute__malloc__
 SyckParser *
 syck_new_parser(void)
 {

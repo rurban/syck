@@ -1,3 +1,4 @@
+/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */
 /*@-globs -mods -modnomods -moduncon -modunconnomods @*/
 /*@-noeffect -noeffectuncon @*/
 /*@-nullassign @*/

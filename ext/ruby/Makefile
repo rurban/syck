@@ -16,5 +16,5 @@ clean:
 	cd ext/syck && \
 	rm lib/syck.so 2>/dev/null; \
 	for f in *; do \
-	  if grep -q "$$f" MANIFEST; then true; else rm "$$f"; fi; \
+	  if grep -q "$$f" MANIFEST; then true; else rm -f "$$f"; fi; \
 	done

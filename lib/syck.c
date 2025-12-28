@@ -212,9 +212,15 @@ syck_lookup_sym( SyckParser *p, SYMID id, char **data )
     return st_lookup( p->syms, (st_data_t)id, (void *)data );
 }
 
+#ifdef HAVE_RUBY_ST_H
+int
+syck_st_free_nodes( st_data_t key, /*@only@*/ st_data_t record,
+                    st_data_t arg )
+#else
 enum st_retval
 syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
                     SHIM(void *arg) )
+#endif
 /*@modifies record @*/
 {
     SyckNode *n = (SyckNode *)record;
@@ -234,14 +240,14 @@ syck_st_free( SyckParser *p )
      */
     if ( p->anchors != NULL )
     {
-        st_foreach( p->anchors, syck_st_free_nodes, NULL );
+        st_foreach( p->anchors, syck_st_free_nodes, 0UL );
         st_free_table( p->anchors );
         p->anchors = NULL;
     }
 
     if ( p->bad_anchors != NULL )
     {
-        st_foreach( p->bad_anchors, syck_st_free_nodes, NULL );
+        st_foreach( p->bad_anchors, syck_st_free_nodes, 0UL );
         st_free_table( p->bad_anchors );
         p->bad_anchors = NULL;
     }

@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAVE_ST_H
-#include <st.h>
+#ifdef HAVE_RUBY_ST_H
+#include <ruby.h>
 #else
 #include "syck_st.h"
 #endif
@@ -64,7 +64,11 @@ void syck_assert( const char *file_name, unsigned line_num )
 #define S_ALLOC(type) (type*)xmalloc(sizeof(type))
 #define S_REALLOC_N(var,type,n) (var)=(type*)xrealloc((char*)(var),sizeof(type)*(n))
 #ifndef CU_TEST_H    
+#ifdef HAVE_RUBY_ST_H
+#define S_FREE(n) xfree((void *)n); n = 0UL;
+#else
 #define S_FREE(n) xfree((void *)n); n = NULL;
+#endif
 #else
 #define S_FREE(n) xfree((void *)n);
 #endif

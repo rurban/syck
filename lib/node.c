@@ -37,7 +37,8 @@ void
 syck_free_node( SyckNode *n )
 {
     syck_free_members( n );
-    if ( n->type_id != NULL )
+#ifndef HAVE_RUBY_ST_H
+    if ( n->type_id != NULL && n->type_id != (void*)1UL)
     {
         S_FREE( n->type_id );
         n->type_id = NULL;
@@ -48,6 +49,7 @@ syck_free_node( SyckNode *n )
         n->anchor = NULL;
     }
     S_FREE( n );
+#endif
 }
 
 __attribute__malloc__
@@ -138,7 +140,7 @@ syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
 void
 syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
 {
-    if ( n->data.str != NULL ) 
+    if ( n->data.str->ptr != NULL )
     {
         S_FREE( n->data.str->ptr );
         n->data.str->ptr = NULL;

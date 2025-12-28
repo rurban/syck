@@ -57,7 +57,7 @@ fi
 AC_CHECK_INCLUDES_DEFAULT
 AC_PROG_EGREP
 
-AC_CHECK_HEADERS(alloca.h stdlib.h string.h sal.h)
+AC_CHECK_HEADERS(alloca.h stdlib.h string.h sal.h ruby/st.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_SIZEOF(int, 4)

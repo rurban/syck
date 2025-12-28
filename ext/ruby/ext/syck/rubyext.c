@@ -789,10 +789,10 @@ syck_set_model(VALUE p, VALUE input, VALUE model)
     syck_parser_bad_anchor_handler( parser, rb_syck_bad_anchor_handler );
 }
 
-enum syck_st_retval
-syck_st_mark_nodes( const char *key, void *n, void *arg )
+int
+syck_st_mark_nodes( st_data_t key, st_data_t n, st_data_t arg )
 {
-    if ( n != (void*)1 ) syck_node_mark( (SyckNode *)n );
+    if ( n != 1UL ) syck_node_mark( (SyckNode *)n );
     return ST_CONTINUE;
 }
 

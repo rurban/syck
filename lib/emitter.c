@@ -139,9 +139,15 @@ syck_new_emitter(void)
     return e;
 }
 
+#ifdef HAVE_RUBY_ST_H
+int
+syck_st_free_anchors( st_data_t key, /*@only@*/ st_data_t name,
+                    st_data_t arg )
+#else
 enum st_retval
 syck_st_free_anchors( SHIM(const char *key), /*@only@*/ void *name,
                       SHIM(void *arg) )
+#endif
 /*@modifies name @*/
 {
     UNUSED(key);
@@ -159,7 +165,7 @@ syck_emitter_st_free( SyckEmitter *e )
      */
     if ( e->anchors != NULL )
     {
-        st_foreach( e->anchors, syck_st_free_anchors, NULL );
+        st_foreach( e->anchors, syck_st_free_anchors, 0UL );
         st_free_table( e->anchors );
         e->anchors = NULL;
     }

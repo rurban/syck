@@ -229,11 +229,6 @@
     }
 
 /*
- * Argjh!  I hate globals!  Here for syckerror() only!
- */
-SyckParser *syck_parser_ptr = NULL;
-
-/*
  * Accessory funcs later in this file.
  */
 void eat_comments( SyckParser * );
@@ -259,11 +254,11 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
         return sycklex_yaml_utf8( sycklval, parser );
 
         case syck_yaml_utf16:
-            syckerror( "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
+            syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
         break;
 
         case syck_yaml_utf32:
-            syckerror( "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
+            syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
         break;
 
         case syck_bytecode_utf8:
@@ -279,7 +274,6 @@ int
 sycklex_yaml_utf8( YYSTYPE *sycklval, SyckParser *parser )
 {
     int doc_level = 0;
-    syck_parser_ptr = parser;
     if ( YYCURSOR == NULL )
     {
         syck_parser_read( parser );
@@ -1149,12 +1143,12 @@ syckwrap(void)
 }
 
 void
-syckerror( const char *msg )
+syckerror( SyckParser *parser, const char *msg )
 {
-    if ( syck_parser_ptr->error_handler == NULL )
-        syck_parser_ptr->error_handler = syck_default_error_handler;
+    if ( parser->error_handler == NULL )
+        parser->error_handler = syck_default_error_handler;
 
-    syck_parser_ptr->root = syck_parser_ptr->root_on_error;
-    (syck_parser_ptr->error_handler)(syck_parser_ptr, msg);
+    parser->root = parser->root_on_error;
+    (parser->error_handler)(parser, msg);
 }
 

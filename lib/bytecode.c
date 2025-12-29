@@ -29,8 +29,6 @@
 #define YYLINE      parser->linect
 #define YYFILL(n)   syck_parser_read(parser)
 
-extern SyckParser *syck_parser_ptr;
-
 char *get_inline( SyckParser *parser );
 
 /*
@@ -136,7 +134,6 @@ int
 sycklex_bytecode_utf8( YYSTYPE *sycklval, SyckParser *parser )
 {
     SyckLevel *lvl;
-    syck_parser_ptr = parser;
     if ( YYCURSOR == NULL )
     {
         syck_parser_read( parser );
@@ -149,7 +146,7 @@ sycklex_bytecode_utf8( YYSTYPE *sycklval, SyckParser *parser )
         return t;
     }
 
-#line 173 "bytecode.re"
+#line 170 "bytecode.re"
 
 
     lvl = CURRENT_LEVEL();
@@ -163,7 +160,7 @@ sycklex_bytecode_utf8( YYSTYPE *sycklval, SyckParser *parser )
     YYTOKEN = YYCURSOR;
 
 
-#line 166 "bytecode.c"
+#line 163 "bytecode.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
@@ -179,11 +176,11 @@ yy1:
 yy2:
 	++YYCURSOR;
 yy3:
-#line 200 "bytecode.re"
+#line 197 "bytecode.re"
 	{   YYPOS(0);
             goto Document;
         }
-#line 186 "bytecode.c"
+#line 183 "bytecode.c"
 yy4:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
@@ -193,7 +190,7 @@ yy4:
 	}
 yy5:
 	++YYCURSOR;
-#line 187 "bytecode.re"
+#line 184 "bytecode.re"
 	{   if ( lvl->status == syck_lvl_header )
             {
                 CHK_NL(YYCURSOR);
@@ -206,7 +203,7 @@ yy5:
                 return 0;
             }
         }
-#line 209 "bytecode.c"
+#line 206 "bytecode.c"
 yy6:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -214,7 +211,7 @@ yy6:
 		default: goto yy1;
 	}
 }
-#line 204 "bytecode.re"
+#line 201 "bytecode.re"
 
 
 Document:
@@ -228,7 +225,7 @@ Document:
         YYTOKEN = YYCURSOR;
 
 
-#line 231 "bytecode.c"
+#line 228 "bytecode.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
@@ -252,15 +249,15 @@ Document:
 yy8:
 yy9:
 	++YYCURSOR;
-#line 382 "bytecode.re"
+#line 379 "bytecode.re"
 	{   ENSURE_YAML_IEND(lvl, -1);
             YYPOS(0);
             return 0;
         }
-#line 260 "bytecode.c"
+#line 257 "bytecode.c"
 yy10:
 	++YYCURSOR;
-#line 369 "bytecode.re"
+#line 366 "bytecode.re"
 	{   CHK_NL(YYCURSOR);
             if ( lvl->status == syck_lvl_seq )
             {
@@ -273,7 +270,7 @@ yy10:
             }
             goto Document;
         }
-#line 276 "bytecode.c"
+#line 273 "bytecode.c"
 yy11:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -282,14 +279,14 @@ yy11:
 	}
 yy12:
 	++YYCURSOR;
-#line 293 "bytecode.re"
+#line 290 "bytecode.re"
 	{   ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_open);
             sycklval->name = get_inline( parser );
             syck_hdlr_remove_anchor( parser, sycklval->name );
             CHK_NL(YYCURSOR);
             return YAML_ANCHOR;
         }
-#line 292 "bytecode.c"
+#line 289 "bytecode.c"
 yy13:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -320,24 +317,24 @@ yy16:
 	}
 yy17:
 	++YYCURSOR;
-#line 300 "bytecode.re"
+#line 297 "bytecode.re"
 	{   ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_str);
             sycklval->name = get_inline( parser );
             POP_LEVEL();
             if ( *( YYCURSOR - 1 ) == '\n' ) YYCURSOR--;
             return YAML_ALIAS;
         }
-#line 330 "bytecode.c"
+#line 327 "bytecode.c"
 yy18:
 	++YYCURSOR;
-#line 289 "bytecode.re"
+#line 286 "bytecode.re"
 	{   ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_str);
             goto Scalar;
         }
-#line 337 "bytecode.c"
+#line 334 "bytecode.c"
 yy19:
 	++YYCURSOR;
-#line 307 "bytecode.re"
+#line 304 "bytecode.re"
 	{   char *qstr;
             ADD_BYTE_LEVEL(lvl, lvl->spaces + 1, syck_lvl_open);
             qstr = get_inline( parser );
@@ -397,20 +394,20 @@ yy19:
             sycklval->name = qstr;
             return YAML_TAGURI;
         }
-#line 400 "bytecode.c"
+#line 397 "bytecode.c"
 yy20:
 	++YYCURSOR;
-#line 367 "bytecode.re"
+#line 364 "bytecode.re"
 	{   goto Comment; }
-#line 405 "bytecode.c"
+#line 402 "bytecode.c"
 yy21:
 	++YYCURSOR;
-#line 218 "bytecode.re"
+#line 215 "bytecode.re"
 	{   ENSURE_YAML_IEND(lvl, -1);
                 YYPOS(0);
                 return 0;
             }
-#line 413 "bytecode.c"
+#line 410 "bytecode.c"
 yy22:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -419,7 +416,7 @@ yy22:
 	}
 yy23:
 	++YYCURSOR;
-#line 253 "bytecode.re"
+#line 250 "bytecode.re"
 	{   if ( lvl->status == syck_lvl_seq && lvl->ncount == 0 )
             {
                 lvl->ncount++;
@@ -455,7 +452,7 @@ yy23:
             CHK_NL(YYCURSOR);
             return YAML_IEND;
         }
-#line 458 "bytecode.c"
+#line 455 "bytecode.c"
 yy24:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -464,7 +461,7 @@ yy24:
 	}
 yy25:
 	++YYCURSOR;
-#line 223 "bytecode.re"
+#line 220 "bytecode.re"
 	{   int complex = 0;
             if ( lvl->ncount % 2 == 0 && ( lvl->status == syck_lvl_map || lvl->status == syck_lvl_seq ) )
             {
@@ -479,7 +476,7 @@ yy25:
             }
             return YAML_IOPEN;
         }
-#line 482 "bytecode.c"
+#line 479 "bytecode.c"
 yy26:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -488,7 +485,7 @@ yy26:
 	}
 yy27:
 	++YYCURSOR;
-#line 238 "bytecode.re"
+#line 235 "bytecode.re"
 	{   int complex = 0;
             if ( lvl->ncount % 2 == 0 && ( lvl->status == syck_lvl_map || lvl->status == syck_lvl_seq ) )
             {
@@ -503,7 +500,7 @@ yy27:
             }
             return YAML_IOPEN;
         }
-#line 506 "bytecode.c"
+#line 503 "bytecode.c"
 yy28:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -511,7 +508,7 @@ yy28:
 		default: goto yy8;
 	}
 }
-#line 387 "bytecode.re"
+#line 384 "bytecode.re"
 
 
     }
@@ -521,7 +518,7 @@ Directive:
         YYTOKEN = YYCURSOR;
 
 
-#line 524 "bytecode.c"
+#line 521 "bytecode.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
@@ -537,11 +534,11 @@ yy30:
 yy31:
 	++YYCURSOR;
 yy32:
-#line 400 "bytecode.re"
+#line 397 "bytecode.re"
 	{   YYCURSOR = YYTOKEN;
                return YAML_DOCSEP;
            }
-#line 544 "bytecode.c"
+#line 541 "bytecode.c"
 yy33:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
@@ -874,10 +871,10 @@ yy36:
 	}
 yy37:
 	++YYCURSOR;
-#line 397 "bytecode.re"
+#line 394 "bytecode.re"
 	{   CHK_NL(YYCURSOR);
                goto Directive; }
-#line 880 "bytecode.c"
+#line 877 "bytecode.c"
 yy38:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -885,7 +882,7 @@ yy38:
 		default: goto yy30;
 	}
 }
-#line 403 "bytecode.re"
+#line 400 "bytecode.re"
 
 
     }
@@ -895,7 +892,7 @@ Comment:
         YYTOKEN = YYCURSOR;
 
 
-#line 898 "bytecode.c"
+#line 895 "bytecode.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
@@ -910,15 +907,15 @@ yy40:
 yy41:
 	++YYCURSOR;
 yy42:
-#line 416 "bytecode.re"
+#line 413 "bytecode.re"
 	{   goto Comment; }
-#line 915 "bytecode.c"
+#line 912 "bytecode.c"
 yy43:
 	++YYCURSOR;
-#line 413 "bytecode.re"
+#line 410 "bytecode.re"
 	{   CHK_NL(YYCURSOR);
                 goto Document; }
-#line 921 "bytecode.c"
+#line 918 "bytecode.c"
 yy44:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -926,7 +923,7 @@ yy44:
 		default: goto yy42;
 	}
 }
-#line 418 "bytecode.re"
+#line 415 "bytecode.re"
 
 
     }
@@ -944,7 +941,7 @@ Scalar2:
     tok = YYCURSOR;
 
 
-#line 947 "bytecode.c"
+#line 944 "bytecode.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
@@ -957,19 +954,19 @@ Scalar2:
 	}
 yy46:
 	++YYCURSOR;
-#line 466 "bytecode.re"
+#line 463 "bytecode.re"
 	{   YYCURSOR = tok;
             goto ScalarEnd;
         }
-#line 964 "bytecode.c"
+#line 961 "bytecode.c"
 yy47:
 	++YYCURSOR;
 yy48:
-#line 470 "bytecode.re"
+#line 467 "bytecode.re"
 	{   CAT(str, cap, idx, tok[0]);
             goto Scalar2;
         }
-#line 972 "bytecode.c"
+#line 969 "bytecode.c"
 yy49:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -979,11 +976,11 @@ yy49:
 		default: goto yy50;
 	}
 yy50:
-#line 462 "bytecode.re"
+#line 459 "bytecode.re"
 	{   YYCURSOR = tok;
             goto ScalarEnd;
         }
-#line 986 "bytecode.c"
+#line 983 "bytecode.c"
 yy51:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -992,10 +989,10 @@ yy51:
 	}
 yy52:
 	++YYCURSOR;
-#line 436 "bytecode.re"
+#line 433 "bytecode.re"
 	{   CHK_NL(tok+1);
             goto Scalar2; }
-#line 998 "bytecode.c"
+#line 995 "bytecode.c"
 yy53:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -1014,7 +1011,7 @@ yy53:
 		default: goto yy54;
 	}
 yy54:
-#line 439 "bytecode.re"
+#line 436 "bytecode.re"
 	{   CHK_NL(tok+1);
             if ( tok + 2 < YYCURSOR )
             {
@@ -1032,17 +1029,17 @@ yy54:
             }
             goto Scalar2;
         }
-#line 1035 "bytecode.c"
+#line 1032 "bytecode.c"
 yy55:
 	++YYCURSOR;
-#line 457 "bytecode.re"
+#line 454 "bytecode.re"
 	{   CHK_NL(tok+1);
             CAT(str, cap, idx, '\0');
             goto Scalar2;
         }
-#line 1043 "bytecode.c"
+#line 1040 "bytecode.c"
 }
-#line 474 "bytecode.re"
+#line 471 "bytecode.re"
 
 
 ScalarEnd:
@@ -1077,7 +1074,7 @@ Inline:
         tok = YYCURSOR;
 
 
-#line 1080 "bytecode.c"
+#line 1077 "bytecode.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
@@ -1090,25 +1087,25 @@ Inline:
 	}
 yy57:
 	++YYCURSOR;
-#line 512 "bytecode.re"
+#line 509 "bytecode.re"
 	{   YYCURSOR = tok;
                 return str;
             }
-#line 1097 "bytecode.c"
+#line 1094 "bytecode.c"
 yy58:
 	++YYCURSOR;
 yy59:
-#line 516 "bytecode.re"
+#line 513 "bytecode.re"
 	{   CAT(str, cap, idx, tok[0]);
                 goto Inline;
             }
-#line 1105 "bytecode.c"
+#line 1102 "bytecode.c"
 yy60:
 	++YYCURSOR;
-#line 509 "bytecode.re"
+#line 506 "bytecode.re"
 	{   CHK_NL(YYCURSOR);
                 return str; }
-#line 1111 "bytecode.c"
+#line 1108 "bytecode.c"
 yy61:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1116,7 +1113,7 @@ yy61:
 		default: goto yy59;
 	}
 }
-#line 520 "bytecode.re"
+#line 517 "bytecode.re"
 
 
     }

@@ -732,7 +732,7 @@ long syck_seq_count( SyckNode *seq )
 /*
  * Lexer prototypes
  */
-void syckerror( const char *msg )
+void syckerror( SyckParser *parser, const char *msg )
 	/*@*/;
 int syckparse( void * )
 	/*@globals fileSystem @*/

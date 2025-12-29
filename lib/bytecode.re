@@ -26,8 +26,6 @@
 #define YYLINE      parser->linect
 #define YYFILL(n)   syck_parser_read(parser)
 
-extern SyckParser *syck_parser_ptr;
-
 char *get_inline( SyckParser *parser );
 
 /*
@@ -133,7 +131,6 @@ int
 sycklex_bytecode_utf8( YYSTYPE *sycklval, SyckParser *parser )
 {
     SyckLevel *lvl;
-    syck_parser_ptr = parser;
     if ( YYCURSOR == NULL )
     {
         syck_parser_read( parser );

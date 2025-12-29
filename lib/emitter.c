@@ -29,7 +29,7 @@ syck_base64enc( char *s, long len )
 {
     long i = 0;
     int padding = '=';
-    char *buff = S_ALLOC_N(char, len * 4 / 3 + 6);
+    char *buff = S_ALLOC_N(char, 1 + len * 4 / 3 + 6);
 
     while (len >= 3) {
         buff[i++] = b64_table[077 & (*s >> 2)];
@@ -64,7 +64,7 @@ syck_base64dec( char *s, long len )
     static int b64_xtable[256];
     char *ptr = syck_strndup( s, len );
     char *end = ptr;
-    char *send = s + len;
+    const char *send = s + len;
 
     assert(end != NULL);
     if (first) {
@@ -72,10 +72,10 @@ syck_base64dec( char *s, long len )
         first = 0;
 
         for (i = 0; i < 256; i++) {
-        b64_xtable[i] = -1;
+            b64_xtable[i] = -1;
         }
         for (i = 0; i < 64; i++) {
-        b64_xtable[(int)b64_table[i]] = i;
+            b64_xtable[(int)b64_table[i]] = i;
         }
     }
     while (s < send) {
@@ -311,7 +311,7 @@ syck_emitter_write( SyckEmitter *e, char *str, long len )
     {
         syck_emitter_flush( e, 0 );
 	for (;;) {
-	    long rest = e->bufsize - (e->marker - e->buffer);
+	    long rest = (e->bufsize - 1) - (e->marker - e->buffer);
 	    if (len <= rest) break;
 	    S_MEMCPY( e->marker, str, char, rest );
 	    e->marker += rest;
@@ -340,14 +340,14 @@ syck_emitter_flush( SyckEmitter *e, long check_room )
      */
     if ( check_room > 0 )
     {
-        if ( e->bufsize > ( e->marker - e->buffer ) + (size_t)check_room )
+        if ( (e->bufsize - 1) > ( e->marker - e->buffer ) + (size_t)check_room )
         {
             return;
         }
     }
     else
     {
-        check_room = e->bufsize;
+        check_room = (e->bufsize - 1);
     }
 
     /*
@@ -586,7 +586,7 @@ syck_scan_scalar( int req_width, char *cursor, long len )
     }
     if ( ( cursor[0] == '-' || cursor[0] == ':' ||
            cursor[0] == '?' || cursor[0] == ',' ) &&
-           ( cursor[1] == ' ' || cursor[1] == '\n' || len == 1 ) )
+         ( len == 1 || cursor[1] == ' ' || cursor[1] == '\n' ) )
     {
             flags |= SCAN_INDIC_S;
     }

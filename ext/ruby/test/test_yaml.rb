@@ -439,6 +439,7 @@ EOY
 	# [ruby-core:23006] [Bug #1311] http://bugs.ruby-lang.org/issues/show/1311
 	#
 	def test_scan_scalar_nl
+		#require 'byebug'; byebug
 		bug1311 = '[ruby-core:23006]'
 		assert_cycle(<<EoY, bug1311)
 

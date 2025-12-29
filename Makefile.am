@@ -11,3 +11,21 @@ EXTRA_DIST = m4/ax_append_compile_flags.m4 \
 	m4/ax_require_defined.m4
 dist_doc_DATA = README README.BYTECODE README.EXT ChangeLog TODO RELEASE AUTHORS
 
+.PHONY: ext ext-test ext-clean
+ext:
+	$(MAKE) -C ext/ruby
+	$(MAKE) -C ext/php
+	$(MAKE) -C ext/yamlbyte
+	$(MAKE) -C ext/lua
+
+ext-test:
+	$(MAKE) -C ext/ruby test
+	$(MAKE) -C ext/php test
+	$(MAKE) -C ext/yamlbyte test
+	$(MAKE) -C ext/lua test
+
+ext-clean:
+	$(MAKE) -C ext/ruby clean
+	$(MAKE) -C ext/php  clean
+	$(MAKE) -C ext/yamlbyte  clean
+	$(MAKE) -C ext/lua  clean

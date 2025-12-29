@@ -559,33 +559,33 @@ void syck_free_emitter( SyckEmitter *e )
 	/*@modifies e @*/;
 void syck_emitter_clear( SyckEmitter *e )
 	/*@modifies e @*/;
-void syck_emitter_write( SyckEmitter *e, char *, long )
+void syck_emitter_write( SyckEmitter *e, const char *, long )
 	/*@modifies e @*/;
-void syck_emitter_escape( SyckEmitter *e, char *, long )
+void syck_emitter_escape( SyckEmitter *e, const char *, long )
 	/*@modifies e @*/;
 void syck_emitter_flush( SyckEmitter *e, long )
 	/*@modifies e @*/;
 void syck_emit( SyckEmitter *e, st_data_t )
 	/*@modifies e @*/;
-void syck_emit_scalar( SyckEmitter *e, char *, enum scalar_style force_style, int, int, char, char *, long )
+void syck_emit_scalar( SyckEmitter *e, const char *, enum scalar_style force_style, int, int, char, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_1quoted( SyckEmitter *e, int, char *, long )
+void syck_emit_1quoted( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_2quoted( SyckEmitter *e, int, char *, long )
+void syck_emit_2quoted( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_folded( SyckEmitter *e, int, char, char *, long )
+void syck_emit_folded( SyckEmitter *e, int, char, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_literal( SyckEmitter *e, char, char *, long )
+void syck_emit_literal( SyckEmitter *e, char, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_seq( SyckEmitter *e, char *, enum seq_style style )
+void syck_emit_seq( SyckEmitter *e, const char *, enum seq_style style )
 	/*@modifies e @*/;
 void syck_emit_item( SyckEmitter *e, st_data_t )
 	/*@modifies e @*/;
-void syck_emit_map( SyckEmitter *e, char *, enum map_style style )
+void syck_emit_map( SyckEmitter *e, const char *, enum map_style style )
 	/*@modifies e @*/;
 void syck_emit_end( SyckEmitter *e )
 	/*@modifies e @*/;
-void syck_emit_tag( SyckEmitter *e, /*@null@*/ char *tag, /*@null@*/ char *ignore )
+void syck_emit_tag( SyckEmitter *e, /*@null@*/ const char *tag, /*@null@*/ const char *ignore )
 	/*@modifies e @*/;
 void syck_emit_indent( SyckEmitter *e )
 	/*@modifies e @*/;
@@ -618,7 +618,7 @@ void syck_parser_implicit_typing( SyckParser *p, int )
 void syck_parser_taguri_expansion( SyckParser *p, int )
 	/*@modifies p @*/;
 __attribute__warn_unused_result__
-int syck_scan_scalar( int, char *, long )
+int syck_scan_scalar( int, const char *, long )
 	/*@*/;
 void syck_parser_handler( SyckParser *p, SyckNodeHandler )
 	/*@modifies p @*/;

@@ -913,7 +913,7 @@ PHP_FUNCTION(syck_dump)
 	syck_emit(emitter, extra->level);
 	syck_emitter_flush(emitter, 0);
 
-	ZVAL_STRINGL(return_value, extra->output, extra->output_size, 1);
+	ZVAL_STRINGL(return_value, extra->output, extra->output_size);
 
 	psex_free(extra);
 	efree(extra);

@@ -388,8 +388,8 @@ typedef struct _syck_emitter SyckEmitter;
 typedef struct _syck_emitter_node SyckEmitterNode;
 /*@=typeuse@*/
 
-typedef void (*SyckOutputHandler)(SyckEmitter *e, char *, long); 
-typedef void (*SyckEmitterHandler)(SyckEmitter *e, st_data_t); 
+typedef void (*SyckOutputHandler)(SyckEmitter *e, const char *, long);
+typedef void (*SyckEmitterHandler)(SyckEmitter *e, st_data_t);
 
 enum doc_stage {
     doc_open,

@@ -52,7 +52,7 @@ void CuStringAppend(CuString *str, char *text) {
   CuStringAppendLen(str, text, length);
 }
 
-void CuStringAppendLen(CuString *str, char *text, long length) {
+void CuStringAppendLen(CuString *str, const char *text, long length) {
   if (str->length + length + 1 >= str->size)
     CuStringResize(str, str->length + length + 1 + STRING_INC);
   str->length += length;

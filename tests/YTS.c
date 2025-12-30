@@ -178,7 +178,7 @@ void CuStreamCompare(CuTest *tc, char *yaml, struct test_node *stream) {
 /*
  * Setup for testing N->Y->N.
  */
-void test_output_handler(SyckEmitter *emitter, char *str, long len) {
+void test_output_handler(SyckEmitter *emitter, const char *str, long len) {
   CuString *dest = (CuString *)emitter->bonus;
   CuStringAppendLen(dest, str, len);
 }

@@ -14,7 +14,7 @@
 //
 // 1. Test the buffering -- print 10 bytes at a time
 //
-void TestSyckEmit_Output(SHIM(SyckEmitter *e), char *str, long len) {
+void TestSyckEmit_Output(SHIM(SyckEmitter *e), const char *str, long len) {
   char *tmp = syck_strndup(str, len);
   printf("OUT: %s [%ld]\n", tmp, len);
   S_FREE(tmp);

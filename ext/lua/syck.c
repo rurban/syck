@@ -16,10 +16,12 @@
 #include "lua.h"
 #include "lualib.h"
 
+#define lua_strlen(a,b) lua_rawlen(a,b)
+
 struct emitter_xtra {
 	lua_State *L;
 	luaL_Buffer output;
-	int id;
+	st_data_t id;
 };
 
 struct parser_xtra {
@@ -62,7 +64,7 @@ SYMID
 lua_syck_parser_handler(SyckParser *p, SyckNode *n)
 {
 	struct parser_xtra *bonus = (struct parser_xtra *)p->bonus;
-	int o, o2, o3 = -1;
+	long o, o2, o3 = -1;
 	SYMID oid;
 	int i;
 
@@ -184,17 +186,19 @@ void lua_syck_emitter_handler(SyckEmitter *e, st_data_t data)
 			syck_emit_scalar(e, "number", scalar_none, 0, 0, 0, buf, strlen(buf));
 			break;
 		case LUA_TTABLE:
-			if (luaL_getn(bonus->L, -1) > 0) {			/* treat it as an array */
+			if (lua_rawlen(bonus->L, -1) > 0) { /* treat it as an array */
 				syck_emit_seq(e, "table", seq_none);
 				lua_pushnil(bonus->L);  /* first key */
 				while (lua_next(bonus->L, -2) != 0) {
 					/* `key' is at index -2 and `value' at index -1 */
-					syck_emit_item(e, bonus->id++);
+					long idx = (long)bonus->id;
+					syck_emit_item(e, bonus->id);
+					bonus->id = (st_data_t)(idx + 1);
 					lua_pop(bonus->L, 1);  /* removes `value'; keeps `key' for next iteration */
 
 				}
 				syck_emit_end(e);
-			} else {									/* treat it as a map */
+			} else {	/* treat it as a map */
 				syck_emit_map(e, "table", map_none);
 				lua_pushnil(bonus->L);
 				while (lua_next(bonus->L, -2) != 0) {
@@ -212,9 +216,10 @@ void lua_syck_emitter_handler(SyckEmitter *e, st_data_t data)
 	bonus->id++;
 }
 
-static void lua_syck_mark_emitter(SyckEmitter *e, int idx)
+static void lua_syck_mark_emitter(SyckEmitter *e, st_data_t _idx)
 {
 	struct emitter_xtra *bonus = (struct emitter_xtra *)e->bonus;
+	long idx = (long)_idx;
 	int type = lua_type(bonus->L, idx);
 
 	switch (type) {
@@ -224,7 +229,7 @@ static void lua_syck_mark_emitter(SyckEmitter *e, int idx)
 				/* `key' is at index -2 and `value' at index -1 */
 				//syck_emitter_mark_node(e, bonus->id++);
 				syck_emitter_mark_node(e, bonus->id++);
-				lua_syck_mark_emitter(e, -1);
+				lua_syck_mark_emitter(e, (st_data_t)-1);
 				lua_pop(bonus->L, 1);
 			}
 			break;
@@ -234,19 +239,19 @@ static void lua_syck_mark_emitter(SyckEmitter *e, int idx)
 	}
 }
 
-
-void lua_syck_output_handler(SyckEmitter *e, char *str, long len)
+void lua_syck_output_handler(SyckEmitter *e, const char *str, long len)
 {
 	struct emitter_xtra *bonus = (struct emitter_xtra *)e->bonus;
 	luaL_addlstring(&bonus->output, str, len);
 }
 
-void lua_syck_error_handler(SyckParser *p, char *msg)
+void lua_syck_error_handler(SyckParser *p, const char *msg)
 {
 	//struct parser_xtra *bonus = (struct parser_xtra *)p->bonus;
-	luaL_error(((struct parser_xtra *)p->bonus)->orig, "Error at [Line %d, Col %d]: %s\n", p->linect, p->cursor - p->lineptr, msg );
+	luaL_error(((struct parser_xtra *)p->bonus)->orig,
+		   "Error at [Line %d, Col %d]: %s\n",
+		   p->linect, p->cursor - p->lineptr, msg );
 }
-
 
 static int syck_load(lua_State *L)
 {
@@ -256,7 +261,7 @@ static int syck_load(lua_State *L)
 	int obj;
 
 	if (!luaL_checkstring(L, 1))
-		luaL_typerror(L, 1, "string");
+		luaL_typeerror(L, 1, "string");
 
 	parser = syck_new_parser();
 	parser->bonus = S_ALLOC_N(struct parser_xtra, 1);
@@ -282,8 +287,6 @@ static int syck_load(lua_State *L)
 	return 1;
 }
 
-
-
 static int syck_dump(lua_State *L)
 {
 	SyckEmitter *emitter;
@@ -294,6 +297,7 @@ static int syck_dump(lua_State *L)
 
 
 	bonus = (struct emitter_xtra *)emitter->bonus;
+	/* create coro for the YAML output buffer */
 	bonus->L = lua_newthread(L);
 	luaL_buffinit(L, &bonus->output);
 
@@ -303,10 +307,10 @@ static int syck_dump(lua_State *L)
 	lua_pushvalue(L, -2);
 	lua_xmove(L, bonus->L, 1);
 
-	bonus->id = 1;
+	bonus->id = (st_data_t)1;
 	lua_syck_mark_emitter(emitter, bonus->id);
 
-	bonus->id = 1;
+	bonus->id = (st_data_t)1;
 	syck_emit(emitter, bonus->id);
 	syck_emitter_flush(emitter, 0);
 
@@ -316,12 +320,11 @@ static int syck_dump(lua_State *L)
 	
 	if (bonus != NULL )
 		S_FREE( bonus );
-	
 
 	return 1;
 }
 
-static const luaL_reg sycklib[] = {
+static const luaL_Reg sycklib[] = {
 	{"load",	syck_load },
 	{"dump",	syck_dump },
 	{NULL, NULL}
@@ -330,21 +333,30 @@ static const luaL_reg sycklib[] = {
 
 static void set_info (lua_State *L)
 {
-// Assumes the table is on top of the stack.
+	// Assumes the table is on top of the stack.
 	lua_pushliteral (L, "_COPYRIGHT");
 	lua_pushliteral (L, "Copyright (C) why the lucky stiff");
-	lua_settable (L, -3);
+	lua_rawset(L, -3);
+	//lua_settable (L, -3);
 	lua_pushliteral (L, "_DESCRIPTION");
 	lua_pushliteral (L, "YAML handling through the syck library");
-	lua_settable (L, -3);
+	lua_rawset(L, -3);
+	//lua_settable (L, -3);
 	lua_pushliteral (L, "_VERSION");
-	lua_pushliteral (L, "0.56");
-	lua_settable (L, -3);
+	lua_pushliteral (L, "0.70");
+	//lua_settable (L, -3);
+	lua_rawset(L, -3);
 }
 
 LUALIB_API int luaopen_syck(lua_State *L)
 {
+#if LUA_VERSION_NUM < 502
 	luaL_openlib(L, "syck", sycklib, 0);
 	set_info(L);
+#else
+	luaL_newlib(L, sycklib);
+	set_info(L);
+	lua_setglobal(L, "syck");
+#endif
 	return 1;
 }

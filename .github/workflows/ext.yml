@@ -100,7 +100,7 @@ jobs:
     - run: ./configure
     - run: make -j -s && sudo make install
     - name: build
-      run: cd ext/lua && make
+      run: cd ext/lua && make && sudo make install
     - name: test
       run: cd ext/lua && make test
   cocoa:

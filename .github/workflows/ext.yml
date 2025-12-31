@@ -95,7 +95,7 @@ jobs:
     - name: setup
       run: |
         sudo apt update -y
-        sudo apt install -y lua5.4 liblua5.4-dev
+        sudo apt install -y lua5.4 liblua5.4-dev lua-unit
     - run: ./bootstrap
     - run: ./configure
     - run: make -j -s && sudo make install

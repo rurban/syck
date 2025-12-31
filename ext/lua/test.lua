@@ -1,12 +1,17 @@
 
 require "yaml"
-require "lunit"
+local luaunit = require("luaunit")
+local assert_equal = luaunit.assertEquals
+local assert_error = luaunit.assertError
+local assert_true   = luaunit.assertTrue
+local assert_false  = luaunit.assertFalse
+local assert_nil    = luaunit.assertNil
+--local assert_notnil = luaunit.assertNotNil
+local assert_error  = luaunit.assertError
 
-lunit.import "all"
+TestYaml = {}
 
-local testcase = lunit.TestCase("LuaYAML Testcases")
-
-function testcase.test_load()
+function TestYaml:test_load()
 	assert_error(function() yaml.load() end)
 	assert_nil(yaml.load("--- "))
 	assert_true(yaml.load("--- true"))
@@ -37,7 +42,7 @@ function testcase.test_load()
 	assert_equal("three", t.strings[3])
 end
 
-function testcase.test_dump()
+function TestYaml:test_dump()
 	assert_equal("--- \n", yaml.dump(nil))
 	assert_equal("--- hey\n", yaml.dump("hey"))
 	assert_equal("--- 5\n", yaml.dump(5))
@@ -55,7 +60,7 @@ function testcase.test_dump()
 	assert_equal(str, yaml.dump({one=1, two=2, three=3}))
 end
 
-function testcase.test_file()
+function TestYaml:test_file()
 	local file = "test.dump"
 
 	local f = assert(io.open(file, "w"))
@@ -78,4 +83,4 @@ function testcase.test_file()
 	assert_equal("hello", obj2[3])
 end
 
-os.exit(lunit.run())
+os.exit(luaunit.LuaUnit.run())

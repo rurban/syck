@@ -83,13 +83,15 @@ void syck_assert( const char *file_name, unsigned line_num )
 /*
  * Compiler attributes
  */
-#if defined(HAVE_FUNC_ATTRIBUTE_NONNULL) && !defined(__cplusplus)
+#ifndef __attribute__nonnull__
+# if defined(HAVE_FUNC_ATTRIBUTE_NONNULL) && !defined(__cplusplus)
 /* g++ has some problem with this attribute */
 #  define __attribute__nonnull__(a)         __attribute__((__nonnull__(a)))
 #  define HAVE_NONNULL
-#else
+# else
 #  define __attribute__nonnull__(a)
 #  undef HAVE_NONNULL
+# endif
 #endif
 #ifdef HAVE_FUNC_ATTRIBUTE_NORETURN
 #  ifdef _MSC_VER
@@ -150,6 +152,8 @@ void syck_assert( const char *file_name, unsigned line_num )
 #define NL_CHOMP    40
 #define NL_KEEP     50
 
+#define EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES 1
+
 #ifndef ST_DATA_T_DEFINED
 typedef void * st_data_t;
 #endif
@@ -185,7 +189,8 @@ enum scalar_style {
     scalar_2quote,
     scalar_fold,
     scalar_literal,
-    scalar_plain
+    scalar_plain,
+    scalar_2quote_1 /* Added by Audrey Tang to support JSON's single quoting */
 };
 
 /*
@@ -452,6 +457,8 @@ struct _syck_emitter {
     SyckLevel *levels;
     int lvl_idx;
     int lvl_capa;
+    int max_depth;
+    int depth;
     /* Pointer for extension's use */
 /*@null@*/
     void *bonus;
@@ -538,7 +545,7 @@ char *syck_base64enc( char *, long )
 	/*@*/;
 /*@null@*/
 __attribute__warn_unused_result__
-char *syck_base64dec( char *, long )
+char *syck_base64dec( char *, long, long * )
 	/*@*/;
 /*@null@*/
 __attribute__malloc__
@@ -547,7 +554,7 @@ __attribute__returns_nonnull__
 SyckEmitter *syck_new_emitter(void)
 	/*@*/;
 __attribute__warn_unused_result__
-SYMID syck_emitter_mark_node( SyckEmitter *e, st_data_t )
+SYMID syck_emitter_mark_node( SyckEmitter *e, st_data_t, unsigned )
 	/*@modifies e @*/;
 void syck_emitter_ignore_id( SyckEmitter *e, SYMID )
 	/*@*/;
@@ -561,7 +568,7 @@ void syck_emitter_clear( SyckEmitter *e )
 	/*@modifies e @*/;
 void syck_emitter_write( SyckEmitter *e, const char *, long )
 	/*@modifies e @*/;
-void syck_emitter_escape( SyckEmitter *e, const char *, long )
+void syck_emitter_escape( SyckEmitter *e, const unsigned char *, long )
 	/*@modifies e @*/;
 void syck_emitter_flush( SyckEmitter *e, long )
 	/*@modifies e @*/;
@@ -572,6 +579,8 @@ void syck_emit_scalar( SyckEmitter *e, const char *, enum scalar_style force_sty
 void syck_emit_1quoted( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
 void syck_emit_2quoted( SyckEmitter *e, int, const char *, long )
+	/*@modifies e @*/;
+void syck_emit_2quoted_1( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
 void syck_emit_folded( SyckEmitter *e, int, char, const char *, long )
 	/*@modifies e @*/;
@@ -653,6 +662,7 @@ SYMID syck_parse( SyckParser *p )
 void syck_default_error_handler( SyckParser *p, const char * )
 	/*@globals fileSystem @*/
 	/*@modifies p, fileSystem @*/;
+int syck_str_is_unquotable_integer(const char* str, long len);
 SYMID syck_yaml2byte_handler( SyckParser *p, SyckNode *n )
 	/*@modifies p, n @*/;
 /*@null@*/

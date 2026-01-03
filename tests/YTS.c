@@ -194,7 +194,7 @@ build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
       i++;
     }
   }
-    return syck_emitter_mark_node(emitter, (st_data_t)node);
+    return syck_emitter_mark_node(emitter, (st_data_t)node, 0);
 
   default:
     break;

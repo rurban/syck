@@ -80,6 +80,33 @@ jobs:
     - name: test
       run: |
         cd ext/php && make test
+  perl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - uses: hendrikmuhs/ccache-action@5ebbd400eff9e74630f759d94ddd7b6c26299639 # v1.2.20
+      with:
+        create-symlink: true
+        key: ${{ github.job }}
+    - name: checkout
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        fetch-depth: 1
+    - name: setup
+      run: |
+        sudo apt update -y
+        sudo apt install -y libperl-dev
+    - run: ./bootstrap
+    - run: ./configure
+    - name: build
+      run: |
+        cd ext/perl && perl Makefile.PL && make
+    - name: test
+      run: |
+        cd ext/perl && make test
+    - name: dist
+      run: |
+        cd ext/perl && make dist
   lua:
     runs-on: ubuntu-latest
     timeout-minutes: 5

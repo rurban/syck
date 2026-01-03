@@ -56,8 +56,9 @@ syck_base64enc( char *s, long len )
     return buff;
 }
 
+/* Supports now binary data */
 char *
-syck_base64dec( char *s, long len )
+syck_base64dec( char *s, long len, long *out_len )
 {
     int a = -1,b = -1,c = 0,d;
     static int first = 1;
@@ -99,6 +100,7 @@ syck_base64dec( char *s, long len )
     }
     *end = '\0';
     /*RSTRING(buf)->len = ptr - RSTRING(buf)->ptr;*/
+    *out_len = end - ptr;
     return ptr;
 }
 
@@ -122,6 +124,8 @@ syck_new_emitter(void)
     e->stage = doc_open;
     e->indent = 2;
     e->level = -1;
+    e->depth = 0;
+    e->max_depth = 512;
     e->anchors = NULL;
     e->markers = NULL;
     e->anchored = NULL;
@@ -783,8 +787,16 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
             syck_emit_folded( e, force_width, keep_nl, str, len );
         break;
 
+        case scalar_2quote_1:
+            syck_emit_2quoted_1( e, force_width, str, len );
+        break;
+
         case scalar_literal:
+#ifdef PERL
+            syck_emit_2quoted( e, force_width, str, len );
+#else
             syck_emit_literal( e, keep_nl, str, len );
+#endif
         break;
 
         case scalar_plain:
@@ -799,7 +811,7 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
 }
 
 void
-syck_emitter_escape( SyckEmitter *e, const char *src, long len )
+syck_emitter_escape( SyckEmitter *e, const unsigned char *src, long len )
 {
     int i;
     for( i = 0; i < len; i++ )
@@ -864,7 +876,7 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
             /*@switchbreak@*/ break;
 
             default:
-                syck_emitter_write( e, mark, 1 );
+                syck_emitter_write( e, (unsigned char*)mark, 1 );
             /*@switchbreak@*/ break;
         }
         mark++;
@@ -924,12 +936,76 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
             /*@switchbreak@*/ break;
 
             default:
-                syck_emitter_escape( e, mark, 1 );
+                syck_emitter_escape( e, (unsigned char*)mark, 1 );
             /*@switchbreak@*/ break;
         }
         mark++;
     }
     syck_emitter_write( e, "\"", 1 );
+}
+
+/*
+ * Outputs a double-quoted block, for perl YAML compat
+ * different \n handling.
+ */
+void syck_emit_2quoted_1( SyckEmitter *e, int width, const char *str, long len )
+{
+    char do_indent = 0;
+    const char *mark = str;
+    const char *start = str;
+    const char *end = str;
+    syck_emitter_write( e, "\'", 1 );
+    while ( mark < str + len ) {
+        if ( do_indent > 0 ) {
+            if ( do_indent == 2 ) {
+                syck_emitter_write( e, "\\", 1 );
+            }
+            syck_emit_indent( e );
+            do_indent = 0;
+        }
+        switch ( *mark ) {
+
+            /* Escape sequences allowed within double quotes. */
+            case '\'': syck_emitter_write( e, "\\\'", 2 ); break;
+            case '\\': syck_emitter_write( e, "\\\\", 2 ); break;
+            case '\0': syck_emitter_write( e, "\\0",  2 ); break;
+            case '\a': syck_emitter_write( e, "\\a",  2 ); break;
+            case '\b': syck_emitter_write( e, "\\b",  2 ); break;
+            case '\f': syck_emitter_write( e, "\\f",  2 ); break;
+            case '\r': syck_emitter_write( e, "\\r",  2 ); break;
+            case '\t': syck_emitter_write( e, "\\t",  2 ); break;
+            case '\v': syck_emitter_write( e, "\\v",  2 ); break;
+            case 0x1b: syck_emitter_write( e, "\\e",  2 ); break;
+            case '\n': syck_emitter_write( e, "\\n",  2 ); break;
+
+            /* XXX - Disabled by Audrey Tang for YAML.pm compat
+            case '\n':
+                end = mark + 1;
+                syck_emitter_write( e, "\\n", 2 );
+                do_indent = e->indent;
+                start = mark + 1;
+                if ( start < str + len && ( *start == ' ' || *start == '\n' ) ) {
+                    do_indent = 0;
+                }
+            break;
+            */
+
+            case ' ':
+                if ( width > 0 && *start != ' ' && mark - end > width ) {
+                    do_indent = 1;
+                    end = mark + 1;
+                } else {
+                    syck_emitter_write( e, " ", 1 );
+                }
+            break;
+
+            default:
+                syck_emitter_escape( e, (const unsigned char *)mark, 1 );
+            break;
+        }
+        mark++;
+    }
+    syck_emitter_write( e, "\'", 1 );
 }
 
 /*
@@ -1232,7 +1308,7 @@ void syck_emit_end( SyckEmitter *e )
  * soon-to-be-emitted tree.
  */
 SYMID
-syck_emitter_mark_node( SyckEmitter *e, st_data_t n )
+syck_emitter_mark_node( SyckEmitter *e, st_data_t n, unsigned flags )
 {
     SYMID oid = 0;
     char *anchor_name = NULL;
@@ -1286,6 +1362,10 @@ assert(e->anchors != NULL);
              * Insert into anchors table
              */
             st_insert( e->anchors, (st_data_t)oid, (st_data_t)anchor_name );
+            if (! (flags & EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES) )
+            {
+                return 0;
+            }
         }
     }
     return oid;

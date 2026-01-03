@@ -17,15 +17,19 @@ ext:
 	$(MAKE) -C ext/php
 	$(MAKE) -C ext/yamlbyte
 	$(MAKE) -C ext/lua
+	cd ext/perl && perl Makefile.PL && make
 
 ext-test:
 	$(MAKE) -C ext/ruby test
 	$(MAKE) -C ext/php test
 	$(MAKE) -C ext/yamlbyte test
 	$(MAKE) -C ext/lua test
+	$(MAKE) -C ext/perl test
 
 ext-clean:
 	$(MAKE) -C ext/ruby clean
 	$(MAKE) -C ext/php  clean
 	$(MAKE) -C ext/yamlbyte  clean
 	$(MAKE) -C ext/lua  clean
+	-$(MAKE) -C ext/perl  clean;
+	$(MAKE) -C ext/perl  clean;

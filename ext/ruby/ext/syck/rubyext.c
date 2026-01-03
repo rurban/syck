@@ -112,7 +112,7 @@ static VALUE syck_node_transform( VALUE );
 SYMID rb_syck_load_handler _((SyckParser *, SyckNode *));
 void rb_syck_err_handler _((SyckParser *, const char *));
 SyckNode * rb_syck_bad_anchor_handler _((SyckParser *, const char *));
-void rb_syck_output_handler _((SyckEmitter *, char *, long));
+void rb_syck_output_handler _((SyckEmitter *, const char *, long));
 void rb_syck_emitter_handler _((SyckEmitter *, st_data_t));
 int syck_parser_assign_io _((SyckParser *, VALUE *));
 VALUE syck_scalar_alloc _((VALUE class));
@@ -2042,7 +2042,7 @@ rb_syck_emitter_handler(SyckEmitter *e, st_data_t data)
  * Handle output from the emitter
  */
 void 
-rb_syck_output_handler(SyckEmitter * emitter, char *str, long len)
+rb_syck_output_handler(SyckEmitter * emitter, const char *str, long len)
 {
     struct emitter_xtra *bonus = (struct emitter_xtra *)emitter->bonus;
     VALUE dest = bonus->port;
@@ -2069,7 +2069,7 @@ syck_out_mark(VALUE emitter, VALUE node)
 #endif
     bonus = (struct emitter_xtra *)emitterPtr->bonus;
     rb_ivar_set( node, s_emitter, emitter );
-    /* syck_emitter_mark_node( emitterPtr, (st_data_t)node ); */
+    /* syck_emitter_mark_node( emitterPtr, (st_data_t)node, 0 ); */
     if ( !NIL_P( bonus->oid ) ) {
         rb_hash_aset( bonus->data, bonus->oid, node );
     }
@@ -2213,7 +2213,7 @@ syck_emitter_emit(int argc, VALUE *argv, VALUE self)
     } else {
         symple = rb_funcall( proc, s_call, 1, rb_ivar_get( self, s_out ) );
     }
-    syck_emitter_mark_node( emitter, (st_data_t)symple );
+    syck_emitter_mark_node( emitter, (st_data_t)symple, 0 );
 
     /* Second pass, build emitted string */
     level -= 1;

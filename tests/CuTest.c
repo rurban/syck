@@ -88,10 +88,10 @@ void CuStringFree(CuString *str) {
 
 void CuTestInit(CuTest *t, char *name, TestFunction function) {
   t->name = CuStrCopy(name);
+  t->function = function;
   t->failed = 0;
   t->ran = 0;
   t->message = NULL;
-  t->function = function;
   t->jumpBuf = NULL;
 }
 

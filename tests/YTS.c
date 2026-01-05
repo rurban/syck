@@ -264,6 +264,7 @@ void CuRoundTrip(CuTest *tc, struct test_node *stream) {
 
 /*
  * Example : Trailing tab in plains
+ * YTS DC7X/in.yaml Various trailing tabs
  */
 void YtsFoldedScalars_7(CuTest *tc) {
   struct test_node map[] = {
@@ -282,6 +283,7 @@ void YtsFoldedScalars_7(CuTest *tc) {
 }
 /*
  * Example : Empty Sequence
+ * part of 7ZZ5/in.yaml Empty flow collections
  */
 void YtsNullsAndEmpties_0(CuTest *tc) {
   struct test_node seq[] = {end_node};
@@ -301,6 +303,7 @@ void YtsNullsAndEmpties_0(CuTest *tc) {
 }
 /*
  * Example : Empty Mapping
+ * part of 7ZZ5/in.yaml Empty flow collections
  */
 void YtsNullsAndEmpties_1(CuTest *tc) {
   struct test_node map2[] = {end_node};
@@ -320,6 +323,7 @@ void YtsNullsAndEmpties_1(CuTest *tc) {
 }
 /*
  * Example : Empty Sequence as Entire Document
+ * none in YTS
  */
 void YtsNullsAndEmpties_2(CuTest *tc) {
   struct test_node seq[] = {end_node};
@@ -337,6 +341,7 @@ void YtsNullsAndEmpties_2(CuTest *tc) {
 }
 /*
  * Example : Empty Mapping as Entire Document
+ * none in YTS
  */
 void YtsNullsAndEmpties_3(CuTest *tc) {
   struct test_node map[] = {end_node};
@@ -354,6 +359,7 @@ void YtsNullsAndEmpties_3(CuTest *tc) {
 }
 /*
  * Example : Null as Document
+ * none in YTS
  */
 void YtsNullsAndEmpties_4(CuTest *tc) {
   struct test_node stream[] = {{T_STR, 0, "~", NULL}, end_node};
@@ -370,6 +376,7 @@ void YtsNullsAndEmpties_4(CuTest *tc) {
 }
 /*
  * Example : Empty String
+ * none in YTS
  */
 void YtsNullsAndEmpties_5(CuTest *tc) {
   struct test_node stream[] = {{T_STR, 0, "", NULL}, end_node};
@@ -386,6 +393,7 @@ void YtsNullsAndEmpties_5(CuTest *tc) {
 }
 /*
  * Example 2.1: Sequence of scalars
+ * YTS FQ7F/in.yaml
  */
 void YtsSpecificationExamples_0(CuTest *tc) {
   struct test_node seq[] = {{T_STR, 0, "Mark McGwire", NULL},
@@ -408,6 +416,7 @@ void YtsSpecificationExamples_0(CuTest *tc) {
 }
 /*
  * Example 2.2: Mapping of scalars to scalars
+ * YTS SYW4/in.yaml
  */
 void YtsSpecificationExamples_1(CuTest *tc) {
   struct test_node map[] = {{T_STR, 0, "hr", NULL},
@@ -433,6 +442,7 @@ void YtsSpecificationExamples_1(CuTest *tc) {
 }
 /*
  * Example 2.3: Mapping of scalars to sequences
+ * YTS PBJ2/in.yaml
  */
 void YtsSpecificationExamples_2(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "Boston Red Sox", NULL},
@@ -469,6 +479,7 @@ void YtsSpecificationExamples_2(CuTest *tc) {
 }
 /*
  * Example 2.4: Sequence of mappings
+ * YTS data/229Q/in.yaml
  */
 void YtsSpecificationExamples_3(CuTest *tc) {
   struct test_node map1[] = {{T_STR, 0, "name", NULL},

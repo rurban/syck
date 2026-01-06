@@ -1,9 +1,6 @@
 //
 // ybext.c
 //
-// $Author$
-// $Date$
-//
 // Copyright (C) 2003 why the lucky stiff, clark evans
 //
 //   WARNING WARNING WARNING  --- THIS IS *JUST* PLAYING
@@ -208,8 +205,23 @@ syck_bytecode(char *yamlstr)
 
 #ifdef TEST_YBEXT
 #include <stdio.h>
-int main() {
-   char *yaml = "test: 1\nand: \"with new\\nline\\n\"\nalso: &3 three\nmore: *3";
+int main(int argc, char **argv) {
+   char *yaml;
+   if (argc == 2) {
+       FILE *fh = fopen(argv[1], "r");
+       size_t fsize;
+       if (!fh) {
+           fprintf(stderr, "Could not open file: %s\n", argv[1]);
+           return 1;
+       }
+       fseek(fh, 0, SEEK_END);
+       fsize = ftell(fh);
+       fseek(fh, 0, SEEK_SET);
+       yaml = S_ALLOC_N(char, fsize + 1);
+       fread(yaml, 1, fsize, fh);
+   }
+   else
+       yaml = "test: 1\nand: \"with new\\nline\\n\"\nalso: &3 three\nmore: *3";
    puts("--- # YAML \n");
    puts(yaml);
    puts("\n...\n");

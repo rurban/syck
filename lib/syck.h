@@ -481,51 +481,68 @@ struct _syck_emitter_node {
     int is_shortcut;
 };
 
+#ifndef EXPORT
+# ifdef SWIG
+#  define EXPORT extern
+# elif defined(_WIN32) && defined(ENABLE_SHARED)
+#  ifdef DLL_EXPORT
+#    define EXPORT  __declspec(dllexport)
+#  else
+#    define EXPORT  __declspec(dllimport)
+#  endif
+# elif defined(__clang__) || defined(__clang) || \
+        (defined( __GNUC__) && ((__GNUC__ * 100) + __GNUC_MINOR__) >= 303)
+#  define EXPORT __attribute__((visibility("default")))
+# else
+#  define EXPORT
+# endif
+#endif
+
 /*
  * Handler prototypes
  */
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 SYMID syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 	/*@modifies n @*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 SyckNode *syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
 	/*@modifies p, n @*/;
-void syck_hdlr_remove_anchor( SyckParser *p, char *a )
+EXPORT void syck_hdlr_remove_anchor( SyckParser *p, char *a )
 	/*@modifies p, a @*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckNode *syck_hdlr_get_anchor( SyckParser *p, char *a )
 	/*@modifies p, a @*/;
-void syck_add_transfer( /*@only@*/ char *uri, SyckNode *n, int taguri )
+EXPORT void syck_add_transfer( /*@only@*/ char *uri, SyckNode *n, int taguri )
 	/*@modifies n, uri @*/;
 /*@null@*/
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 char *syck_xprivate( const char *type_id, int type_len )
 	/*@*/;
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 char *syck_taguri( const char *domain, const char *type_id, int type_len )
 	/*@*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 int syck_tagcmp( /*@null@*/ const char *tag1, /*@null@*/ const char *tag2 )
 	/*@*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 int syck_add_sym( SyckParser *p, void *data )
 	/*@modifies p @*/;
-int syck_lookup_sym( SyckParser *p, SYMID, char **out )
+EXPORT int syck_lookup_sym( SyckParser *p, SYMID, char **out )
 	/*@modifies *data @*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 int syck_try_implicit( SyckNode *n )
 	/*@*/;
 /*@null@*/
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 char *syck_type_id_to_uri( char *type_id )
 	/*@*/;
-void try_tag_implicit( SyckNode *n, int taguri )
+EXPORT void try_tag_implicit( SyckNode *n, int taguri )
 	/*@modifies n @*/;
 /*@observer@*/
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 const char *syck_match_implicit( const char *str, size_t len )
 	/*@*/;
@@ -534,220 +551,220 @@ const char *syck_match_implicit( const char *str, size_t len )
  * API prototypes
  */
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 char *syck_strndup( const char *buf, long len )
 	/*@*/;
-long syck_io_file_read( char *buf, SyckIoFile *file, long max_size, long skip )
+EXPORT long syck_io_file_read( char *buf, SyckIoFile *file, long max_size, long skip )
 	/*@globals fileSystem @*/
 	/*@modifies buf, file, fileSystem @*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 long syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
 	/*@modifies buf, str @*/;
 /*@null@*/
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 char *syck_base64enc( char *, long )
 	/*@*/;
 /*@null@*/
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 char *syck_base64dec( char *, long, long * )
 	/*@*/;
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckEmitter *syck_new_emitter(void)
 	/*@*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 SYMID syck_emitter_mark_node( SyckEmitter *e, st_data_t, unsigned )
 	/*@modifies e @*/;
-void syck_emitter_ignore_id( SyckEmitter *e, SYMID )
+EXPORT void syck_emitter_ignore_id( SyckEmitter *e, SYMID )
 	/*@*/;
-void syck_output_handler( SyckEmitter *e, SyckOutputHandler )
+EXPORT void syck_output_handler( SyckEmitter *e, SyckOutputHandler )
 	/*@modifies e @*/;
-void syck_emitter_handler( SyckEmitter *e, SyckEmitterHandler )
+EXPORT void syck_emitter_handler( SyckEmitter *e, SyckEmitterHandler )
 	/*@modifies e @*/;
-void syck_free_emitter( SyckEmitter *e )
+EXPORT void syck_free_emitter( SyckEmitter *e )
 	/*@modifies e @*/;
-void syck_emitter_clear( SyckEmitter *e )
+EXPORT void syck_emitter_clear( SyckEmitter *e )
 	/*@modifies e @*/;
-void syck_emitter_write( SyckEmitter *e, const char *, long )
+EXPORT void syck_emitter_write( SyckEmitter *e, const char *, long )
 	/*@modifies e @*/;
-void syck_emitter_escape( SyckEmitter *e, const unsigned char *, long )
+EXPORT void syck_emitter_escape( SyckEmitter *e, const unsigned char *, long )
 	/*@modifies e @*/;
-void syck_emitter_flush( SyckEmitter *e, long )
+EXPORT void syck_emitter_flush( SyckEmitter *e, long )
 	/*@modifies e @*/;
-void syck_emit( SyckEmitter *e, st_data_t )
+EXPORT void syck_emit( SyckEmitter *e, st_data_t )
 	/*@modifies e @*/;
-void syck_emit_scalar( SyckEmitter *e, const char *, enum scalar_style force_style, int, int, char, const char *, long )
+EXPORT void syck_emit_scalar( SyckEmitter *e, const char *, enum scalar_style force_style, int, int, char, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_1quoted( SyckEmitter *e, int, const char *, long )
+EXPORT void syck_emit_1quoted( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_2quoted( SyckEmitter *e, int, const char *, long )
+EXPORT void syck_emit_2quoted( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_2quoted_1( SyckEmitter *e, int, const char *, long )
+EXPORT void syck_emit_2quoted_1( SyckEmitter *e, int, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_folded( SyckEmitter *e, int, char, const char *, long )
+EXPORT void syck_emit_folded( SyckEmitter *e, int, char, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_literal( SyckEmitter *e, char, const char *, long )
+EXPORT void syck_emit_literal( SyckEmitter *e, char, const char *, long )
 	/*@modifies e @*/;
-void syck_emit_seq( SyckEmitter *e, const char *, enum seq_style style )
+EXPORT void syck_emit_seq( SyckEmitter *e, const char *, enum seq_style style )
 	/*@modifies e @*/;
-void syck_emit_item( SyckEmitter *e, st_data_t )
+EXPORT void syck_emit_item( SyckEmitter *e, st_data_t )
 	/*@modifies e @*/;
-void syck_emit_map( SyckEmitter *e, const char *, enum map_style style )
+EXPORT void syck_emit_map( SyckEmitter *e, const char *, enum map_style style )
 	/*@modifies e @*/;
-void syck_emit_end( SyckEmitter *e )
+EXPORT void syck_emit_end( SyckEmitter *e )
 	/*@modifies e @*/;
-void syck_emit_tag( SyckEmitter *e, /*@null@*/ const char *tag, /*@null@*/ const char *ignore )
+EXPORT void syck_emit_tag( SyckEmitter *e, /*@null@*/ const char *tag, /*@null@*/ const char *ignore )
 	/*@modifies e @*/;
-void syck_emit_indent( SyckEmitter *e )
+EXPORT void syck_emit_indent( SyckEmitter *e )
 	/*@modifies e @*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckLevel *syck_emitter_current_level( SyckEmitter *e )
 	/*@*/;
-__attribute__warn_unused_result__
+EXPORT __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckLevel *syck_emitter_parent_level( SyckEmitter *e )
 	/*@*/;
-void syck_emitter_pop_level( SyckEmitter *e )
+EXPORT void syck_emitter_pop_level( SyckEmitter *e )
 	/*@modifies e @*/;
-void syck_emitter_add_level( SyckEmitter *e, int, enum syck_level_status )
+EXPORT void syck_emitter_add_level( SyckEmitter *e, int, enum syck_level_status )
 	/*@modifies e @*/;
-void syck_emitter_reset_levels( SyckEmitter *e )
+EXPORT void syck_emitter_reset_levels( SyckEmitter *e )
 	/*@modifies e @*/;
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckParser *syck_new_parser(void)
 	/*@*/;
-void syck_free_parser( SyckParser *p )
+EXPORT void syck_free_parser( SyckParser *p )
 	/*@modifies p @*/;
-void syck_parser_set_root_on_error( SyckParser *p, SYMID )
+EXPORT void syck_parser_set_root_on_error( SyckParser *p, SYMID )
 	/*@modifies p @*/;
-void syck_parser_implicit_typing( SyckParser *p, int )
+EXPORT void syck_parser_implicit_typing( SyckParser *p, int )
 	/*@modifies p @*/;
-void syck_parser_taguri_expansion( SyckParser *p, int )
+EXPORT void syck_parser_taguri_expansion( SyckParser *p, int )
 	/*@modifies p @*/;
 __attribute__warn_unused_result__
 int syck_scan_scalar( int, const char *, long )
 	/*@*/;
-void syck_parser_handler( SyckParser *p, SyckNodeHandler )
+EXPORT void syck_parser_handler( SyckParser *p, SyckNodeHandler )
 	/*@modifies p @*/;
-void syck_parser_error_handler( SyckParser *p, /*@null@*/ SyckErrorHandler )
+EXPORT void syck_parser_error_handler( SyckParser *p, /*@null@*/ SyckErrorHandler )
 	/*@modifies p @*/;
-void syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler )
+EXPORT void syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler )
 	/*@modifies p @*/;
-void syck_parser_set_input_type( SyckParser *p, enum syck_parser_input input_type )
+EXPORT void syck_parser_set_input_type( SyckParser *p, enum syck_parser_input input_type )
         /*@modifies p @*/;
-void syck_parser_file( SyckParser *p, FILE *, SyckIoFileRead )
+EXPORT void syck_parser_file( SyckParser *p, FILE *, SyckIoFileRead )
 	/*@modifies p @*/;
-void syck_parser_str( SyckParser *p, char *, long, /*@null@*/ SyckIoStrRead )
+EXPORT void syck_parser_str( SyckParser *p, char *, long, /*@null@*/ SyckIoStrRead )
 	/*@modifies p @*/;
-void syck_parser_str_auto( SyckParser *p, const char *, /*@null@*/ SyckIoStrRead )
+EXPORT void syck_parser_str_auto( SyckParser *p, const char *, /*@null@*/ SyckIoStrRead )
 	/*@modifies p @*/;
-__attribute__returns_nonnull__
+EXPORT __attribute__returns_nonnull__
 SyckLevel *syck_parser_current_level( SyckParser *p )
 	/*@*/;
-void syck_parser_add_level( SyckParser *p, int, enum syck_level_status )
+EXPORT void syck_parser_add_level( SyckParser *p, int, enum syck_level_status )
 	/*@modifies p @*/;
-void syck_parser_pop_level( SyckParser *p )
+EXPORT void syck_parser_pop_level( SyckParser *p )
 	/*@modifies p @*/;
-void free_any_io( SyckParser *p )
+EXPORT void free_any_io( SyckParser *p )
 	/*@modifies p @*/;
-long syck_parser_read( SyckParser *p )
+EXPORT long syck_parser_read( SyckParser *p )
 	/*@modifies p @*/;
-long syck_parser_readlen( SyckParser *p, long )
+EXPORT long syck_parser_readlen( SyckParser *p, long )
 	/*@modifies p @*/;
-SYMID syck_parse( SyckParser *p )
+EXPORT SYMID syck_parse( SyckParser *p )
 	/*@globals fileSystem @*/
 	/*@modifies p, fileSystem @*/;
-void syck_default_error_handler( SyckParser *p, const char * )
+EXPORT void syck_default_error_handler( SyckParser *p, const char * )
 	/*@globals fileSystem @*/
 	/*@modifies p, fileSystem @*/;
-int syck_str_is_unquotable_integer(const char* str, long len);
-SYMID syck_yaml2byte_handler( SyckParser *p, SyckNode *n )
+EXPORT int syck_str_is_unquotable_integer(const char* str, long len);
+EXPORT SYMID syck_yaml2byte_handler( SyckParser *p, SyckNode *n )
 	/*@modifies p, n @*/;
 /*@null@*/
-char *syck_yaml2byte( char *yamlstr )
+EXPORT char *syck_yaml2byte( char *yamlstr )
 	/*@globals fileSystem @*/
 	/*@modifies fileSystem @*/;
 
 /*
  * Allocation prototypes
  */
-__attribute__malloc__
+EXPORT __attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_map(void)
 	/*@*/;
-__attribute__malloc__
+EXPORT __attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_seq(void)
 	/*@*/;
-__attribute__malloc__
+EXPORT __attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_str(void)
 	/*@*/;
-void syck_free_node( SyckNode *n )
+EXPORT void syck_free_node( SyckNode *n )
 	/*@modifies n @*/;
-void syck_free_members( SyckNode *n )
+EXPORT void syck_free_members( SyckNode *n )
 	/*@modifies n @*/;
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 SyckNode *syck_new_str( const char *str, enum scalar_style style )
 	/*@*/;
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 SyckNode *syck_new_str2( char *str, long len, enum scalar_style style )
 	/*@*/;
-void syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
+EXPORT void syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
 	/*@modifies n @*/;
-void syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
+EXPORT void syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
 	/*@modifies n @*/;
-void syck_str_blow_away_commas( SyckNode *n )
+EXPORT void syck_str_blow_away_commas( SyckNode *n )
 	/*@modifies n @*/;
 /*@null@*/
 char *syck_str_read( SyckNode *n )
 	/*@*/;
 /*@null@*/
-__attribute__malloc__
+EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 SyckNode *syck_new_map( SYMID key, SYMID value )
 	/*@*/;
-void syck_map_empty( SyckNode *n )
+EXPORT void syck_map_empty( SyckNode *n )
 	/*@modifies n @*/;
-void syck_map_add( SyckNode *map, SYMID key, SYMID value )
+EXPORT void syck_map_add( SyckNode *map, SYMID key, SYMID value )
 	/*@modifies map @*/;
-SYMID syck_map_read( SyckNode *map, enum map_part p, long idx )
+EXPORT SYMID syck_map_read( SyckNode *map, enum map_part p, long idx )
 	/*@*/;
-void syck_map_assign( SyckNode *map, enum map_part p, long idx, SYMID id )
+EXPORT void syck_map_assign( SyckNode *map, enum map_part p, long idx, SYMID id )
 	/*@modifies map @*/;
-long syck_map_count( SyckNode *map )
+EXPORT long syck_map_count( SyckNode *map )
 	/*@*/;
-void syck_map_update( SyckNode *map1, SyckNode *map2 )
+EXPORT void syck_map_update( SyckNode *map1, SyckNode *map2 )
 	/*@modifies map1, map2 @*/;
 /*@null@*/
-SyckNode *syck_new_seq( SYMID value )
+EXPORT SyckNode *syck_new_seq( SYMID value )
 	/*@*/;
-void syck_seq_empty( SyckNode *n )
+EXPORT void syck_seq_empty( SyckNode *n )
 	/*@modifies n @*/;
-void syck_seq_add( SyckNode *arr, SYMID value )
+EXPORT void syck_seq_add( SyckNode *arr, SYMID value )
 	/*@modifies arr @*/;
-void syck_seq_assign( SyckNode *seq, long idx, SYMID id )
+EXPORT void syck_seq_assign( SyckNode *seq, long idx, SYMID id )
 	/*@modifies seq @*/;
-SYMID syck_seq_read( SyckNode *seq, long idx )
+EXPORT SYMID syck_seq_read( SyckNode *seq, long idx )
 	/*@*/;
-long syck_seq_count( SyckNode *seq )
+EXPORT long syck_seq_count( SyckNode *seq )
 	/*@*/;
 
 /*
  * Lexer prototypes
  */
-void syckerror( SyckParser *parser, const char *msg )
+EXPORT void syckerror( SyckParser *parser, const char *msg )
 	/*@*/;
 // already defined in gram.h
 //int syckparse( void * )/*@globals fileSystem @*//*@modifies fileSystem @*/;
@@ -765,7 +782,7 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
-int sycklex( YYSTYPE *_sycklval, SyckParser *parser )
+EXPORT int sycklex( YYSTYPE *_sycklval, SyckParser *parser )
 	/*@modifies _sycklval, parser @*/;
 
 #if defined(__cplusplus)

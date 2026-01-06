@@ -53,6 +53,13 @@ static void emit_stream(const char *yaml) {
     // print it
     puts(cs->buffer);
 
+    puts("\n--- # Parsed Stream");
+    puts("+STR");
+    puts("+DOC");
+    print_stream(ystream);
+    puts("-DOC");
+    puts("-STR");
+
     S_FREE(ystream);
     if (parser->syms != NULL)
         st_foreach(parser->syms, syck_free_copies, 0);

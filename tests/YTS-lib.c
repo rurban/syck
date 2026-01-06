@@ -257,3 +257,40 @@ CuRoundTrip(CuTest *tc, struct test_node *stream) {
 
   syck_free_emitter(emitter);
 }
+
+/* TODO: print in YTS test.event formar */
+void print_stream(struct test_node *s1) {
+  int i = 0;
+  while (1) {
+    //CuAssertIntEquals(tc, s1[i].type, s2[i].type);
+    if (s1[i].type == T_END)
+      return;
+    switch (s1[i].type) {
+    case T_STR:
+      printf("=VAL ");
+      if (s1[i].tag) {
+        if (!strcmp(s1[i].tag, "tag:yaml.org,2002:str"))
+          printf("'");
+        else if (!strcmp(s1[i].tag, "tag:yaml.org,2002:int"))
+          printf(":");
+      }
+      // TODO string escape the key
+      printf("%s\n", s1[i].key);
+      break;
+    case T_SEQ:
+      printf("+SEQ\n");
+      print_stream(s1[i].value);
+      printf("-SEQ\n");
+      break;
+    case T_MAP:
+      printf("+MAP\n");
+      print_stream(s1[i].value);
+      printf("-MAP\n");
+      break;
+    default:
+      break;
+    }
+    i++;
+
+  }
+}

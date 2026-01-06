@@ -57,6 +57,7 @@ tests/test-parse
 tests/test-parse.*
 tests/test-yts
 tests/test-yts.*
+tests/yts-stream
 tests/test-yts-full
 tests/test-yts-full.*
 tests/yaml-test-suite/

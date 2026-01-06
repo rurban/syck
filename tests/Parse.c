@@ -181,6 +181,19 @@ static CuSuite *SyckGetSuite(void) {
   return suite;
 }
 
+#if 0
+static void Parse_Arg(char *filename) {
+  SyckParser *parser;
+  SYMID id;
+
+  parser = syck_new_parser();
+  //syck_parser_handler(parser, SyckParseStringHandler);
+  syck_parser_str_auto(parser, yaml, NULL);
+  id = syck_parse(parser);
+  syck_free_parser(parser);
+}
+#endif
+
 int main(void) {
   CuString *output = CuStringNew();
   CuSuite *suite = SyckGetSuite();

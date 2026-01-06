@@ -79,11 +79,10 @@ syck_io_file_read( char *buf, SyckIoFile *file, long max_size, long skip )
 long
 syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
 {
-    char *beg;
+    const char *beg = str ? str->ptr : NULL;
     long len = 0;
 
     ASSERT( str != NULL );
-    beg = str->ptr;
     if ( max_size >= 0 )
     {
         max_size -= skip;
@@ -367,9 +366,9 @@ syck_parser_str( SyckParser *p, char *ptr, long len, SyckIoStrRead read )
 }
 
 void
-syck_parser_str_auto( SyckParser *p, char *ptr, SyckIoStrRead read )
+syck_parser_str_auto( SyckParser *p, const char *ptr, SyckIoStrRead read )
 {
-    syck_parser_str( p, ptr, strlen( ptr ), read );
+    syck_parser_str( p, (char *)ptr, strlen( ptr ), read );
 }
 
 SyckLevel *

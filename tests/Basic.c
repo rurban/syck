@@ -32,7 +32,7 @@ static void TestSyckNodeAlloc(CuTest *tc) {
 //
 // Test building a simple sequence
 //
-void TestSyckSeqAlloc(CuTest *tc) {
+static void TestSyckSeqAlloc(CuTest *tc) {
   SyckNode *n;
   SYMID id;
 
@@ -51,7 +51,7 @@ void TestSyckSeqAlloc(CuTest *tc) {
 //
 // Test building a simple map
 //
-void TestSyckMapAlloc(CuTest *tc) {
+static void TestSyckMapAlloc(CuTest *tc) {
   SyckNode *n;
 
   n = syck_new_map(24556, 24557);
@@ -86,7 +86,7 @@ void TestSyckMapAlloc(CuTest *tc) {
 //
 // Test building a simple map
 //
-void TestSyckMapUpdate(CuTest *tc) {
+static void TestSyckMapUpdate(CuTest *tc) {
   SyckNode *n1, *n2;
 
   n1 = syck_new_map(51116, 51117);
@@ -106,7 +106,7 @@ void TestSyckMapUpdate(CuTest *tc) {
   syck_free_node(n1);
 }
 
-CuSuite *SyckGetSuite() {
+static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, TestSyckNodeAlloc);
   SUITE_ADD_TEST(suite, TestSyckSeqAlloc);

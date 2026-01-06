@@ -14,13 +14,13 @@
 //
 // 1. Test the buffering -- print 10 bytes at a time
 //
-void TestSyckEmit_Output(SHIM(SyckEmitter *e), const char *str, long len) {
+static void TestSyckEmit_Output(SHIM(SyckEmitter *e), const char *str, long len) {
   char *tmp = syck_strndup(str, len);
   printf("OUT: %s [%ld]\n", tmp, len);
   S_FREE(tmp);
 }
 
-void TestSyckEmit(SHIM(CuTest *tc)) {
+static void TestSyckEmit(SHIM(CuTest *tc)) {
   SyckEmitter *emitter;
   UNUSED(tc);
 
@@ -45,7 +45,7 @@ void TestSyckEmit(SHIM(CuTest *tc)) {
  * Ensure that our base64 encoder can do some basic
  * binary encoding.
  */
-void TestBase64Encode(CuTest *tc) {
+static void TestBase64Encode(CuTest *tc) {
   char gif[] =
       "GIF89a\f\000\f\000\204\000\000\377\377\367\365\365\356\351\351\345fff"
       "\000\000\000\347\347\347^^^"
@@ -60,7 +60,7 @@ void TestBase64Encode(CuTest *tc) {
   char *enc = syck_base64enc(gif, 185);
   CuAssertStrEquals(
       tc, enc,
-      "R0lGODlhDAAMAIQAAP//9/"
+      (char*)"R0lGODlhDAAMAIQAAP//9/"
       "X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5OTk6enp56enmlpaWNjY6Ojo4SEhP/"
       "++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/"
       "++SH+"
@@ -69,7 +69,7 @@ void TestBase64Encode(CuTest *tc) {
   S_FREE(enc);
 }
 
-CuSuite *SyckGetSuite() {
+static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, TestSyckEmit);
   SUITE_ADD_TEST(suite, TestBase64Encode);

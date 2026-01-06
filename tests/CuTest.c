@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "syck.h"
 #include "CuTest.h"
 
 /*-------------------------------------------------------------------------*
@@ -15,8 +16,8 @@ char *CuStrAlloc(int size) {
   return new;
 }
 
-char *CuStrCopy(char *old) {
-  int len = strlen(old);
+char *CuStrCopy(const char *old) {
+  size_t len = strlen(old);
   char *new = CuStrAlloc(len + 1);
   strcpy(new, old);
   return new;
@@ -42,17 +43,17 @@ CuString *CuStringNew(void) {
   return str;
 }
 
-void CuStringResize(CuString *str, int newSize) {
+void CuStringResize(CuString *str, size_t newSize) {
   str->buffer = (char *)realloc(str->buffer, sizeof(char) * newSize);
   str->size = newSize;
 }
 
-void CuStringAppend(CuString *str, char *text) {
-  int length = strlen(text);
+void CuStringAppend(CuString *str, const char *text) {
+  size_t length = strlen(text);
   CuStringAppendLen(str, text, length);
 }
 
-void CuStringAppendLen(CuString *str, const char *text, long length) {
+void CuStringAppendLen(CuString *str, const char *text, size_t length) {
   if (str->length + length + 1 >= str->size)
     CuStringResize(str, str->length + length + 1 + STRING_INC);
   str->length += length;
@@ -66,7 +67,8 @@ void CuStringAppendChar(CuString *str, char ch) {
   CuStringAppend(str, text);
 }
 
-void CuStringAppendFormat(CuString *str, char *format, ...) {
+__attribute__format__(2,3)
+void CuStringAppendFormat(CuString *str, const char *format, ...) {
   va_list argp;
   char buf[HUGE_STRING_LEN];
   va_start(argp, format);
@@ -86,7 +88,7 @@ void CuStringFree(CuString *str) {
  * CuTest
  *-------------------------------------------------------------------------*/
 
-void CuTestInit(CuTest *t, char *name, TestFunction function) {
+void CuTestInit(CuTest *t, const char *name, TestFunction function) {
   t->name = CuStrCopy(name);
   t->function = function;
   t->failed = 0;
@@ -95,7 +97,7 @@ void CuTestInit(CuTest *t, char *name, TestFunction function) {
   t->jumpBuf = NULL;
 }
 
-CuTest *CuTestNew(char *name, TestFunction function) {
+CuTest *CuTestNew(const char *name, TestFunction function) {
   CuTest *tc = CU_ALLOC(CuTest);
   CuTestInit(tc, name, function);
   return tc;
@@ -108,14 +110,14 @@ void CuTestFree(CuTest *t) {
   }
 }
 
-void CuFail(CuTest *tc, char *message) {
+void CuFail(CuTest *tc, const char *message) {
   tc->failed = 1;
   tc->message = CuStrCopy(message);
   if (tc->jumpBuf != 0)
     longjmp(*(tc->jumpBuf), 0);
 }
 
-void CuAssert(CuTest *tc, char *message, int condition) {
+void CuAssert(CuTest *tc, const char *message, int condition) {
   if (condition)
     return;
   CuFail(tc, message);
@@ -127,7 +129,7 @@ void CuAssertTrue(CuTest *tc, int condition) {
   CuFail(tc, "assert failed");
 }
 
-void CuAssertStrEquals(CuTest *tc, char *expected, char *actual) {
+void CuAssertStrEquals(CuTest *tc, const char *expected, char *actual) {
   CuString *message;
   if (strcmp(expected, actual) == 0)
     return;
@@ -183,7 +185,7 @@ void CuSuiteInit(CuSuite *testSuite) {
   testSuite->failCount = 0;
 }
 
-CuSuite *CuSuiteNew() {
+CuSuite *CuSuiteNew(void) {
   CuSuite *testSuite = CU_ALLOC(CuSuite);
   CuSuiteInit(testSuite);
   return testSuite;
@@ -237,7 +239,7 @@ void CuSuiteDetails(CuSuite *testSuite, CuString *details) {
 
   if (testSuite->failCount == 0) {
     int passCount = testSuite->count - testSuite->failCount;
-    char *testWord = passCount == 1 ? "test" : "tests";
+    const char *testWord = passCount == 1 ? "test" : "tests";
     CuStringAppendFormat(details, "OK (%d %s)\n", passCount, testWord);
   } else {
     if (testSuite->failCount == 1)

@@ -140,6 +140,11 @@ void syck_assert( const char *file_name, unsigned line_num )
 #else
 #  define __attribute__returns_nonnull__
 #endif
+#ifdef HAVE_FUNC_ATTRIBUTE_FORMAT
+#  define __attribute__format__(x,y)              __attribute__((format(printf, x, y)))
+#else
+#  define __attribute__format__(x,y)
+#endif
 #define SHIM(a) /*@unused@*/ a __attribute__unused__
 
 /*
@@ -641,7 +646,7 @@ void syck_parser_file( SyckParser *p, FILE *, SyckIoFileRead )
 	/*@modifies p @*/;
 void syck_parser_str( SyckParser *p, char *, long, /*@null@*/ SyckIoStrRead )
 	/*@modifies p @*/;
-void syck_parser_str_auto( SyckParser *p, char *, /*@null@*/ SyckIoStrRead )
+void syck_parser_str_auto( SyckParser *p, const char *, /*@null@*/ SyckIoStrRead )
 	/*@modifies p @*/;
 __attribute__returns_nonnull__
 SyckLevel *syck_parser_current_level( SyckParser *p )

@@ -79,6 +79,7 @@ AX_GCC_FUNC_ATTRIBUTE(pure)
 AX_GCC_FUNC_ATTRIBUTE(const)
 AX_GCC_FUNC_ATTRIBUTE(warn_unused_result)
 AX_GCC_FUNC_ATTRIBUTE(unused)
+AX_GCC_FUNC_ATTRIBUTE(format)
 
 AC_MSG_CHECKING([for --disable-werror])
 AC_ARG_ENABLE([werror],AS_HELP_STRING([--disable-werror],[

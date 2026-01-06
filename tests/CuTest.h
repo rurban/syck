@@ -3,11 +3,12 @@
 
 #include <setjmp.h>
 #include <stdarg.h>
+#include "syck.h"
 
 /* CuString */
 
 char *CuStrAlloc(int size);
-char *CuStrCopy(char *old);
+char *CuStrCopy(const char *old);
 
 #define CU_ALLOC(TYPE) ((TYPE *)malloc(sizeof(TYPE)))
 
@@ -16,19 +17,20 @@ char *CuStrCopy(char *old);
 #define STRING_INC 256
 
 typedef struct {
-  int length;
-  int size;
+  size_t length;
+  size_t size;
   char *buffer;
 } CuString;
 
 void CuStringInit(CuString *str);
 CuString *CuStringNew(void);
-void CuStringRead(CuString *str, char *path);
-void CuStringAppend(CuString *str, char *text);
-void CuStringAppendLen(CuString *str, const char *text, long length);
+void CuStringRead(CuString *str, const char *path);
+void CuStringAppend(CuString *str, const char *text);
+void CuStringAppendLen(CuString *str, const char *text, size_t length);
 void CuStringAppendChar(CuString *str, char ch);
-void CuStringAppendFormat(CuString *str, char *format, ...);
-void CuStringResize(CuString *str, int newSize);
+__attribute__format__(2,3)
+void CuStringAppendFormat(CuString *str, const char *format, ...);
+void CuStringResize(CuString *str, size_t newSize);
 void CuStringFree(CuString *str);
 
 /* CuTest */
@@ -46,12 +48,13 @@ struct CuTest {
   jmp_buf *jumpBuf;
 };
 
-void CuTestInit(CuTest *t, char *name, TestFunction function);
-CuTest *CuTestNew(char *name, TestFunction function);
-void CuFail(CuTest *tc, char *message);
-void CuAssert(CuTest *tc, char *message, int condition);
+void CuTestInit(CuTest *t, const char *name, TestFunction function);
+CuTest *CuTestNew(const char *name, TestFunction function);
+void CuTestFree(CuTest *t);
+void CuFail(CuTest *tc, const char *message);
+void CuAssert(CuTest *tc, const char *message, int condition);
 void CuAssertTrue(CuTest *tc, int condition);
-void CuAssertStrEquals(CuTest *tc, char *expected, char *actual);
+void CuAssertStrEquals(CuTest *tc, const char *expected, char *actual);
 void CuAssertIntEquals(CuTest *tc, int expected, int actual);
 void CuAssertPtrEquals(CuTest *tc, void *expected, void *actual);
 void CuAssertPtrNotNull(CuTest *tc, void *pointer);

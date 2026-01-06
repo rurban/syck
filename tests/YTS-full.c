@@ -50,7 +50,7 @@ struct yts_node {
   char *value;
   struct yts_node *kids;
 };
-struct yts_node end_node = {STREAM_END_EVENT, opt_no_type, NULL, NULL, NULL, NULL};
+const struct yts_node yts_end_node = {STREAM_END_EVENT, opt_no_type, NULL, NULL, NULL, NULL};
 
 /*
  * Helper to compare YAML parse node events with
@@ -158,11 +158,13 @@ static void CuStreamCompare(CuTest *tc, char *yaml, struct yts_node *stream) {
   while (1) {
     struct yts_node *ydoc;
     SYMID oid = syck_parse(parser);
+    int res;
+
     if (parser->eof == 1)
       break;
 
     /* Add document to stream */
-    int res = syck_lookup_sym(parser, oid, (char **)&ydoc);
+    res = syck_lookup_sym(parser, oid, (char **)&ydoc);
     if (0 == res)
       break;
 
@@ -170,7 +172,7 @@ static void CuStreamCompare(CuTest *tc, char *yaml, struct yts_node *stream) {
     doc_ct++;
     S_REALLOC_N(ystream, struct yts_node, doc_ct + 1);
   }
-  ystream[doc_ct] = end_node;
+  ystream[doc_ct] = yts_end_node;
 
   /* Traverse the struct and the symbol table side-by-side */
   /* DEBUG: y( stream, 0 ); y( ystream, 0 ); */
@@ -201,14 +203,14 @@ static SYMID
 build_symbol_table(SyckEmitter *emitter, struct yts_node *node) {
   switch (node->type) {
   case SEQ_START_EVENT:
-  case MAP_START_EVENT:
+  case MAP_START_EVENT: {
     int i = 0;
     while (!is_end_type(&(node->kids[i]))) {
       build_symbol_table(emitter, &node->kids[i]);
       i++;
     }
     return syck_emitter_mark_node(emitter, (st_data_t)node, 0);
-
+  }
   default:
     break;
   }
@@ -245,9 +247,12 @@ test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
     }
     syck_emit_end(emitter);
   } break;
+  default:
+    break;
   }
 }
 
+__attribute__unused__
 static void
 CuRoundTrip(CuTest *tc, struct yts_node *stream) {
   int i = 0;
@@ -300,22 +305,25 @@ yts_test_func(CuTest *tc) {
   fprintf(stderr, "%s/in.yaml: %s\n", path, tc->name);
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/in.yaml", path);
   fn[sizeof(fn)-1] = '\0';
-  if (fh = fopen(fn, "r")) {
+  fh = fopen(fn, "r");
+  if (fh) {
     size_t fsize, nread;
     fseek(fh, 0, SEEK_END);
     fsize = ftell(fh);
-    fseek(fh, 0, SEEK_SET);
     yaml = S_ALLOC_N(char, fsize + 1);
+    fseek(fh, 0, SEEK_SET);
     nread = fread(yaml, 1, fsize, fh);
+    yaml[nread] = '\0';
     if (nread != fsize)
       fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread, fsize);
     CuStreamCompare(tc, yaml, stream);
+    S_FREE(yaml);
   } else {
     fprintf(stderr, "no file %s\n", fn);
   }
 }
 
-static void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
+static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {
   FILE *fh;
   char fn[256];
   char name[256];
@@ -351,13 +359,14 @@ static void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
   off = sizeof(DATA_DIR)-1;
   snprintf(name, sizeof(name)-1, "%s/%s", prefix, dir->d_name);
   name[sizeof(name)-1] = '\0';
-  if (fh = fopen(fn, "r")) {
+  fh = fopen(fn, "r");
+  if (fh) {
     CuSuiteAdd(suite, CuTestNew(&name[off], yts_test_func));
     fclose(fh);
   }
 }
 
-static CuSuite *SyckGetSuite() {
+static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
   struct dirent **flist;
   int n = scandir("yaml-test-suite", &flist, NULL, alphasort);

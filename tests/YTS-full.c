@@ -192,7 +192,7 @@ void test_output_handler(SyckEmitter *emitter, const char *str, long len) {
 }
 
 static
-bool is_end_type(struct yts_node *node) {
+int is_end_type(struct yts_node *node) {
   return node->type == MAP_END_EVENT || node->type == SEQ_END_EVENT;
 }
 
@@ -276,13 +276,14 @@ void CuRoundTrip(CuTest *tc, struct yts_node *stream) {
 void yts_test_func(CuTest *tc) {
   char s[128];
   char path[64];
-  char fn[64];
+  char fn[128];
   struct yts_node *stream = NULL;
   char *yaml;
   FILE *fh;
 
   strncpy(path, tc->name, sizeof(path)-1);
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/===", path);
+  fn[sizeof(fn)-1] = '\0';
   fh = fopen(fn, "r");
   free(tc->name);
   if (!fh) {
@@ -294,13 +295,16 @@ void yts_test_func(CuTest *tc) {
   }
   fprintf(stderr, "%s/in.yaml: %s\n", path, tc->name);
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/in.yaml", path);
+  fn[sizeof(fn)-1] = '\0';
   if (fh = fopen(fn, "r")) {
-    size_t fsize;
+    size_t fsize, nread;
     fseek(fh, 0, SEEK_END);
     fsize = ftell(fh);
     fseek(fh, 0, SEEK_SET);
     yaml = S_ALLOC_N(char, fsize + 1);
-    fread(yaml, 1, fsize, fh);
+    nread = fread(yaml, 1, fsize, fh);
+    if (nread != fsize)
+      fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread, fsize);
     CuStreamCompare(tc, yaml, stream);
   } else {
     fprintf(stderr, "no file %s\n", fn);
@@ -309,19 +313,21 @@ void yts_test_func(CuTest *tc) {
 
 void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
   FILE *fh;
-  char fn[80];
-  char name[80];
+  char fn[256];
+  char name[256];
   size_t off;
 
   if (dir->d_name[0] == '.')
     return;
   snprintf(fn, sizeof(fn)-1, "%s/%s/in.yaml", prefix, dir->d_name);
+  fn[sizeof(fn)-1] = '\0';
   fh = fopen(fn, "r");
   if (!fh) {
     struct dirent **subdirs;
     int n1;
     // some subdirs of data
     snprintf(fn, sizeof(fn)-1, "%s/%s", prefix, dir->d_name);
+    fn[sizeof(fn)-1] = '\0';
     n1 = scandir(fn, &subdirs, NULL, alphasort);
     if (n1) {
       for (int i=0; i<n1; i++) {
@@ -340,6 +346,7 @@ void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
   }
   off = sizeof(DATA_DIR)-1;
   snprintf(name, sizeof(name)-1, "%s/%s", prefix, dir->d_name);
+  name[sizeof(name)-1] = '\0';
   if (fh = fopen(fn, "r")) {
     CuSuiteAdd(suite, CuTestNew(&name[off], yts_test_func));
     fclose(fh);

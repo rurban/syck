@@ -62,6 +62,11 @@ AC_CHECK_HEADERS(alloca.h stdlib.h string.h sal.h ruby/st.h)
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
+AX_COMPILER_FLAGS([WARN_CFLAGS],[AM_LDFLAGS],[yes],
+    [-fno-semantic-interposition -fwrapv -fno-common -fvisibility=hidden \
+     -fno-strict-aliasing -ftrivial-auto-var-init=zero -fstrict-flex-arrays=3 \
+     -fstack-protector-strong -fstack-clash-protection \
+     -fcf-protection=full -fno-delete-null-pointer-checks])
 AX_GCC_FUNC_ATTRIBUTE(returns_nonnull)
 AX_GCC_FUNC_ATTRIBUTE(noreturn)
 AX_GCC_FUNC_ATTRIBUTE(malloc)
@@ -70,11 +75,21 @@ AX_GCC_FUNC_ATTRIBUTE(const)
 AX_GCC_FUNC_ATTRIBUTE(warn_unused_result)
 AX_GCC_FUNC_ATTRIBUTE(unused)
 
+AC_MSG_CHECKING([for --disable-werror])
+AC_ARG_ENABLE([werror],AS_HELP_STRING([--disable-werror],[
+    Disable -Werror (default: no).]),[],[enable_werror=yes])
+AS_IF([test x$enable_werror != xno],
+  [AC_DEFINE([HAVE_WERROR],1,[If -Werror is enabled.])
+   WARN_CFLAGS="-Werror $WARN_CFLAGS"
+   AC_MSG_RESULT([no (default)])],
+  [AC_MSG_RESULT([yes])])
+
+
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_VPRINTF
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_FILES([Makefile 
-                 lib/Makefile 
+AC_CONFIG_FILES([Makefile
+                 lib/Makefile
                  tests/Makefile])
 AC_OUTPUT

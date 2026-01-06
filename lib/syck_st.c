@@ -81,7 +81,7 @@ strhash(const void *arg)
 	h &= ~g;
     }
     return h;
-#elif HASH_PERL
+#elif defined(HASH_PERL)
     register int val = 0;
 
     while ((c = *string++) != '\0') {
@@ -89,7 +89,7 @@ strhash(const void *arg)
     }
 
     return val + (val>>5);
-#elif HASH_JENKINS
+#elif defined(HASH_JENKINS)
     register const unsigned char *s_PeRlHaSh = (const unsigned char *)string;
     register uint32_t hash_PeRlHaSh = 0;
     while ((c = *s_PeRlHaSh++) != '\0') {
@@ -527,6 +527,7 @@ st_foreach(st_table *table,
 		ptr = ptr->next;
 		/*@switchbreak@*/ break;
 	    case ST_STOP:
+	    default:
 		return;
 	    case ST_DELETE:
 		tmp = ptr;

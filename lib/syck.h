@@ -38,7 +38,7 @@ extern "C" {
  * Memory Allocation (using ruby's xmalloc with ext/ruby)
  */
 
-#if DEBUG
+#ifdef DEBUG
 __attribute__noreturn__
 void syck_assert( const char *file_name, unsigned line_num )
 	/*@globals fileSystem @*/
@@ -744,9 +744,9 @@ long syck_seq_count( SyckNode *seq )
  */
 void syckerror( SyckParser *parser, const char *msg )
 	/*@*/;
-int syckparse( void * )
-	/*@globals fileSystem @*/
-	/*@modifies fileSystem @*/;
+// already defined in gram.h
+//int syckparse( void * )/*@globals fileSystem @*//*@modifies fileSystem @*/;
+
 /* XXX union YYSTYPE *sycklval has issues on Mac OS X. */
 /* Value type from gram.h.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

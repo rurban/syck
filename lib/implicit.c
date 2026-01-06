@@ -27,15 +27,18 @@ try_tag_implicit( SyckNode *n, int taguri )
     {
         case syck_str_kind:
             tid = syck_match_implicit( n->data.str->ptr, n->data.str->len );
-        break;
+            break;
 
         case syck_seq_kind:
             tid = "seq";
-        break;
+            break;
 
         case syck_map_kind:
             tid = "map";
-        break;
+            break;
+
+        default:
+            break;
     }
     if ( n->type_id != NULL ) {
        S_FREE( n->type_id );
@@ -55,7 +58,7 @@ const char *syck_match_implicit( const char *str, size_t len )
     const char *limit = str + len;
 
 
-#line 58 "implicit.c"
+#line 61 "implicit.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 26) YYFILL(26);
@@ -92,15 +95,15 @@ const char *syck_match_implicit( const char *str, size_t len )
 	}
 yy1:
 	++YYCURSOR;
-#line 88 "implicit.re"
+#line 91 "implicit.re"
 	{   return "null"; }
-#line 97 "implicit.c"
+#line 100 "implicit.c"
 yy2:
 	++YYCURSOR;
 yy3:
-#line 126 "implicit.re"
+#line 129 "implicit.re"
 	{   return "str"; }
-#line 103 "implicit.c"
+#line 106 "implicit.c"
 yy4:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
@@ -340,9 +343,9 @@ yy31:
 	}
 yy32:
 	++YYCURSOR;
-#line 100 "implicit.re"
+#line 103 "implicit.re"
 	{   return "int"; }
-#line 345 "implicit.c"
+#line 348 "implicit.c"
 yy33:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -459,9 +462,9 @@ yy41:
 	goto yy23;
 yy42:
 	++YYCURSOR;
-#line 122 "implicit.re"
+#line 125 "implicit.re"
 	{   return "default"; }
-#line 464 "implicit.c"
+#line 467 "implicit.c"
 yy43:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -590,14 +593,14 @@ yy62:
 	}
 yy63:
 	++YYCURSOR;
-#line 96 "implicit.re"
+#line 99 "implicit.re"
 	{   return "int#oct"; }
-#line 595 "implicit.c"
+#line 598 "implicit.c"
 yy64:
 	++YYCURSOR;
-#line 102 "implicit.re"
+#line 105 "implicit.re"
 	{   return "float#fix"; }
-#line 600 "implicit.c"
+#line 603 "implicit.c"
 yy65:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -753,9 +756,9 @@ yy74:
 	}
 yy75:
 	++YYCURSOR;
-#line 124 "implicit.re"
+#line 127 "implicit.re"
 	{   return "merge"; }
-#line 758 "implicit.c"
+#line 761 "implicit.c"
 yy76:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -770,9 +773,9 @@ yy77:
 	}
 yy78:
 	++YYCURSOR;
-#line 92 "implicit.re"
+#line 95 "implicit.re"
 	{   return "bool#no"; }
-#line 775 "implicit.c"
+#line 778 "implicit.c"
 yy79:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -787,9 +790,9 @@ yy80:
 	}
 yy81:
 	++YYCURSOR;
-#line 90 "implicit.re"
+#line 93 "implicit.re"
 	{   return "bool#yes"; }
-#line 792 "implicit.c"
+#line 795 "implicit.c"
 yy82:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -840,9 +843,9 @@ yy90:
 	}
 yy91:
 	++YYCURSOR;
-#line 98 "implicit.re"
+#line 101 "implicit.re"
 	{   return "int#base60"; }
-#line 845 "implicit.c"
+#line 848 "implicit.c"
 yy92:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -864,9 +867,9 @@ yy92:
 	}
 yy93:
 	++YYCURSOR;
-#line 94 "implicit.re"
+#line 97 "implicit.re"
 	{   return "int#hex"; }
-#line 869 "implicit.c"
+#line 872 "implicit.c"
 yy94:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -895,14 +898,14 @@ yy98:
 	goto yy23;
 yy99:
 	++YYCURSOR;
-#line 108 "implicit.re"
+#line 111 "implicit.re"
 	{   return "float#inf"; }
-#line 900 "implicit.c"
+#line 903 "implicit.c"
 yy100:
 	++YYCURSOR;
-#line 112 "implicit.re"
+#line 115 "implicit.re"
 	{   return "float#nan"; }
-#line 905 "implicit.c"
+#line 908 "implicit.c"
 yy101:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -939,19 +942,19 @@ yy103:
 	}
 yy104:
 	++YYCURSOR;
-#line 106 "implicit.re"
+#line 109 "implicit.re"
 	{   return "float#base60"; }
-#line 944 "implicit.c"
+#line 947 "implicit.c"
 yy105:
 	++YYCURSOR;
-#line 110 "implicit.re"
+#line 113 "implicit.re"
 	{   return "float#neginf"; }
-#line 949 "implicit.c"
+#line 952 "implicit.c"
 yy106:
 	++YYCURSOR;
-#line 104 "implicit.re"
+#line 107 "implicit.re"
 	{   return "float#exp"; }
-#line 954 "implicit.c"
+#line 957 "implicit.c"
 yy107:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1023,9 +1026,9 @@ yy111:
 	}
 yy112:
 	++YYCURSOR;
-#line 114 "implicit.re"
+#line 117 "implicit.re"
 	{   return "timestamp#ymd"; }
-#line 1028 "implicit.c"
+#line 1031 "implicit.c"
 yy113:
 	++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 9) YYFILL(9);
@@ -1375,9 +1378,9 @@ yy141:
 	}
 yy142:
 	++YYCURSOR;
-#line 116 "implicit.re"
+#line 119 "implicit.re"
 	{   return "timestamp#iso8601"; }
-#line 1380 "implicit.c"
+#line 1383 "implicit.c"
 yy143:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1395,9 +1398,9 @@ yy143:
 	}
 yy144:
 	++YYCURSOR;
-#line 118 "implicit.re"
+#line 121 "implicit.re"
 	{   return "timestamp#spaced"; }
-#line 1400 "implicit.c"
+#line 1403 "implicit.c"
 yy145:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1473,7 +1476,7 @@ yy150:
 		default: goto yy23;
 	}
 }
-#line 128 "implicit.re"
+#line 131 "implicit.re"
 
 
 }
@@ -1512,7 +1515,7 @@ syck_type_id_to_uri( char *type_id )
     limit = type_id + strlen( type_id );
 
 
-#line 1515 "implicit.c"
+#line 1518 "implicit.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 21) YYFILL(21);
@@ -1591,14 +1594,14 @@ yy152:
 yy153:
 	++YYCURSOR;
 yy154:
-#line 205 "implicit.re"
+#line 208 "implicit.re"
 	{   return syck_taguri( YAML_DOMAIN, type_id, strlen( type_id ) ); }
-#line 1596 "implicit.c"
+#line 1599 "implicit.c"
 yy155:
 	++YYCURSOR;
-#line 179 "implicit.re"
+#line 182 "implicit.re"
 	{   return syck_xprivate( type_id + 1, strlen( type_id ) - 1 ); }
-#line 1601 "implicit.c"
+#line 1604 "implicit.c"
 yy156:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
@@ -1974,7 +1977,7 @@ yy162:
 	}
 yy163:
 	++YYCURSOR;
-#line 181 "implicit.re"
+#line 184 "implicit.re"
 	{   char *domain = S_ALLOC_N( char, ( YYCURSOR - type_id ) + 15 );
                     char *uri;
 
@@ -1987,7 +1990,7 @@ yy163:
                     S_FREE( domain );
                     return uri;
                 }
-#line 1990 "implicit.c"
+#line 1993 "implicit.c"
 yy164:
 	++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 12) YYFILL(12);
@@ -2421,7 +2424,7 @@ yy181:
 	}
 yy182:
 	++YYCURSOR;
-#line 194 "implicit.re"
+#line 197 "implicit.re"
 	{   char *domain = S_ALLOC_N( char, YYCURSOR - type_id );
                                char *uri;
 
@@ -2432,7 +2435,7 @@ yy182:
                                S_FREE( domain );
                                return uri;
                             }
-#line 2435 "implicit.c"
+#line 2438 "implicit.c"
 yy183:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2551,9 +2554,9 @@ yy192:
 	}
 yy193:
 	++YYCURSOR;
-#line 177 "implicit.re"
+#line 180 "implicit.re"
 	{   return syck_strndup( type_id, strlen( type_id ) ); }
-#line 2556 "implicit.c"
+#line 2559 "implicit.c"
 yy194:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2586,9 +2589,9 @@ yy195:
 	}
 yy196:
 	++YYCURSOR;
-#line 175 "implicit.re"
+#line 178 "implicit.re"
 	{   return syck_strndup( type_id, strlen( type_id ) ); }
-#line 2591 "implicit.c"
+#line 2594 "implicit.c"
 yy197:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2654,7 +2657,7 @@ yy202:
 		default: goto yy152;
 	}
 }
-#line 207 "implicit.re"
+#line 210 "implicit.re"
 
 
 }

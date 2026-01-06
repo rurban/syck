@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS = 1.4 foreign
 
 AM_CPPFLAGS = -I$(top_srcdir)
+WARN_CFLAGS = @WARN_CFLAGS@
+AM_CFLAGS   = -I. $(WARN_CFLAGS)
 
 LEXLIB = @LEXLIB@
 SUFFIXES = .re
@@ -29,6 +31,8 @@ EXTRA_DIST = bytecode.re \
 	implicit.re \
 	gram.y
 
+emitter_lo_CFLAGS = $(AM_CFLAGS) -Wno-switch-enum
+bytecode_lo_CFLAGS = $(AM_CFLAGS) -Wno-switch-enum
 libsyck_la_CFLAGS = $(AM_CFLAGS)
 libsyck_la_LDFLAGS = -version-info $(SYCK_SO_VERSION)
 libsyck_la_SOURCES = $(libsyck_a_SOURCES)

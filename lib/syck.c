@@ -390,7 +390,7 @@ syck_parser_pop_level( SyckParser *p )
     free( p->levels[p->lvl_idx].domain );
 }
 
-void 
+void
 syck_parser_add_level( SyckParser *p, int len, enum syck_level_status status )
 {
     ASSERT( p != NULL );

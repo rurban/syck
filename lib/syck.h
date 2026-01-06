@@ -63,7 +63,7 @@ void syck_assert( const char *file_name, unsigned line_num )
 #define S_ALLOC_N(type,n) (type*)xmalloc(sizeof(type)*(n))
 #define S_ALLOC(type) (type*)xmalloc(sizeof(type))
 #define S_REALLOC_N(var,type,n) (var)=(type*)xrealloc((char*)(var),sizeof(type)*(n))
-#ifndef CU_TEST_H    
+#ifndef CU_TEST_H
 #ifdef HAVE_RUBY_ST_H
 #define S_FREE(n) xfree((void *)n); n = 0UL;
 #else
@@ -141,7 +141,7 @@ void syck_assert( const char *file_name, unsigned line_num )
 #  define __attribute__returns_nonnull__
 #endif
 #define SHIM(a) /*@unused@*/ a __attribute__unused__
-    
+
 /*
  * Node definitions
  */
@@ -692,7 +692,7 @@ void syck_free_members( SyckNode *n )
 /*@null@*/
 __attribute__malloc__
 __attribute__warn_unused_result__
-SyckNode *syck_new_str( char *str, enum scalar_style style )
+SyckNode *syck_new_str( const char *str, enum scalar_style style )
 	/*@*/;
 /*@null@*/
 __attribute__malloc__
@@ -759,7 +759,7 @@ union YYSTYPE
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
-#endif    
+#endif
 int sycklex( YYSTYPE *_sycklval, SyckParser *parser )
 	/*@modifies _sycklval, parser @*/;
 

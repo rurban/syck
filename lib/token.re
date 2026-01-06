@@ -8,6 +8,7 @@
  */
 #include "syck.h"
 #include "gram.h"
+#include "bytecode.h"
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
@@ -231,13 +232,44 @@
 /*
  * Accessory funcs later in this file.
  */
-void eat_comments( SyckParser * );
-char escape_seq( char );
-int is_newline( char *ptr );
-int newline_len( char *ptr );
-int sycklex_yaml_utf8( YYSTYPE *, SyckParser * );
-int sycklex_bytecode_utf8( YYSTYPE *, SyckParser * );
 int syckwrap(void);
+static void eat_comments( SyckParser *parser );
+
+static int
+newline_len( char *ptr )
+{
+    if ( *ptr == '\n' )
+        return 1;
+
+    if ( *ptr == '\r' && *( ptr + 1 ) == '\n' )
+        return 2;
+
+    return 0;
+}
+
+static int
+is_newline( char *ptr )
+{
+    return newline_len( ptr );
+}
+
+static char
+escape_seq( char ch )
+{
+    switch ( ch )
+    {
+        case '0': return '\0';
+        case 'a': return 7;
+        case 'b': return '\010';
+        case 'e': return '\033';
+        case 'f': return '\014';
+        case 'n': return '\n';
+        case 'r': return '\015';
+        case 't': return '\t';
+        case 'v': return '\013';
+        default: return ch;
+    }
+}
 
 /*
  * My own re-entrant sycklex() using re2c.
@@ -929,6 +961,7 @@ ScalarBlock:
         {
             case '|': blockType = BLOCK_LIT; break;
             case '>': blockType = BLOCK_FOLD; break;
+            default: break;
         }
 
         while ( ++yyt <= YYCURSOR )
@@ -1081,7 +1114,7 @@ ANY                 {   QUOTECAT(qstr, qcapa, qidx, *YYTOKEN);
 
 }
 
-void
+static void
 eat_comments( SyckParser *parser )
 {
 Comment:
@@ -1101,42 +1134,6 @@ ANY                 {   goto Comment;
 
     }
 
-}
-
-char
-escape_seq( char ch )
-{
-    switch ( ch )
-    {
-        case '0': return '\0';
-        case 'a': return 7;
-        case 'b': return '\010';
-        case 'e': return '\033';
-        case 'f': return '\014';
-        case 'n': return '\n';
-        case 'r': return '\015';
-        case 't': return '\t';
-        case 'v': return '\013';
-        default: return ch;
-    }
-}
-
-int
-is_newline( char *ptr )
-{
-    return newline_len( ptr );
-}
-
-int
-newline_len( char *ptr )
-{
-    if ( *ptr == '\n' )
-        return 1;
-
-    if ( *ptr == '\r' && *( ptr + 1 ) == '\n' )
-        return 2;
-
-    return 0;
 }
 
 int

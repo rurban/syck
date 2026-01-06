@@ -53,7 +53,7 @@ sub copy_with_coda {
 }
 
 my $DEFINE;
-my @SYCK_FILES = qw(bytecode.c emitter.c gram.c gram.h handler.c implicit.c
+my @SYCK_FILES = qw(bytecode.c bytecode.h emitter.c gram.c gram.h handler.c implicit.c
                     node.c syck.c syck_st.c token.c
                     sycklex.h syck.h syck_st.h);
 # are we in ext/syck/ or a standalone cpan distribution?

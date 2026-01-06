@@ -1,4 +1,5 @@
 bytecode.c
+bytecode.h
 Changes
 COMPATIBILITY
 COPYING

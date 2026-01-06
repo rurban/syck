@@ -1,7 +1,9 @@
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 WARN_CFLAGS = @WARN_CFLAGS@
 AM_CFLAGS   = -I. $(WARN_CFLAGS)
-LDADD = $(top_builddir)/lib/.libs/libsyck.a
+AM_LDFLAGS  = -static
+AM_LIBTOOLFLAGS = --tag=CC
+LDADD = $(top_builddir)/lib/.libs/libsyck.la
 CUSRC = CuTest.c CuTest.h
 
 TESTS = test-basic test-parse test-emit test-yts test-yts-full

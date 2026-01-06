@@ -67,11 +67,19 @@ AX_COMPILER_FLAGS([WARN_CFLAGS],[AM_LDFLAGS],[yes],
      -ftrivial-auto-var-init=zero -fstrict-flex-arrays=3 \
      -fstack-protector-strong -fstack-clash-protection \
      -fcf-protection=full -fno-delete-null-pointer-checks \
-     -Wformat-truncation -Wno-format-nonliteral])
+     -Wformat-truncation -Wno-format-nonliteral -Wdiscarded_qualifiers])
 if test "$ax_cv_check_cflags__Wformat_truncation" = "yes"; then
   WNO_FORMAT_TRUNCATION=-Wno-format-truncation
 fi
+if test "$ax_cv_check_cflags__Wdiscarded_qualifiers" = "yes"; then
+  WNO_DISCARDED_QUALIFIERS=-Wno-discarded_qualifiers
+fi
+if test "$ax_cv_check_cflags__Wswitch_enum" = "yes"; then
+  WNO_SWITCH_ENUM=-Wno-switch-enum
+fi
 AC_SUBST(WNO_FORMAT_TRUNCATION)
+AC_SUBST(WNO_DISCARDED_QUALIFIERS)
+AC_SUBST(WNO_SWITCH_ENUM)
 AX_GCC_FUNC_ATTRIBUTE(returns_nonnull)
 AX_GCC_FUNC_ATTRIBUTE(noreturn)
 AX_GCC_FUNC_ATTRIBUTE(malloc)

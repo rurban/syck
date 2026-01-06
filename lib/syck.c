@@ -11,11 +11,12 @@
 #include <assert.h>
 
 #include "syck.h"
+#include "gram.h"
 
 /*
  * Custom assert
  */
-#if DEBUG
+#ifdef DEBUG
 __attribute__noreturn__
 void syck_assert( const char *file_name, unsigned line_num )
 {
@@ -29,6 +30,8 @@ void syck_assert( const char *file_name, unsigned line_num )
 
 /*@-modfilesys@*/
 /*@only@*/ /*@null@*/
+static
+__attribute__unused__
 __attribute__noreturn__
 void syck_vmefail(size_t size)
 {
@@ -109,7 +112,7 @@ syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
     return len;
 }
 
-void
+static void
 syck_parser_reset_levels( SyckParser *p )
 	/*@modifies p @*/
 {
@@ -128,7 +131,7 @@ syck_parser_reset_levels( SyckParser *p )
     p->levels[0].status = syck_lvl_header;
 }
 
-void
+static void
 syck_parser_reset_cursor( SyckParser *p )
 	/*@modifies p @*/
 {
@@ -213,11 +216,11 @@ syck_lookup_sym( SyckParser *p, SYMID id, char **data )
 }
 
 #ifdef HAVE_RUBY_ST_H
-int
+static int
 syck_st_free_nodes( st_data_t key, /*@only@*/ st_data_t record,
                     st_data_t arg )
 #else
-enum st_retval
+static enum st_retval
 syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
                     SHIM(void *arg) )
 #endif
@@ -231,7 +234,7 @@ syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
     return ST_CONTINUE;
 }
 
-void
+static void
 syck_st_free( SyckParser *p )
 	/*@modifies p @*/
 {
@@ -411,24 +414,27 @@ free_any_io( SyckParser *p )
     switch ( p->io_type )
     {
         case syck_io_str:
-            if ( p->io.str != NULL ) 
+            if ( p->io.str != NULL )
             {
                 S_FREE( p->io.str );
                 p->io.str = NULL;
             }
-        break;
+            break;
 
         case syck_io_file:
-            if ( p->io.file != NULL ) 
+            if ( p->io.file != NULL )
             {
                 S_FREE( p->io.file );
                 p->io.file = NULL;
             }
-        break;
+            break;
+
+        default:
+            break;
     }
 }
 
-long
+static long
 syck_move_tokens( SyckParser *p )
 	/*@modifies p @*/
 {
@@ -456,7 +462,7 @@ syck_move_tokens( SyckParser *p )
     return skip;
 }
 
-void
+static void
 syck_check_limit( SyckParser *p, long len )
 	/*@modifies p @*/
 {
@@ -487,6 +493,9 @@ syck_parser_read( SyckParser *p )
             skip = syck_move_tokens( p );
             len = (p->io.file->read)( p->buffer, p->io.file, SYCK_BUFFERSIZE - 1, skip );
             break;
+
+        default:
+            break;
     }
     syck_check_limit( p, len );
     return len;
@@ -508,6 +517,9 @@ syck_parser_readlen( SyckParser *p, long max_size )
         case syck_io_file:
             skip = syck_move_tokens( p );
             len = (p->io.file->read)( p->buffer, p->io.file, max_size, skip );
+            break;
+
+        default:
             break;
     }
     syck_check_limit( p, len );

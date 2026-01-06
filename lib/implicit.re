@@ -24,15 +24,18 @@ try_tag_implicit( SyckNode *n, int taguri )
     {
         case syck_str_kind:
             tid = syck_match_implicit( n->data.str->ptr, n->data.str->len );
-        break;
+            break;
 
         case syck_seq_kind:
             tid = "seq";
-        break;
+            break;
 
         case syck_map_kind:
             tid = "map";
-        break;
+            break;
+
+        default:
+            break;
     }
     if ( n->type_id != NULL ) {
        S_FREE( n->type_id );

@@ -14,7 +14,7 @@
  * Node allocation functions
  */
 __attribute__malloc__
-SyckNode *
+static SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
 	/*@*/
 {
@@ -397,7 +397,7 @@ syck_free_members( SyckNode *n )
                 S_FREE( n->data.str );
                 n->data.str = NULL;
             }
-        break;
+            break;
 
         case syck_seq_kind:
             if ( n->data.list != NULL )
@@ -406,7 +406,7 @@ syck_free_members( SyckNode *n )
                 S_FREE( n->data.list );
                 n->data.list = NULL;
             }
-        break;
+            break;
 
         case syck_map_kind:
             if ( n->data.pairs != NULL )
@@ -416,7 +416,10 @@ syck_free_members( SyckNode *n )
                 S_FREE( n->data.pairs );
                 n->data.pairs = NULL;
             }
-        break;
+            break;
+
+        default:
+            break;
     }
 }
 

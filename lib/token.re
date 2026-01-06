@@ -251,18 +251,21 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
     switch ( parser->input_type )
     {
         case syck_yaml_utf8:
-        return sycklex_yaml_utf8( sycklval, parser );
+            return sycklex_yaml_utf8( sycklval, parser );
 
         case syck_yaml_utf16:
             syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
-        break;
+            break;
 
         case syck_yaml_utf32:
             syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
-        break;
+            break;
 
         case syck_bytecode_utf8:
-        return sycklex_bytecode_utf8( sycklval, parser );
+            return sycklex_bytecode_utf8( sycklval, parser );
+
+        default:
+            break;
     }
     return YAML_DOCSEP;
 }

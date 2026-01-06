@@ -8,6 +8,7 @@
  */
 #include "syck.h"
 #include "gram.h"
+#include "bytecode.h"
 #include <string.h>
 
 #define QUOTELEN 128
@@ -59,12 +60,16 @@ char *get_inline( SyckParser *parser );
         switch ( lvl->status ) \
         { \
             case syck_lvl_seq: \
+            case syck_lvl_iseq: /* ?? */ \
+            case syck_lvl_seqx: /* ?? */ \
                 lvl->ncount++; \
                 ADD_LEVEL(len, syck_lvl_open); \
                 YYPOS(0); \
             return '-'; \
         \
             case syck_lvl_map: \
+            case syck_lvl_imap: /* ?? */ \
+            case syck_lvl_mapx: /* ?? */ \
                 lvl->ncount++; \
                 ADD_LEVEL(len, s); \
             break; \
@@ -73,6 +78,13 @@ char *get_inline( SyckParser *parser );
                 lvl->status = s; \
             break; \
         \
+            case syck_lvl_header: \
+            case syck_lvl_doc:    \
+            case syck_lvl_block:  \
+            case syck_lvl_str:    \
+            case syck_lvl_end:    \
+            case syck_lvl_pause:  \
+            case syck_lvl_anctag:  \
             default: \
                 ADD_LEVEL(len, s); \
             break; \

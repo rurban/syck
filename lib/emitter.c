@@ -140,11 +140,11 @@ syck_new_emitter(void)
 }
 
 #ifdef HAVE_RUBY_ST_H
-int
+static int
 syck_st_free_anchors( st_data_t key, /*@only@*/ st_data_t name,
                     st_data_t arg )
 #else
-enum st_retval
+static enum st_retval
 syck_st_free_anchors( SHIM(const char *key), /*@only@*/ void *name,
                       SHIM(void *arg) )
 #endif
@@ -156,7 +156,7 @@ syck_st_free_anchors( SHIM(const char *key), /*@only@*/ void *name,
     return ST_CONTINUE;
 }
 
-void
+static void
 syck_emitter_st_free( SyckEmitter *e )
 	/*@modifies e @*/
 {
@@ -210,7 +210,7 @@ syck_emitter_pop_level( SyckEmitter *e )
     S_FREE( e->levels[e->lvl_idx].domain );
 }
 
-void 
+void
 syck_emitter_add_level( SyckEmitter *e, int len, enum syck_level_status status )
 {
     ASSERT( e != NULL );
@@ -302,7 +302,6 @@ syck_emitter_write( SyckEmitter *e, const char *str, long len )
     {
         syck_emitter_clear( e );
     }
-    
     /*
      * Flush if at end of buffer
      */
@@ -377,7 +376,7 @@ syck_emit( SyckEmitter *e, st_data_t n )
     long x = 0;
     SyckLevel *parent;
     SyckLevel *lvl = syck_emitter_current_level( e );
-    
+
     /*
      * Determine headers.
      */
@@ -513,7 +512,7 @@ void syck_emit_tag( SyckEmitter *e, const char *tag, const char *ignore )
     lvl->anctag = 1;
 }
 
-/* 
+/*
  * Emit a newline and an appropriately spaced indent.
  */
 void syck_emit_indent( SyckEmitter *e )
@@ -790,6 +789,10 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
         case scalar_plain:
             syck_emitter_write( e, str, len );
         break;
+
+        default:
+            fprintf(stderr, "Illegal force_style %u ignored\n", force_style);
+        break;
     }
 
     if ( parent->status == syck_lvl_mapx )
@@ -818,7 +821,7 @@ syck_emitter_escape( SyckEmitter *e, const char *src, long len )
         }
         else
         {
-            syck_emitter_write( e, src + i, 1 );
+            syck_emitter_write( e, (char*)&src[i], 1 );
             if( '\\' == src[i] )
                 syck_emitter_write( e, "\\", 1 );
         }
@@ -1008,6 +1011,8 @@ void syck_emit_folded( SyckEmitter *e, int width, char keep_nl, const char *str,
                     }
                 }
             /*@switchbreak@*/ break;
+            default:
+                break;
         }
         mark++;
     }
@@ -1077,12 +1082,13 @@ void syck_emit_map( SyckEmitter *e, const char *tag, enum map_style style )
 void syck_emit_item( SyckEmitter *e, st_data_t n )
 {
     SyckLevel *lvl = syck_emitter_current_level( e );
+    SyckLevel *parent;
+
     switch ( lvl->status )
     {
         case syck_lvl_seq:
-        {
-            SyckLevel *parent = syck_emitter_parent_level( e );
-
+        case syck_lvl_seqx:  /* TODO check */
+            parent = syck_emitter_parent_level( e );
             /* seq-in-map shortcut */
             if ( parent->status == syck_lvl_mapx && lvl->ncount == 0 ) {
                 /* shortcut -- the lvl->anctag check should be unneccesary but
@@ -1092,7 +1098,6 @@ void syck_emit_item( SyckEmitter *e, st_data_t n )
                     lvl->spaces = parent->spaces;
                 }
             }
-
             /* seq-in-seq shortcut */
             else if ( lvl->anctag == 0 && parent->status == syck_lvl_seq && lvl->ncount == 0 ) {
                 int spcs = ( lvl->spaces - parent->spaces ) - 2;
@@ -1105,24 +1110,18 @@ void syck_emit_item( SyckEmitter *e, st_data_t n )
                     break;
                 }
             }
-
             syck_emit_indent( e );
             syck_emitter_write( e, "- ", 2 );
-        }
-        break;
+            break;
 
         case syck_lvl_iseq:
-        {
             if ( lvl->ncount > 0 ) {
                 syck_emitter_write( e, ", ", 2 );
             }
-        }
-        break;
+            break;
 
         case syck_lvl_map:
-        {
-            SyckLevel *parent = syck_emitter_parent_level( e );
-
+            parent = syck_emitter_parent_level( e );
             /* map-in-seq shortcut */
             if ( lvl->anctag == 0 && parent->status == syck_lvl_seq && lvl->ncount == 0 ) {
                 int spcs = ( lvl->spaces - parent->spaces ) - 2;
@@ -1134,17 +1133,14 @@ void syck_emit_item( SyckEmitter *e, st_data_t n )
                     break;
                 }
             }
-
             if ( lvl->ncount % 2 == 0 ) {
                 syck_emit_indent( e );
             } else {
                 syck_emitter_write( e, ": ", 2 );
             }
-        }
-        break;
+            break;
 
         case syck_lvl_mapx:
-        {
             if ( lvl->ncount % 2 == 0 ) {
                 syck_emit_indent( e );
                 lvl->status = syck_lvl_map;
@@ -1160,11 +1156,9 @@ void syck_emit_item( SyckEmitter *e, st_data_t n )
                 }
                 syck_emitter_write( e, ": ", 2 );
             }
-        }
-        break;
+            break;
 
         case syck_lvl_imap:
-        {
             if ( lvl->ncount > 0 ) {
                 if ( lvl->ncount % 2 == 0 ) {
                     syck_emitter_write( e, ", ", 2 );
@@ -1172,10 +1166,19 @@ void syck_emit_item( SyckEmitter *e, st_data_t n )
                     syck_emitter_write( e, ": ", 2 );
                 }
             }
-        }
-        break;
+            break;
 
-        default: break;
+        /* TODO check */
+        case syck_lvl_header:
+        case syck_lvl_doc:
+        case syck_lvl_open:
+        case syck_lvl_block:
+        case syck_lvl_str:
+        case syck_lvl_end:
+        case syck_lvl_pause:
+        case syck_lvl_anctag:
+        default:
+            break;
     }
     lvl->ncount++;
 
@@ -1192,21 +1195,23 @@ void syck_emit_end( SyckEmitter *e )
     switch ( lvl->status )
     {
         case syck_lvl_seq:
+        case syck_lvl_seqx: /* TODO check */
             if ( lvl->ncount == 0 ) {
                 syck_emitter_write( e, "[]\n", 3 );
             } else if ( parent->status == syck_lvl_mapx ) {
                 syck_emitter_write( e, "\n", 1 );
             }
-        break;
+            break;
 
         case syck_lvl_iseq:
             syck_emitter_write( e, "]", 1 );
             if ( parent->status == syck_lvl_mapx ) {
                 syck_emitter_write( e, "\n", 1 );
             }
-        break;
+            break;
 
         case syck_lvl_map:
+        case syck_lvl_mapx:  /* TODO check */
             if ( lvl->ncount == 0 ) {
                 syck_emitter_write( e, "{}\n", 3 );
             } else if ( lvl->ncount % 2 == 1 ) {
@@ -1214,16 +1219,26 @@ void syck_emit_end( SyckEmitter *e )
             } else if ( parent->status == syck_lvl_mapx ) {
                 syck_emitter_write( e, "\n", 1 );
             }
-        break;
+            break;
 
         case syck_lvl_imap:
             syck_emitter_write( e, "}", 1 );
             if ( parent->status == syck_lvl_mapx ) {
                 syck_emitter_write( e, "\n", 1 );
             }
-        break;
+            break;
 
-        default: break;
+        /* TODO check */
+        case syck_lvl_header:
+        case syck_lvl_doc:
+        case syck_lvl_open:
+        case syck_lvl_block:
+        case syck_lvl_str:
+        case syck_lvl_end:
+        case syck_lvl_pause:
+        case syck_lvl_anctag:
+        default:
+            break;
     }
 }
 
@@ -1244,7 +1259,7 @@ syck_emitter_mark_node( SyckEmitter *e, st_data_t n )
     {
         e->markers = st_init_numtable();
     }
-assert(e->markers != NULL);
+    assert(e->markers != NULL);
 
     /*
      * Markers table initially marks the string position of the
@@ -1265,21 +1280,25 @@ assert(e->markers != NULL);
         {
             e->anchors = st_init_numtable();
         }
-assert(e->anchors != NULL);
+        assert(e->anchors != NULL);
 
         if ( ! st_lookup( e->anchors, (st_data_t)oid, (void *)&anchor_name ) )
         {
             int idx = 0;
-            const char *anc = ( e->anchor_format == NULL ? DEFAULT_ANCHOR_FORMAT : e->anchor_format );
+            size_t sz;
+            const char *anc = !e->anchor_format ? DEFAULT_ANCHOR_FORMAT : e->anchor_format;
 
             /*
              * Second time hitting this object, let's give it an anchor
              */
             idx = e->anchors->num_entries + 1;
-            anchor_name = S_ALLOC_N( char, strlen( anc ) + 10 );
-            S_MEMZERO( anchor_name, char, strlen( anc ) + 10 );
+            sz = strlen( anc ) + 10;
+            anchor_name = S_ALLOC_N( char, sz );
+            S_MEMZERO( anchor_name, char, sz );
 /*@-formatconst@*/
-            sprintf( anchor_name, anc, idx );
+            /* FIXME -Wno-format-nonliteral */
+            snprintf( anchor_name, sz - 1, anc, idx );
+            anchor_name[sz-1] = '\0';
 /*@=formatconst@*/
 
             /*

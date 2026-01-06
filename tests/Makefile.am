@@ -1,4 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/lib
+WARN_CFLAGS = @WARN_CFLAGS@
+AM_CFLAGS   = -I. $(WARN_CFLAGS)
 AM_LDFLAGS = -L$(top_builddir)/lib
 LIBS = -lsyck
 CUSRC = CuTest.c CuTest.h
@@ -11,6 +13,7 @@ test_parse_SOURCES = Parse.c $(CUSRC)
 test_emit_SOURCES = Emit.c $(CUSRC)
 test_yts_SOURCES = YTS.c $(CUSRC)
 test_yts_full_SOURCES = YTS-full.c $(CUSRC)
+test_yts_full_CFLAGS = $(AM_CFLAGS) -Wno-format-truncation
 
 yaml-test-suite: Makefile.am
 	git submodule update --init

@@ -56,7 +56,7 @@ struct yts_node end_node = {STREAM_END_EVENT, opt_no_type, NULL, NULL, NULL, NUL
  * Helper to compare YAML parse node events with
  * equivalent test.event lines.
  */
-SYMID
+static SYMID
 yts_parse_event_handler(SyckParser *p, SyckNode *n) {
   int i = 0;
   struct yts_node *tn = S_ALLOC_N(struct yts_node, 1);
@@ -103,8 +103,9 @@ yts_parse_event_handler(SyckParser *p, SyckNode *n) {
   return syck_add_sym(p, (char *)tn);
 }
 
-enum st_retval syck_free_copies(SHIM(const char *key), void *_tn,
-                                SHIM(void *arg)) {
+static enum st_retval
+syck_free_copies(SHIM(const char *key), void *_tn,
+                 SHIM(void *arg)) {
   const struct yts_node *tn = (const struct yts_node *)_tn;
   UNUSED(key);
   UNUSED(arg);
@@ -118,7 +119,7 @@ enum st_retval syck_free_copies(SHIM(const char *key), void *_tn,
   return ST_CONTINUE;
 }
 
-void CuStreamCompareX(CuTest *tc, struct yts_node *s1, struct yts_node *s2) {
+static void CuStreamCompareX(CuTest *tc, struct yts_node *s1, struct yts_node *s2) {
   int i = 0;
   while (1) {
     CuAssertIntEquals(tc, s1[i].type, s2[i].type);
@@ -141,7 +142,7 @@ void CuStreamCompareX(CuTest *tc, struct yts_node *s1, struct yts_node *s2) {
   }
 }
 
-void CuStreamCompare(CuTest *tc, char *yaml, struct yts_node *stream) {
+static void CuStreamCompare(CuTest *tc, char *yaml, struct yts_node *stream) {
   int doc_ct = 0;
   struct yts_node *ystream = S_ALLOC_N(struct yts_node, doc_ct + 1);
 
@@ -186,7 +187,7 @@ void CuStreamCompare(CuTest *tc, char *yaml, struct yts_node *stream) {
 /*
  * Setup for testing N->Y->N.
  */
-void test_output_handler(SyckEmitter *emitter, const char *str, long len) {
+static void test_output_handler(SyckEmitter *emitter, const char *str, long len) {
   CuString *dest = (CuString *)emitter->bonus;
   CuStringAppendLen(dest, str, len);
 }
@@ -196,7 +197,7 @@ int is_end_type(struct yts_node *node) {
   return node->type == MAP_END_EVENT || node->type == SEQ_END_EVENT;
 }
 
-SYMID
+static SYMID
 build_symbol_table(SyckEmitter *emitter, struct yts_node *node) {
   switch (node->type) {
   case SEQ_START_EVENT:
@@ -214,7 +215,8 @@ build_symbol_table(SyckEmitter *emitter, struct yts_node *node) {
   return 0;
 }
 
-void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
+static void
+test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
   struct yts_node *node = (struct yts_node *)data;
   switch (node->type) {
   case SCALAR_EVENT:
@@ -246,7 +248,8 @@ void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
   }
 }
 
-void CuRoundTrip(CuTest *tc, struct yts_node *stream) {
+static void
+CuRoundTrip(CuTest *tc, struct yts_node *stream) {
   int i = 0;
   CuString *cs = CuStringNew();
   SyckEmitter *emitter = syck_new_emitter();
@@ -273,7 +276,8 @@ void CuRoundTrip(CuTest *tc, struct yts_node *stream) {
   syck_free_emitter(emitter);
 }
 
-void yts_test_func(CuTest *tc) {
+static void
+yts_test_func(CuTest *tc) {
   char s[128];
   char path[64];
   char fn[128];
@@ -311,7 +315,7 @@ void yts_test_func(CuTest *tc) {
   }
 }
 
-void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
+static void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
   FILE *fh;
   char fn[256];
   char name[256];
@@ -353,7 +357,7 @@ void addYTSDir(char *prefix, struct dirent *dir, CuSuite *suite) {
   }
 }
 
-CuSuite *SyckGetSuite() {
+static CuSuite *SyckGetSuite() {
   CuSuite *suite = CuSuiteNew();
   struct dirent **flist;
   int n = scandir("yaml-test-suite", &flist, NULL, alphasort);

@@ -14,7 +14,8 @@
 //
 // 1. Test the buffering -- read 4 bytes at a time
 //
-void TestSyckReadString(CuTest *tc) {
+static void
+TestSyckReadString(CuTest *tc) {
   SyckParser *parser;
   char *tmp;
   int len = 0;
@@ -71,7 +72,7 @@ void TestSyckReadString(CuTest *tc) {
 //
 // 2. Test parsing a simple string and handler
 //
-SYMID
+static SYMID
 SyckParseStringHandler(SHIM(SyckParser *p), SyckNode *n) {
   UNUSED(p);
   if (n->kind != syck_str_kind)
@@ -83,7 +84,7 @@ SyckParseStringHandler(SHIM(SyckParser *p), SyckNode *n) {
   return 1112;
 }
 
-void TestSyckParseString(CuTest *tc) {
+static void TestSyckParseString(CuTest *tc) {
   SyckParser *parser;
   SYMID id;
 
@@ -100,7 +101,8 @@ void TestSyckParseString(CuTest *tc) {
 //
 // 3.
 //
-SYMID
+__attribute__unused__
+static SYMID
 SyckParseString2Handler(SHIM(SyckParser *p), SyckNode *n) {
   UNUSED(p);
   if (n->kind != syck_str_kind)
@@ -112,7 +114,8 @@ SyckParseString2Handler(SHIM(SyckParser *p), SyckNode *n) {
   return 1112;
 }
 
-enum st_retval ListAnchors(const char *key, void *_n, void *_tc) {
+static enum st_retval
+ListAnchors(const char *key, void *_n, void *_tc) {
   SyckNode *n = (SyckNode *)_n;
   CuTest *tc = (CuTest *)_tc;
   char *sd = syck_strndup(n->data.str->ptr, n->data.str->len);
@@ -122,17 +125,17 @@ enum st_retval ListAnchors(const char *key, void *_n, void *_tc) {
   return ST_CONTINUE;
 }
 
-void TestSyckParseString2(CuTest *tc) {
+static void TestSyckParseString2(CuTest *tc) {
   SyckParser *parser;
   parser = syck_new_parser();
   syck_parser_handler(parser, SyckParseStringHandler);
   syck_parser_str_auto(parser, "--- {test: 1, and: 2, or: &test 13}", NULL);
-  syckparse(parser);
+  syck_parse(parser);
   st_foreach(parser->anchors, ListAnchors, tc);
   syck_free_parser(parser);
 }
 
-void TestSyckParseMap(SHIM(CuTest *tc)) {
+static void TestSyckParseMap(SHIM(CuTest *tc)) {
   SyckParser *parser;
   UNUSED(tc);
   parser = syck_new_parser();
@@ -145,7 +148,7 @@ void TestSyckParseMap(SHIM(CuTest *tc)) {
   syck_free_parser(parser);
 }
 
-void TestSyckParseFold(SHIM(CuTest *tc)) {
+static void TestSyckParseFold(SHIM(CuTest *tc)) {
   SyckParser *parser;
   UNUSED(tc);
   parser = syck_new_parser();
@@ -155,7 +158,7 @@ void TestSyckParseFold(SHIM(CuTest *tc)) {
   syck_free_parser(parser);
 }
 
-void TestSyckParseMultidoc(SHIM(CuTest *tc)) {
+static void TestSyckParseMultidoc(SHIM(CuTest *tc)) {
   SyckParser *parser;
   UNUSED(tc);
   parser = syck_new_parser();
@@ -167,7 +170,7 @@ void TestSyckParseMultidoc(SHIM(CuTest *tc)) {
   syck_free_parser(parser);
 }
 
-CuSuite *SyckGetSuite() {
+static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, TestSyckReadString);
   SUITE_ADD_TEST(suite, TestSyckParseString);

@@ -1,8 +1,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 WARN_CFLAGS = @WARN_CFLAGS@
 AM_CFLAGS   = -I. $(WARN_CFLAGS)
-AM_LDFLAGS = -L$(top_builddir)/lib
-LIBS = -lsyck
+LDADD = $(top_builddir)/lib/.libs/libsyck.a
 CUSRC = CuTest.c CuTest.h
 
 TESTS = test-basic test-parse test-emit test-yts test-yts-full
@@ -13,7 +12,7 @@ test_parse_SOURCES = Parse.c $(CUSRC)
 test_emit_SOURCES = Emit.c $(CUSRC)
 test_yts_SOURCES = YTS.c $(CUSRC)
 test_yts_full_SOURCES = YTS-full.c $(CUSRC)
-test_yts_full_CFLAGS = $(AM_CFLAGS) -Wno-format-truncation
+test_yts_full_CFLAGS = $(AM_CFLAGS) @WNO_FORMAT_TRUNCATION@
 
 yaml-test-suite: Makefile.am
 	git submodule update --init

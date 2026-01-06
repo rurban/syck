@@ -12,7 +12,7 @@ AM_YFLAGS = -d -t -v -p syck
 
 lib_LTLIBRARIES = libsyck.la
 include_HEADERS = syck.h syck_st.h
-noinst_HEADERS = yamlbyte.h gram.h
+noinst_HEADERS = yamlbyte.h gram.h bytecode.h
 DISTCLEANFILES = gram.c gram.h token.c implicit.c bytecode.c
 
 libsyck_a_SOURCES = \

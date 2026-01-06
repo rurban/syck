@@ -99,7 +99,6 @@ AC_DEFUN([AX_COMPILER_FLAGS_CFLAGS],[
             -Wmissing-field-initializers dnl
             -Wcast-align dnl
             -Wformat=2 dnl
-            -Wformat-nonliteral dnl
             -Wformat-security dnl
             -Wformat-y2k dnl
             -Wsign-compare dnl

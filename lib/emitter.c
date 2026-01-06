@@ -1296,7 +1296,7 @@ syck_emitter_mark_node( SyckEmitter *e, st_data_t n )
             anchor_name = S_ALLOC_N( char, sz );
             S_MEMZERO( anchor_name, char, sz );
 /*@-formatconst@*/
-            /* FIXME -Wno-format-nonliteral */
+            /* requires -Wno-format-nonliteral */
             snprintf( anchor_name, sz - 1, anc, idx );
             anchor_name[sz-1] = '\0';
 /*@=formatconst@*/

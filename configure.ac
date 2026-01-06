@@ -64,9 +64,14 @@ AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 AX_COMPILER_FLAGS([WARN_CFLAGS],[AM_LDFLAGS],[yes],
     [-fno-semantic-interposition -fwrapv -fno-common -fvisibility=hidden \
-     -fno-strict-aliasing -ftrivial-auto-var-init=zero -fstrict-flex-arrays=3 \
+     -ftrivial-auto-var-init=zero -fstrict-flex-arrays=3 \
      -fstack-protector-strong -fstack-clash-protection \
-     -fcf-protection=full -fno-delete-null-pointer-checks])
+     -fcf-protection=full -fno-delete-null-pointer-checks \
+     -Wformat-truncation -Wno-format-nonliteral])
+if test "$ax_cv_check_cflags__Wformat_truncation" = "yes"; then
+  WNO_FORMAT_TRUNCATION=-Wno-format-truncation
+fi
+AC_SUBST(WNO_FORMAT_TRUNCATION)
 AX_GCC_FUNC_ATTRIBUTE(returns_nonnull)
 AX_GCC_FUNC_ATTRIBUTE(noreturn)
 AX_GCC_FUNC_ATTRIBUTE(malloc)

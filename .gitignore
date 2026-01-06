@@ -17,6 +17,8 @@ config/ltmain.sh
 config/missing
 config/ylwrap
 configure
+ext/lua/syck.o
+ext/lua/syck.so
 ext/ruby/Gemfile.lock
 ext/ruby/ext
 ext/ruby/pkg
@@ -57,6 +59,7 @@ tests/test-yts
 tests/test-yts.*
 tests/test-yts-full
 tests/test-yts-full.*
+tests/yaml-test-suite/
 TAGS
 /NEWS
 /INSTALL

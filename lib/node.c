@@ -104,14 +104,14 @@ syck_alloc_str(void)
 
     n = syck_alloc_node( syck_str_kind );
     n->data.str = s;
-    
+
     return n;
 }
 
 SyckNode *
-syck_new_str( char *str, enum scalar_style style )
+syck_new_str( const char *str, enum scalar_style style )
 {
-    return syck_new_str2( str, strlen( str ), style );
+    return syck_new_str2( (char*)str, strlen( str ), style );
 }
 
 __attribute__malloc__
@@ -121,7 +121,7 @@ syck_new_str2( char *str, long len, enum scalar_style style )
     SyckNode *n;
 
     n = syck_alloc_str();
-assert(n != NULL);
+    assert(n != NULL);
     n->data.str->ptr = S_ALLOC_N( char, len + 1 );
     n->data.str->len = len;
     n->data.str->style = style;
@@ -146,7 +146,7 @@ syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
         n->data.str->ptr = NULL;
         n->data.str->len = 0;
     }
-assert(n->data.str != NULL);
+    assert(n->data.str != NULL);
     n->data.str->ptr = S_ALLOC_N( char, len + 1 );
     n->data.str->len = len;
     n->data.str->style = style;
@@ -185,7 +185,7 @@ syck_new_map( SYMID key, SYMID value )
     SyckNode *n;
 
     n = syck_alloc_map();
-assert(n != NULL);
+    assert(n != NULL);
     syck_map_add( n, key, value );
 
     return n;
@@ -215,7 +215,7 @@ syck_map_add( SyckNode *map, SYMID key, SYMID value )
 
     ASSERT( map != NULL );
     ASSERT( map->data.pairs != NULL );
-    
+
     m = map->data.pairs;
     idx = m->idx;
     m->idx += 1;

@@ -38,10 +38,11 @@ typedef struct {
 } bytestring_t;
 
 /*@null@*/
+static
 bytestring_t *bytestring_alloc(void)
 	/*@*/
 {
-    bytestring_t *ret; 
+    bytestring_t *ret;
     /*TRACE0("bytestring_alloc()");*/
     ret = S_ALLOC(bytestring_t);
     ret->hash   = HASH;
@@ -53,8 +54,9 @@ bytestring_t *bytestring_alloc(void)
     return ret;
 }
 
-void bytestring_append(bytestring_t *str, char code, 
-                       /*@null@*/ char *start, /*@null@*/ char *finish) 
+static
+void bytestring_append(bytestring_t *str, char code,
+                       /*@null@*/ char *start, /*@null@*/ char *finish)
 	/*@modifies str @*/
 {
     long grow;
@@ -70,16 +72,17 @@ void bytestring_append(bytestring_t *str, char code,
     if(length > str->remaining) {
         grow = (length - str->remaining) + CHUNKSIZE;
         str->remaining += grow;
-        str->length    += grow; 
+        str->length    += grow;
         S_REALLOC_N( str->buffer, char, str->length + 1 );
         assert(str->buffer);
     }
     curr = str->buffer + (str->length - str->remaining);
     *curr = code;
     curr += 1;
-    if(start != NULL) 
+    if(start != NULL) {
         while(start < finish)
             *curr ++ = *start ++;
+    }
     *curr = '\n';
     curr += 1;
     *curr = 0;
@@ -87,6 +90,7 @@ void bytestring_append(bytestring_t *str, char code,
     assert( (str->buffer + str->length) - str->remaining );
 }
 
+static
 void bytestring_extend(bytestring_t *str, /*@null@*/ bytestring_t *ext)
 	/*@modifies str, ext @*/
 {
@@ -185,14 +189,14 @@ assert(val != NULL);
                     {
                         bytestring_append(val,YAMLBYTE_NULLCHAR,NULL,NULL);
                     }
-                    else 
+                    else
                     {
                         assert("oops");
                     }
                 }
                 current += 1;
             }
-        break;
+            break;
         case syck_seq_kind:
             bytestring_append(val,YAMLBYTE_SEQUENCE,NULL,NULL);
             for ( i = 0; i < n->data.list->idx; i++ )
@@ -202,7 +206,7 @@ assert(val != NULL);
                 bytestring_extend(val, sav);
             }
             bytestring_append(val,YAMLBYTE_END_BRANCH,NULL,NULL);
-        break;
+            break;
         case syck_map_kind:
             bytestring_append(val,YAMLBYTE_MAPPING,NULL,NULL);
             for ( i = 0; i < n->data.pairs->idx; i++ )
@@ -215,7 +219,9 @@ assert(val != NULL);
                 bytestring_extend(val, sav);
             }
             bytestring_append(val,YAMLBYTE_END_BRANCH,NULL,NULL);
-        break;
+            break;
+        default:
+            break;
     }
     oid = syck_add_sym( p, (char *) val );
     /*TRACE1("Saving: %s", val->buffer );*/
@@ -227,7 +233,7 @@ syck_yaml2byte(char *yamlstr)
 {
     SYMID oid;
     char *ret;
-    bytestring_t *sav; 
+    bytestring_t *sav;
 
     SyckParser *parser = syck_new_parser();
 assert(parser != NULL);

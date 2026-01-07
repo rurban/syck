@@ -5,7 +5,7 @@
  *
  * Run the complete yaml-test-suite in plain C to check any deviations from libyaml.
  * - parse all yaml-test-suite/XXXX/in.yaml
- * - optionally emit the node events in a special format,
+ * - emit the node events in a special event stream format,
  *   and compare to yaml-test-suite/XXXX/test.event
  * - and emit it, comparing to yaml-test-suite/XXXX/out.yaml
  */

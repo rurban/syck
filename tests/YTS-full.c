@@ -16,6 +16,7 @@
 #include "YTS-lib.h"
 #include <string.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #define DATA_DIR "yaml-test-suite/"
 
@@ -53,6 +54,11 @@ struct yts_node {
 };
 const struct yts_node yts_end_node = {STREAM_END_EVENT, opt_no_type, NULL, NULL, NULL, NULL};
 
+static int file_exists(const char *fn) {
+  struct stat st;
+  return stat(fn, &st) == 0;
+}
+
 static void yts_test_func(CuTest *tc) {
   char s[128];
   char path[64];
@@ -62,6 +68,7 @@ static void yts_test_func(CuTest *tc) {
   char *yaml;
   FILE *fh, *outfh = NULL, *testfh = NULL;
   size_t fsize, nread;
+  int must_fail = 0;
 
   strncpy(path, tc->name, sizeof(path)-1);
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/===", path);
@@ -89,9 +96,12 @@ static void yts_test_func(CuTest *tc) {
   if (nread != fsize)
     fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread, fsize);
 
-  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/out.yaml", path);
-  outfh = fopen(fn, "r");
-  CuAssert(tc, "out.yaml not found", outfh != NULL);
+  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/error", path);
+  if (!file_exists(fn)) {
+    snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/out.yaml", path);
+    outfh = fopen(fn, "r");
+    CuAssert(tc, "out.yaml not found", outfh != NULL);
+  }
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/test.event", path);
   testfh = fopen(fn, "r");
   CuAssert(tc, "test.event not found", testfh != NULL);
@@ -100,12 +110,14 @@ static void yts_test_func(CuTest *tc) {
   ev = CuStringNew();
   test_yaml_and_stream(cs, yaml, ev);
 
-  if (!compare_cs(tc, outfh, cs))
-    printf("OK out.yaml matches\n");
-  else {
-    printf("FAIL out.yaml does not match\n");
+  if (outfh) {
+    if (!compare_cs(tc, outfh, cs))
+      printf("OK out.yaml matches\n");
+    else {
+      printf("FAIL out.yaml does not match\n");
+    }
+    fclose(outfh);
   }
-  fclose(outfh);
 
   if (!compare_cs(tc, testfh, ev))
     printf("OK test.event matches\n");

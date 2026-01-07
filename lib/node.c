@@ -68,7 +68,7 @@ syck_alloc_map(void)
 
     n = syck_alloc_node( syck_map_kind );
     n->data.pairs = m;
-    
+
     return n;
 }
 
@@ -240,7 +240,7 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
     m1 = map1->data.pairs;
     m2 = map2->data.pairs;
     if ( m2->idx < 1 ) return;
-        
+
     new_idx = m1->idx;
     new_idx += m2->idx;
     new_capa = m1->capa;
@@ -256,8 +256,8 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
     }
     for ( new_idx = 0; new_idx < m2->idx; m1->idx++, new_idx++ )
     {
-        m1->keys[m1->idx] = m2->keys[new_idx]; 
-        m1->values[m1->idx] = m2->values[new_idx]; 
+        m1->keys[m1->idx] = m2->keys[new_idx];
+        m1->values[m1->idx] = m2->values[new_idx];
     }
 }
 

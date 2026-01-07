@@ -116,9 +116,16 @@ assert(p->bad_anchors != NULL);
         }
     }
 
-    if ( n == NULL && p->bad_anchor_handler )
+    if ( n == NULL || n == (void *)1)
     {
-        n = (p->bad_anchor_handler)( p, a );
+        if (p->bad_anchor_handler)
+            n = (p->bad_anchor_handler)( p, a );
+        else {
+            n = syck_new_str( "", scalar_plain );
+            n->type_id = syck_taguri( YAML_DOMAIN, "null", 4 );
+            n->anchor = a;
+            return n;
+        }
     }
 
     if ( n->anchor != NULL )

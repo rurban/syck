@@ -95,7 +95,7 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
         if ( st_lookup( p->anchors, (st_data_t)a, (void *)&n ) )
         {
             if ( n != (void *)1 )
-            {    
+            {
                 S_FREE( a );
                 return n;
             }
@@ -106,7 +106,8 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
                     p->bad_anchors = st_init_strtable();
                 }
 assert(p->bad_anchors != NULL);
-                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n ) )
+                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n )
+                     && p->bad_anchor_handler)
                 {
                     n = (p->bad_anchor_handler)( p, a );
                     st_insert( p->bad_anchors, (st_data_t)a, (st_data_t)n );
@@ -115,7 +116,7 @@ assert(p->bad_anchors != NULL);
         }
     }
 
-    if ( n == NULL )
+    if ( n == NULL && p->bad_anchor_handler )
     {
         n = (p->bad_anchor_handler)( p, a );
     }
@@ -123,7 +124,7 @@ assert(p->bad_anchors != NULL);
     if ( n->anchor != NULL )
     {
         S_FREE( a );
-    } 
+    }
     else
     {
         n->anchor = a;

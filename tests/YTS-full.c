@@ -13,6 +13,7 @@
 #define _GNU_SOURCE
 #include "CuTest.h"
 #include "syck.h"
+#include "YTS-lib.h"
 #include <string.h>
 #include <dirent.h>
 
@@ -52,243 +53,15 @@ struct yts_node {
 };
 const struct yts_node yts_end_node = {STREAM_END_EVENT, opt_no_type, NULL, NULL, NULL, NULL};
 
-/*
- * Helper to compare YAML parse node events with
- * equivalent test.event lines.
- */
-static SYMID
-yts_parse_event_handler(SyckParser *p, SyckNode *n) {
-  int i = 0;
-  struct yts_node *tn = S_ALLOC_N(struct yts_node, 1);
-  memset(tn, 0, sizeof(struct yts_node));
-
-  tn->opt_type = opt_no_type;
-  if (n->type_id) {
-    tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
-  }
-  else if (n->anchor) {
-    tn->anchor = syck_strndup(n->anchor, strlen(n->anchor));
-  }
-
-  switch (n->kind) {
-  case syck_str_kind:
-    tn->type = SCALAR_EVENT; // =VAL with opt. tag/anchor and a value
-    if (!n->type_id && !n->anchor)
-      tn->opt_type = opt_value_type;
-    tn->value = syck_strndup(n->data.str->ptr, n->data.str->len);
-    break;
-
-  case syck_seq_kind:
-    tn->type = SEQ_START_EVENT;
-    tn->value = NULL;
-    if (!n->data.list->idx) {
-      tn->type = SEQ_EMPTY_EVENT;
-      tn->opt_type = opt_empty_type;
-    }
-    break;
-
-  case syck_map_kind:
-    tn->type = MAP_START_EVENT;
-    tn->value = NULL;
-    if (!n->data.list->idx) {
-      tn->type = MAP_EMPTY_EVENT;
-      tn->opt_type = opt_empty_type;
-    }
-    break;
-
-  default:
-    exit(1);
-  }
-
-  return syck_add_sym(p, (char *)tn);
-}
-
-static enum st_retval
-syck_free_copies(SHIM(const char *key), void *_tn,
-                 SHIM(void *arg)) {
-  const struct yts_node *tn = (const struct yts_node *)_tn;
-  UNUSED(key);
-  UNUSED(arg);
-  if (tn != NULL) {
-    S_FREE(tn->tag);
-    S_FREE(tn->anchor);
-    S_FREE(tn->value);
-  }
-  S_FREE(tn);
-  tn = NULL;
-  return ST_CONTINUE;
-}
-
-static void CuStreamCompareX(CuTest *tc, struct yts_node *s1, struct yts_node *s2) {
-  int i = 0;
-  while (1) {
-    CuAssertIntEquals(tc, s1[i].type, s2[i].type);
-    /*
-    if (s1[i].type == T_END)
-      return;
-    if (s1[i].tag != 0 && s2[i].tag != 0)
-      CuAssertStrEquals(tc, s1[i].tag, s2[i].tag);
-    switch (s1[i].type) {
-    case T_STR:
-      CuAssertStrEquals(tc, s1[i].key, s2[i].key);
-      break;
-    case T_SEQ:
-    case T_MAP:
-      CuStreamCompareX(tc, s1[i].value, s2[i].value);
-      break;
-    }
-    */
-    i++;
-  }
-}
-
-static void CuStreamCompare(CuTest *tc, char *yaml, struct yts_node *stream) {
-  int doc_ct = 0;
-  struct yts_node *ystream = S_ALLOC_N(struct yts_node, doc_ct + 1);
-
-  /* Set up parser */
-  SyckParser *parser = syck_new_parser();
-  syck_parser_str_auto(parser, yaml, NULL);
-  syck_parser_handler(parser, yts_parse_event_handler);
-  syck_parser_error_handler(parser, NULL);
-  syck_parser_implicit_typing(parser, 1);
-  syck_parser_taguri_expansion(parser, 1);
-
-  /* Parse all streams */
-  while (1) {
-    struct yts_node *ydoc;
-    SYMID oid = syck_parse(parser);
-    int res;
-
-    if (parser->eof == 1)
-      break;
-
-    /* Add document to stream */
-    res = syck_lookup_sym(parser, oid, (char **)&ydoc);
-    if (0 == res)
-      break;
-
-    ystream[doc_ct] = ydoc[0];
-    doc_ct++;
-    S_REALLOC_N(ystream, struct yts_node, doc_ct + 1);
-  }
-  ystream[doc_ct] = yts_end_node;
-
-  /* Traverse the struct and the symbol table side-by-side */
-  /* DEBUG: y( stream, 0 ); y( ystream, 0 ); */
-  if (stream)
-    CuStreamCompareX(tc, stream, ystream);
-
-  /* Free the node tables and the parser */
-  S_FREE(ystream);
-  if (parser->syms != NULL)
-    st_foreach(parser->syms, syck_free_copies, 0);
-  syck_free_parser(parser);
-}
-
-/*
- * Setup for testing N->Y->N.
- */
-static void test_output_handler(SyckEmitter *emitter, const char *str, long len) {
-  CuString *dest = (CuString *)emitter->bonus;
-  CuStringAppendLen(dest, str, len);
-}
-
-static
-int is_end_type(struct yts_node *node) {
-  return node->type == MAP_END_EVENT || node->type == SEQ_END_EVENT;
-}
-
-static SYMID
-build_symbol_table(SyckEmitter *emitter, struct yts_node *node) {
-  switch (node->type) {
-  case SEQ_START_EVENT:
-  case MAP_START_EVENT: {
-    int i = 0;
-    while (!is_end_type(&(node->kids[i]))) {
-      build_symbol_table(emitter, &node->kids[i]);
-      i++;
-    }
-    return syck_emitter_mark_node(emitter, (st_data_t)node, 0);
-  }
-  default:
-    break;
-  }
-  return 0;
-}
-
-static void
-test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
-  struct yts_node *node = (struct yts_node *)data;
-  switch (node->type) {
-  case SCALAR_EVENT:
-    syck_emit_scalar(emitter, node->tag, scalar_none, 0, 0, 0, node->value,
-                     strlen(node->value));
-    break;
-  case SEQ_START_EVENT:
-  case SEQ_EMPTY_EVENT:
-  {
-    int i = 0;
-    syck_emit_seq(emitter, node->tag, seq_none);
-    while (!is_end_type(&node->kids[i])) {
-      syck_emit_item(emitter, (st_data_t)&node->kids[i]);
-      i++;
-    }
-    syck_emit_end(emitter);
-  } break;
-  case MAP_START_EVENT:
-  case MAP_EMPTY_EVENT:
-  {
-    int i = 0;
-    syck_emit_map(emitter, node->tag, map_none);
-    while (!is_end_type(&node->kids[i])) {
-      syck_emit_item(emitter, (st_data_t)&node->kids[i]);
-      i++;
-    }
-    syck_emit_end(emitter);
-  } break;
-  default:
-    break;
-  }
-}
-
-__attribute__unused__
-static void
-CuRoundTrip(CuTest *tc, struct yts_node *stream) {
-  int i = 0;
-  CuString *cs = CuStringNew();
-  SyckEmitter *emitter = syck_new_emitter();
-
-  /* Calculate anchors and tags */
-  build_symbol_table(emitter, stream);
-
-  /* Build the stream */
-  syck_output_handler(emitter, test_output_handler);
-  syck_emitter_handler(emitter, test_emitter_handler);
-  emitter->bonus = cs;
-  while (!is_end_type(&stream[i])) {
-    syck_emit(emitter, (st_data_t)&stream[i]);
-    syck_emitter_flush(emitter, 0);
-    i++;
-  }
-
-  /* Reload the stream and compare */
-  /* printf( "-- output for %s --\n%s\n--- end of output --\n", tc->name,
-   * cs->buffer ); */
-  CuStreamCompare(tc, cs->buffer, stream);
-  CuStringFree(cs);
-
-  syck_free_emitter(emitter);
-}
-
-static void
-yts_test_func(CuTest *tc) {
+static void yts_test_func(CuTest *tc) {
   char s[128];
   char path[64];
   char fn[128];
   struct yts_node *stream = NULL;
+  CuString *cs, *ev;
   char *yaml;
-  FILE *fh;
+  FILE *fh, *outfh = NULL, *testfh = NULL;
+  size_t fsize, nread;
 
   strncpy(path, tc->name, sizeof(path)-1);
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/===", path);
@@ -306,21 +79,44 @@ yts_test_func(CuTest *tc) {
   snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/in.yaml", path);
   fn[sizeof(fn)-1] = '\0';
   fh = fopen(fn, "r");
-  if (fh) {
-    size_t fsize, nread;
-    fseek(fh, 0, SEEK_END);
-    fsize = ftell(fh);
-    yaml = S_ALLOC_N(char, fsize + 1);
-    fseek(fh, 0, SEEK_SET);
-    nread = fread(yaml, 1, fsize, fh);
-    yaml[nread] = '\0';
-    if (nread != fsize)
-      fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread, fsize);
-    CuStreamCompare(tc, yaml, stream);
-    S_FREE(yaml);
-  } else {
-    fprintf(stderr, "no file %s\n", fn);
+  CuAssert(tc, "in.yaml not found", fh != NULL);
+  fseek(fh, 0, SEEK_END);
+  fsize = ftell(fh);
+  yaml = S_ALLOC_N(char, fsize + 1);
+  fseek(fh, 0, SEEK_SET);
+  nread = fread(yaml, 1, fsize, fh);
+  yaml[nread] = '\0';
+  if (nread != fsize)
+    fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread, fsize);
+
+  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/out.yaml", path);
+  outfh = fopen(fn, "r");
+  CuAssert(tc, "out.yaml not found", outfh != NULL);
+  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/test.event", path);
+  testfh = fopen(fn, "r");
+  CuAssert(tc, "test.event not found", testfh != NULL);
+
+  cs = CuStringNew();
+  ev = CuStringNew();
+  test_yaml_and_stream(cs, yaml, ev);
+
+  if (!compare_cs(tc, outfh, cs))
+    printf("OK out.yaml matches\n");
+  else {
+    printf("FAIL out.yaml does not match\n");
   }
+  fclose(outfh);
+
+  if (!compare_cs(tc, testfh, ev))
+    printf("OK test.event matches\n");
+  else {
+    printf("FAIL test.event does not match\n");
+  }
+  fclose(testfh);
+
+  CuStringFree(cs);
+  CuStringFree(ev);
+  S_FREE(yaml);
 }
 
 static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {

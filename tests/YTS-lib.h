@@ -30,3 +30,5 @@ void test_output_handler(SyckEmitter *emitter, const char *str, long len);
 void test_emitter_handler(SyckEmitter *emitter, st_data_t data);
 void CuRoundTrip(CuTest *tc, struct test_node *stream);
 void emit_stream(CuString *cs, struct test_node *s);
+void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev);
+int compare_cs(CuTest *tc, FILE *fh, CuString *cs);

@@ -454,7 +454,8 @@ syck_move_tokens( SyckParser *p )
         p->token = p->buffer;
         p->marker -= count;
         p->cursor -= count;
-        p->toktmp -= count;
+        if (p->toktmp)
+            p->toktmp -= count;
         p->limit -= count;
         p->lineptr -= count;
         p->linectptr -= count;

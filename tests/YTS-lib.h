@@ -29,4 +29,4 @@ SYMID build_symbol_table(SyckEmitter *emitter, struct test_node *node);
 void test_output_handler(SyckEmitter *emitter, const char *str, long len);
 void test_emitter_handler(SyckEmitter *emitter, st_data_t data);
 void CuRoundTrip(CuTest *tc, struct test_node *stream);
-void print_stream(struct test_node *s1);
+void emit_stream(CuString *cs, struct test_node *s);

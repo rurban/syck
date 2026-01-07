@@ -178,6 +178,9 @@ static CuSuite *SyckGetSuite(void) {
         || (a >= 'A' && a <= 'Z'))
       addYTSDir("yaml-test-suite", flist[i], suite);
   }
+  while (n--) {
+    free(flist[n]);
+  }
   free(flist);
   return suite;
 }

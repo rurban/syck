@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
        // check if dir with in.yaml
        struct dirent **files;
        int n = scandir(argv[1], &files, NULL, alphasort);
-       if (n) {
+       if (n > 0) {
            int found = 0;
            int more = 0;
            for (int i=0; i<n; i++) {
@@ -85,6 +85,10 @@ int main(int argc, char **argv) {
                    more++;
                }
            }
+           while (n--) {
+               free(files[n]);
+           }
+           free(files);
            if (!found) {
                fprintf(stderr, "No in.yaml in %s\n", argv[1]);
                return 1;

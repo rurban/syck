@@ -363,18 +363,21 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev) {
 
 int compare_cs(CuTest *tc, FILE *fh, CuString *cs) {
     CuString *file_cs = CuStringNew();
-    CuString *s = CuStringNew();
     char buf[256];
     while (fgets(buf, sizeof(buf), fh)) {
         CuStringAppend(file_cs, buf);
     }
     if (tc) {
       CuAssertStrEquals(tc, file_cs->buffer, cs->buffer);
+      CuStringFree(file_cs);
       return 0;
     } else {
-      if (strcmp(file_cs->buffer, cs->buffer) == 0)
+      if (strcmp(file_cs->buffer, cs->buffer) == 0) {
+        CuStringFree(file_cs);
         return 0;
+      }
       fprintf(stderr, "expected <\n%s> but was <\n%s>\n", file_cs->buffer, cs->buffer);
+      CuStringFree(file_cs);
       return 1;
     }
 }

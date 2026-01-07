@@ -711,6 +711,7 @@ EXPORT void syck_free_node( SyckNode *n )
 	/*@modifies n @*/;
 EXPORT void syck_free_members( SyckNode *n )
 	/*@modifies n @*/;
+
 /*@null@*/
 EXPORT __attribute__malloc__
 __attribute__warn_unused_result__

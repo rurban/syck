@@ -49,6 +49,7 @@ syck_free_node( SyckNode *n )
         n->anchor = NULL;
     }
     S_FREE( n );
+    n = NULL;
 #endif
 }
 
@@ -389,7 +390,7 @@ syck_free_members( SyckNode *n )
     switch ( n->kind  )
     {
         case syck_str_kind:
-            if ( n->data.str != NULL ) 
+            if ( n->data.str != NULL )
             {
                 S_FREE( n->data.str->ptr );
                 n->data.str->ptr = NULL;

@@ -521,6 +521,8 @@ st_foreach(st_table *table,
 	last = 0;
 	for(ptr = table->bins[i]; ptr != 0;) {
 	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
+            if (func == syck_st_free_nodes)
+                ptr->record = NULL;
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = ptr;

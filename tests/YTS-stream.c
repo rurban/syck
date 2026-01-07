@@ -4,13 +4,12 @@
 
 extern const struct test_node end_node;
 
-static void emit_stream(const char *yaml) {
-    CuString *cs = CuStringNew();
+static void test_stream(CuString *cs, const char *yaml) {
     SyckEmitter *emitter = syck_new_emitter();
     struct test_node *ystream = S_ALLOC_N(struct test_node, 1);
     int doc_ct = 0;
     int i = 0;
-  
+
     /* Set up parser */
     SyckParser *parser = syck_new_parser();
     syck_parser_str_auto(parser, yaml, NULL);
@@ -38,7 +37,7 @@ static void emit_stream(const char *yaml) {
         S_REALLOC_N(ystream, struct test_node, doc_ct + 1);
     }
     ystream[doc_ct] = end_node;
-    
+
     build_symbol_table(emitter, ystream);
 
     /* Build the stream */
@@ -56,7 +55,7 @@ static void emit_stream(const char *yaml) {
     puts("\n--- # Parsed Stream");
     puts("+STR");
     puts("+DOC");
-    print_stream(ystream);
+    emit_stream(cs, ystream);
     puts("-DOC");
     puts("-STR");
 
@@ -64,36 +63,44 @@ static void emit_stream(const char *yaml) {
     if (parser->syms != NULL)
         st_foreach(parser->syms, syck_free_copies, 0);
     syck_free_parser(parser);
-    
-    CuStringFree(cs);
     syck_free_emitter(emitter);
 }
 
 int main(int argc, char **argv) {
    char *yaml;
    struct test_node *stream;
-   if (argc == 2) {
-       FILE *fh = fopen(argv[1], "r");
-       size_t fsize;
-       if (!fh) {
-           fprintf(stderr, "Could not open file: %s\n", argv[1]);
-           return 1;
-       }
-       fseek(fh, 0, SEEK_END);
-       fsize = ftell(fh);
-       yaml = S_ALLOC_N(char, fsize + 1);
-       fseek(fh, 0, SEEK_SET);
-       yaml[fsize] = '\0';
-       fread(yaml, 1, fsize, fh);
+   CuString *cs;
+   FILE *fh;
+   size_t fsize, nread;
+
+   if (argc != 2) {
+       fprintf(stderr, "yaml-file argument missing\n");
+       exit(1);
    }
-   else
-       yaml = (char*)"test: 1\nand: \"with new\\nline\\n\"\nalso: &3 three\nmore: *3";
+   fh = fopen(argv[1], "r");
+   if (!fh) {
+       fprintf(stderr, "Could not open file: %s\n", argv[1]);
+       return 1;
+   }
+   fseek(fh, 0, SEEK_END);
+   fsize = ftell(fh);
+   yaml = S_ALLOC_N(char, fsize + 1);
+   fseek(fh, 0, SEEK_SET);
+   yaml[fsize] = '\0';
+   nread = fread(yaml, 1, fsize, fh);
+   if (nread != fsize) {
+       fprintf(stderr, "Unexpected file size %s: %zu != %zu read", argv[1], fsize, nread);
+       exit(1);
+   }
+
    puts("--- # YAML \n");
    puts(yaml);
    puts("\n...\n");
 
-   emit_stream(yaml);
+   cs = CuStringNew();
+   test_stream(cs, yaml);
 
+   CuStringFree(cs);
    S_FREE(yaml);
    return 0;
 }

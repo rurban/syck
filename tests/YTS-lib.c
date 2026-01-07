@@ -258,34 +258,36 @@ CuRoundTrip(CuTest *tc, struct test_node *stream) {
   syck_free_emitter(emitter);
 }
 
-/* TODO: print in YTS test.event formar */
-void print_stream(struct test_node *s1) {
+/* TODO: print in YTS test.event format */
+void emit_stream(CuString *cs, struct test_node *s) {
   int i = 0;
   while (1) {
-    //CuAssertIntEquals(tc, s1[i].type, s2[i].type);
-    if (s1[i].type == T_END)
+    if (s[i].type == T_END)
       return;
-    switch (s1[i].type) {
+    switch (s[i].type) {
     case T_STR:
-      printf("=VAL ");
-      if (s1[i].tag) {
-        if (!strcmp(s1[i].tag, "tag:yaml.org,2002:str"))
-          printf("'");
-        else if (!strcmp(s1[i].tag, "tag:yaml.org,2002:int"))
-          printf(":");
+      CuStringAppend(cs, "=VAL ");
+      if (s[i].tag) {
+        if (!strcmp(s[i].tag, "tag:yaml.org,2002:str"))
+          CuStringAppend(cs, "'");
+        else if (!strcmp(s[i].tag, "tag:yaml.org,2002:int"))
+          CuStringAppend(cs, ":");
       }
       // TODO string escape the key
-      printf("%s\n", s1[i].key);
+      CuStringAppend(cs, s[i].key);
+      CuStringAppendLen(cs, "\n", 1);
       break;
     case T_SEQ:
-      printf("+SEQ\n");
-      print_stream(s1[i].value);
-      printf("-SEQ\n");
+      // TODO [] style?
+      CuStringAppend(cs, "+SEQ\n");
+      emit_stream(cs, s[i].value);
+      CuStringAppend(cs, "-SEQ\n");
       break;
     case T_MAP:
-      printf("+MAP\n");
-      print_stream(s1[i].value);
-      printf("-MAP\n");
+      // TODO {} style?
+      CuStringAppend(cs, "+MAP\n");
+      emit_stream(cs, s[i].value);
+      CuStringAppend(cs, "-MAP\n");
       break;
     default:
       break;

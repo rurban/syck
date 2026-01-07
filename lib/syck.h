@@ -728,6 +728,16 @@ EXPORT void syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_sty
 	/*@modifies n @*/;
 EXPORT void syck_str_blow_away_commas( SyckNode *n )
 	/*@modifies n @*/;
+#ifdef HAVE_RUBY_ST_H
+EXPORT int
+syck_st_free_nodes( st_data_t key, /*@only@*/ st_data_t record,
+                    st_data_t arg );
+#else
+EXPORT enum st_retval
+syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
+                    SHIM(void *arg) );
+#endif
+
 /*@null@*/
 char *syck_str_read( SyckNode *n )
 	/*@*/;

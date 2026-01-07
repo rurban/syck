@@ -216,11 +216,11 @@ syck_lookup_sym( SyckParser *p, SYMID id, char **data )
 }
 
 #ifdef HAVE_RUBY_ST_H
-static int
+int
 syck_st_free_nodes( st_data_t key, /*@only@*/ st_data_t record,
                     st_data_t arg )
 #else
-static enum st_retval
+enum st_retval
 syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
                     SHIM(void *arg) )
 #endif
@@ -229,9 +229,8 @@ syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
     SyckNode *n = (SyckNode *)record;
     UNUSED(key);
     UNUSED(arg);
-    if ( n != (void *)1 )
+    if ( n != NULL && n != (void *)1 )
         syck_free_node( n );
-    n = NULL;
     return ST_CONTINUE;
 }
 

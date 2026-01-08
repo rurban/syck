@@ -14,7 +14,7 @@ dist_doc_DATA = README README.BYTECODE README.EXT ChangeLog TODO RELEASE AUTHORS
 .PHONY: ext ext-test ext-clean
 ext:
 	$(MAKE) -C ext/ruby
-	$(MAKE) -C ext/php
+	cd ext/php && phpize && ./configure --with-syck=$(prefix) && make
 	$(MAKE) -C ext/yamlbyte
 	$(MAKE) -C ext/lua
 	cd ext/perl && perl Makefile.PL && make

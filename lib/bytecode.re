@@ -531,4 +531,3 @@ ANY         {   CAT(str, cap, idx, tok[0]);
     }
 
 }
-

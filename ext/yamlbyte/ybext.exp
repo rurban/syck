@@ -1,4 +1,4 @@
---- # YAML 
+--- # YAML
 
 test: 1
 and: "with new\nline\n"
@@ -28,4 +28,3 @@ Ttag:yaml.org,2002:str
 Smore
 R3
 E
-

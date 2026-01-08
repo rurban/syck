@@ -103,8 +103,8 @@ is( Load("--- ''\n"), '' );
 my $h = { bar => [qw<baz troz>] };
 $h->{foo} = $h->{bar};
 is( Dump($h), << '.');
---- 
-bar: &1 
+---
+bar: &1
   - baz
   - troz
 foo: *1
@@ -114,11 +114,11 @@ if (0) {
 my $r;
 $r = \$r;
 is( Dump($r), << '.');
---- &1 !!perl/ref 
+--- &1 !!perl/ref
 =: *1
 .
 is( Dump( scalar Load( Dump($r) ) ), << '.');
---- &1 !!perl/ref 
+--- &1 !!perl/ref
 =: *1
 .
 }
@@ -146,10 +146,10 @@ is( Load("--- -4294967296\n"), -4294967296 );
 
 # RT #18752
 my $recurse1 = << '.';
---- &1 
-Foo: 
+--- &1
+Foo:
   parent: *1
-Troz: 
+Troz:
   parent: *1
 .
 
@@ -157,17 +157,17 @@ is( Dump( scalar Load($recurse1) ), $recurse1, 'recurse 1' );
 
 # We wanna verify the circular ref but we can't garuntuee numbering after 5.18.0 changed the hash algorithm
 my $recurse2 = << '.';
---- &1 
-Bar: 
+--- &1
+Bar:
   parent: *1
-Baz: 
+Baz:
   parent: *1
-Foo: 
+Foo:
   parent: *1
-Troz: 
+Troz:
   parent: *1
-Zort: &2 
-  Poit: 
+Zort: &2
+  Poit:
     parent: *2
   parent: *1
 .
@@ -301,7 +301,7 @@ TODO: {
   \  \n<i>new</i>\n"};
     my $expected = q{<tag>content string</tag>
 <anothertag>other content</anothertag>
-  
+
 <i>new</i>
 };
     local $TODO = "not handling double quoted style right";

@@ -1,24 +1,25 @@
 #import <Foundation/Foundation.h>
 
-//#if TARGET_OS_IPHONE
+// #if TARGET_OS_IPHONE
+#import "GSNSDataExtensions.h"
 #import "YAMLCategories.h"
 #import "YAMLCocoaCategories.h"
-#import "GSNSDataExtensions.h"
-//#else
-//#import <YAML/YAMLCategories.h>
-//#import <YAML/YAMLCocoaCategories.h>
-//#import <YAML/GSNSDataExtensions.h>
-//#endif
+// #else
+// #import <YAML/YAMLCategories.h>
+// #import <YAML/YAMLCocoaCategories.h>
+// #import <YAML/GSNSDataExtensions.h>
+// #endif
 
 id yaml_parse(NSString *str);
 id yaml_parse_raw_utf8(const char *str, long len);
 
 @interface NSObject (PublicYAMLAdditions)
-// -toYAML and +fromYAML are the methods you will need to override for your classes
-// overide -toYAML to return a NSArray, NSDictionary, NSString or NSNumber
+// -toYAML and +fromYAML are the methods you will need to override for your
+// classes overide -toYAML to return a NSArray, NSDictionary, NSString or
+// NSNumber
 - (id)toYAML;
 // overide +fromYAML to read the same back in
-// [MyClass fromYAML:[me toYAML]] should give a copy of me 
+// [MyClass fromYAML:[me toYAML]] should give a copy of me
 + (id)fromYAML:(id)data;
 
 // -yamlData is a sibling of -toYAML
@@ -26,9 +27,10 @@ id yaml_parse_raw_utf8(const char *str, long len);
 - (id)yamlData;
 // -yamlParse is the opposite of -yamlData
 // it will decode the wrapped up data of -yamlData
-// [[me yamlData] yamlParse] should give a copy of me 
+// [[me yamlData] yamlParse] should give a copy of me
 - (id)yamlParse;
 
-// yamlDescription provides the actual yaml text that you can write out to a file
-- (NSString*)yamlDescription;
+// yamlDescription provides the actual yaml text that you can write out to a
+// file
+- (NSString *)yamlDescription;
 @end

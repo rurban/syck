@@ -1,9 +1,9 @@
 #ifndef CU_TEST_H
 #define CU_TEST_H
 
+#include "syck.h"
 #include <setjmp.h>
 #include <stdarg.h>
-#include "syck.h"
 
 /* CuString */
 
@@ -28,8 +28,8 @@ void CuStringRead(CuString *str, const char *path);
 void CuStringAppend(CuString *str, const char *text);
 void CuStringAppendLen(CuString *str, const char *text, size_t length);
 void CuStringAppendChar(CuString *str, char ch);
-__attribute__format__(2,3)
-void CuStringAppendFormat(CuString *str, const char *format, ...);
+__attribute__format__(2, 3) void CuStringAppendFormat(CuString *str,
+                                                      const char *format, ...);
 void CuStringAppendEscaped(CuString *str, const char *text);
 void CuStringResize(CuString *str, size_t newSize);
 void CuStringFree(CuString *str);

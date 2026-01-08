@@ -32,7 +32,8 @@ YAML
 # using file name
 {
     DumpFile( 'dumpfile.yml', $scalar );
-    file_contents_is( 'dumpfile.yml', $expected_yaml, 'DumpFile works with filenames' );
+    file_contents_is( 'dumpfile.yml', $expected_yaml,
+        'DumpFile works with filenames' );
     unlink 'dumpfile.yml' or die $!;
 }
 
@@ -42,13 +43,15 @@ YAML
     my $h = IO::File->new('>dumpfile.yml');
     DumpFile( $h, $scalar );
     close $h;
-    file_contents_is( 'dumpfile.yml', $expected_yaml, 'DumpFile works with IO::File' );
+    file_contents_is( 'dumpfile.yml', $expected_yaml,
+        'DumpFile works with IO::File' );
     unlink 'dumpfile.yml' or die $!;
 }
 
 # dump to indirect file handles
 SKIP: {
-    skip "indirect file handles require 5.6 or later", 1 unless $] >= 5.006000;
+    skip "indirect file handles require 5.6 or later", 1
+        unless $] >= 5.006000;
     eval q[
 
     open(my $h, '>', 'dumpfile.yml');
@@ -66,7 +69,8 @@ SKIP: {
     open( H, '>dumpfile.yml' );
     DumpFile( *H, $scalar );
     close(H);
-    file_contents_is( 'dumpfile.yml', $expected_yaml, 'DumpFile works with ordinary file handles' );
+    file_contents_is( 'dumpfile.yml', $expected_yaml,
+        'DumpFile works with ordinary file handles' );
     unlink 'dumpfile.yml' or die $!;
 }
 
@@ -76,7 +80,8 @@ SKIP: {
     open( H, '>dumpfile.yml' );
     DumpFile( \*H, $scalar );
     close(H);
-    file_contents_is( 'dumpfile.yml', $expected_yaml, 'DumpFile works with glob refs' );
+    file_contents_is( 'dumpfile.yml', $expected_yaml,
+        'DumpFile works with glob refs' );
     unlink 'dumpfile.yml' or die $!;
 }
 

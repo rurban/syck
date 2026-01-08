@@ -11,7 +11,7 @@ foreach($functions as $func) {
 echo "<br>\n";
 echo "Testing load: \n";
 $doc =<<<YAML
-- 
+-
   a: 1
   b: 2
   c: 3

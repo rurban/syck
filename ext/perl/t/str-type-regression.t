@@ -53,12 +53,16 @@ for my $attempt ( 1 .. $iterations ) {
     # Check that all values are empty strings, not the literal "str"
     for my $key ( keys %$data ) {
         if ( $data->{$key} eq 'str' ) {
-            fail("FAIL at iteration $attempt: key '$key' has value 'str' instead of empty string");
+            fail(
+                "FAIL at iteration $attempt: key '$key' has value 'str' instead of empty string"
+            );
             $failed++;
             last;
         }
         elsif ( $data->{$key} ne '' ) {
-            fail("FAIL at iteration $attempt: key '$key' has unexpected value: '$data->{$key}'");
+            fail(
+                "FAIL at iteration $attempt: key '$key' has unexpected value: '$data->{$key}'"
+            );
             $failed++;
             last;
         }
@@ -67,6 +71,8 @@ for my $attempt ( 1 .. $iterations ) {
     last if $failed;
 }
 
-ok( !$failed, "All empty string values remain empty strings across $iterations iterations" );
+ok( !$failed,
+    "All empty string values remain empty strings across $iterations iterations"
+);
 
 done_testing();

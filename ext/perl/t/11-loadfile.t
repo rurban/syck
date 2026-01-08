@@ -41,12 +41,19 @@ write_file( 'loadfile.yml',  "---\na simple scalar" );
 write_file( 'emptyfile.yml', "" );
 
 END {
-    unlink 'loadfile.yml'  or die "can't delete 'loadfile.yml': $!"  if -e 'loadfile.yml';
-    unlink 'emptyfile.yml' or die "can't delete 'emptyfile.yml': $!" if -e 'emptyfile.yml';
+    unlink 'loadfile.yml'
+        or die "can't delete 'loadfile.yml': $!"
+        if -e 'loadfile.yml';
+    unlink 'emptyfile.yml'
+        or die "can't delete 'emptyfile.yml': $!"
+        if -e 'emptyfile.yml';
 }
 
 # using file names
-is( LoadFile('loadfile.yml'), "a simple scalar", 'LoadFile works with file names' );
+is( LoadFile('loadfile.yml'),
+    "a simple scalar",
+    'LoadFile works with file names'
+);
 
 # read via IO::File
 {
@@ -58,10 +65,14 @@ is( LoadFile('loadfile.yml'), "a simple scalar", 'LoadFile works with file names
 
 # read via indirect file handles
 SKIP: {
-    skip "indirect file handles require 5.6 or later", 1 unless $] >= 5.006000;
+    skip "indirect file handles require 5.6 or later", 1
+        unless $] >= 5.006000;
 
     open( my $h, 'loadfile.yml' );
-    is( LoadFile($h), "a simple scalar", 'LoadFile works with indirect filehandles' );
+    is( LoadFile($h),
+        "a simple scalar",
+        'LoadFile works with indirect filehandles'
+    );
     close($h);
 }
 
@@ -69,7 +80,10 @@ SKIP: {
 {
     local *H;
     open( H, 'loadfile.yml' );
-    is( LoadFile(*H), "a simple scalar", 'LoadFile works with ordinary filehandles' );
+    is( LoadFile(*H),
+        "a simple scalar",
+        'LoadFile works with ordinary filehandles'
+    );
     close(H);
 }
 
@@ -87,13 +101,20 @@ SKIP: {
 
     my $string = 'a simple scalar';
     open( my $h, '<', \$string );
-    is( LoadFile($h), "a simple scalar", 'LoadFile works with in-memory files' );
+    is( LoadFile($h),
+        "a simple scalar",
+        'LoadFile works with in-memory files'
+    );
     close($h);
 }
 
 {    # Load empty file fails
     my $yml = eval { LoadFile('emptyfile.yml') };
-    like( $@, qr/^\'emptyfile.yml' is empty or non-existent at/ms, "LoadFile dies loading an empty file" );
+    like(
+        $@,
+        qr/^\'emptyfile.yml' is empty or non-existent at/ms,
+        "LoadFile dies loading an empty file"
+    );
     is( $yml, undef, "LoadFile returns undef loading an empty file" );
 }
 

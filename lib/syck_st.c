@@ -118,7 +118,7 @@ static struct st_hash_type type_strhash = {
 };
 
 #define alloc(type) (type*)malloc((unsigned)sizeof(type))
-#define Calloc(n,s) (char*)calloc((n),(s))
+#define Calloc(n,s) calloc((n),(s))
 
 #define EQUAL(table,x,y) ((x)==(y) || (*table->type->compare)((x),(y)) == 0)
 

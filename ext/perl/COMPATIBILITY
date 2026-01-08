@@ -22,4 +22,3 @@ New way:
 * The best strategy is to update to the latest version.
 * There are potential problems if you use YAML for RPC and the server
   and client versions don't match.
-

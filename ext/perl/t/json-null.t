@@ -12,4 +12,3 @@ like $dat, qr/null/;
 
 $dat = JSON::Syck::Dump( { foo => !1 } );
 unlike $dat, qr/"foo":}/;
-

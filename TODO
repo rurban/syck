@@ -44,4 +44,3 @@
 [ ] Python extension with complete hooks.
 [ ] Full YAML 1.1 and 1.2 support.
 [ ] UTF-16 and UTF-32 support for 1.2 (via BOM)
-

@@ -8,7 +8,7 @@ use Test::More tests => 4;
 use YAML::Syck;
 
 my $entry = { a => 'b' };
-my $db = [ $entry, $entry ];
+my $db    = [ $entry, $entry ];
 
 my $dump = Dump($db);
 is( $dump, qq{--- \n- &1 \n  a: b\n- *1\n} );
@@ -22,4 +22,3 @@ is( $dump, qq{--- \n- &1 \n  a: b\n- *1\n} );
 
 my $dbcopycopy = Load($dumpcopy);
 is_deeply( $dbcopy, $db );
-

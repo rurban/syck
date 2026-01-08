@@ -4,16 +4,17 @@ use strict;
 use warnings;
 
 use base 'Exporter';
-our @EXPORT_OK = qw/can_compile_loadable_object can_compile_static_library can_compile_extension/;
-our %EXPORT_TAGS = (all => \@EXPORT_OK);
+our @EXPORT_OK
+    = qw/can_compile_loadable_object can_compile_static_library can_compile_extension/;
+our %EXPORT_TAGS = ( all => \@EXPORT_OK );
 
 use Config;
 use Carp 'carp';
 use File::Basename 'basename';
 use File::Spec::Functions qw/catfile catdir rel2abs/;
-use File::Temp qw/tempdir tempfile/;
+use File::Temp            qw/tempdir tempfile/;
 
-my $tempdir = tempdir('HASCOMPILERXXXX', CLEANUP => 1, DIR => '.');
+my $tempdir = tempdir( 'HASCOMPILERXXXX', CLEANUP => 1, DIR => '.' );
 
 my $loadable_object_format = <<'END';
 #define PERL_NO_GET_CONTEXT
@@ -62,148 +63,201 @@ EXPORT XS_EXTERNAL(boot_%s) {
 
 END
 
-my $counter = 1;
+my $counter    = 1;
 my %prelinking = map { $_ => 1 } qw/MSWin32 VMS aix/;
 
 sub can_compile_loadable_object {
-	my %args = @_;
+    my %args = @_;
 
-	my $output = $args{output} || \*STDOUT;
+    my $output = $args{output} || \*STDOUT;
 
-	my $config = $args{config} || 'ExtUtils::HasCompiler::Config';
-	return if not $config->get('usedl');
+    my $config = $args{config} || 'ExtUtils::HasCompiler::Config';
+    return if not $config->get('usedl');
 
-	my ($source_handle, $source_name) = tempfile('TESTXXXX', DIR => $tempdir, SUFFIX => '.c', UNLINK => 1);
-	my $basename = basename($source_name, '.c');
-	my $abs_basename = catfile($tempdir, $basename);
+    my ( $source_handle, $source_name ) = tempfile(
+        'TESTXXXX',
+        DIR    => $tempdir,
+        SUFFIX => '.c',
+        UNLINK => 1
+    );
+    my $basename     = basename( $source_name, '.c' );
+    my $abs_basename = catfile( $tempdir, $basename );
 
-	my ($cc, $ccflags, $optimize, $cccdlflags, $ld, $ldflags, $lddlflags, $libperl, $perllibs, $archlibexp, $_o, $dlext) = map { $config->get($_) } qw/cc ccflags optimize cccdlflags ld ldflags lddlflags libperl perllibs archlibexp _o dlext/;
+    my ($cc,       $ccflags,    $optimize,  $cccdlflags,
+        $ld,       $ldflags,    $lddlflags, $libperl,
+        $perllibs, $archlibexp, $_o,        $dlext
+        )
+        = map { $config->get($_) }
+        qw/cc ccflags optimize cccdlflags ld ldflags lddlflags libperl perllibs archlibexp _o dlext/;
 
-	my $incdir = catdir($archlibexp, 'CORE');
-	my $object_file = $abs_basename.$_o;
-	my $loadable_object = "$abs_basename.$dlext";
+    my $incdir          = catdir( $archlibexp, 'CORE' );
+    my $object_file     = $abs_basename . $_o;
+    my $loadable_object = "$abs_basename.$dlext";
 
-	my @commands;
-	if ($^O eq 'MSWin32' && $cc =~ /^cl/) {
-		push @commands, qq{$cc $ccflags $cccdlflags $optimize /I "$incdir" /c $source_name /Fo$object_file};
-		push @commands, qq{$ld $object_file $lddlflags $libperl $perllibs /out:$loadable_object /def:$abs_basename.def /pdb:$abs_basename.pdb};
-	}
-	elsif ($^O eq 'VMS') {
-		# Mksymlists is only the beginning of the story.
-		open my $opt_fh, '>>', "$abs_basename.opt" or do { carp "Couldn't append to '$abs_basename.opt'"; return };
-		print $opt_fh "PerlShr/Share\n";
-		close $opt_fh;
+    my @commands;
+    if ( $^O eq 'MSWin32' && $cc =~ /^cl/ ) {
+        push @commands,
+            qq{$cc $ccflags $cccdlflags $optimize /I "$incdir" /c $source_name /Fo$object_file};
+        push @commands,
+            qq{$ld $object_file $lddlflags $libperl $perllibs /out:$loadable_object /def:$abs_basename.def /pdb:$abs_basename.pdb};
+    }
+    elsif ( $^O eq 'VMS' ) {
 
-		my $incdirs = $ccflags =~ s{ /inc[^=]+ (?:=)+ (?:\()? ( [^\/\)]* ) }{}xi ? "$1,$incdir" : $incdir;
-		push @commands, qq{$cc $ccflags $optimize /include=($incdirs) $cccdlflags $source_name /obj=$object_file};
-		push @commands, qq{$ld $ldflags $lddlflags=$loadable_object $object_file,$abs_basename.opt/OPTIONS,${incdir}perlshr_attr.opt/OPTIONS' $perllibs};
-	}
-	else {
-		my @extra;
-		if ($^O eq 'MSWin32') {
-			my $lib = '-l' . ($libperl =~ /lib([^.]+)\./)[0];
-			push @extra, "$abs_basename.def", $lib, $perllibs;
-		}
-		elsif ($^O eq 'cygwin') {
-			push @extra, catfile($incdir, $config->get('useshrplib') ? 'libperl.dll.a' : 'libperl.a');
-		}
-		elsif ($^O eq 'aix') {
-			$lddlflags =~ s/\Q$(BASEEXT)\E/$abs_basename/;
-			$lddlflags =~ s/\Q$(PERL_INC)\E/$incdir/;
-		}
-		elsif ($^O eq 'android') {
-			push @extra, qq{"-L$incdir"}, '-lperl', $perllibs;
-		}
-		push @commands, qq{$cc $ccflags $optimize "-I$incdir" $cccdlflags -c $source_name -o $object_file};
-		push @commands, qq{$ld $object_file -o $loadable_object $lddlflags @extra};
-	}
+        # Mksymlists is only the beginning of the story.
+        open my $opt_fh, '>>', "$abs_basename.opt"
+            or do { carp "Couldn't append to '$abs_basename.opt'"; return };
+        print $opt_fh "PerlShr/Share\n";
+        close $opt_fh;
 
-	if ($prelinking{$^O}) {
-		require ExtUtils::Mksymlists;
-		ExtUtils::Mksymlists::Mksymlists(NAME => $basename, FILE => $abs_basename, IMPORTS => {});
-	}
+        my $incdirs
+            = $ccflags =~ s{ /inc[^=]+ (?:=)+ (?:\()? ( [^\/\)]* ) }{}xi
+            ? "$1,$incdir"
+            : $incdir;
+        push @commands,
+            qq{$cc $ccflags $optimize /include=($incdirs) $cccdlflags $source_name /obj=$object_file};
+        push @commands,
+            qq{$ld $ldflags $lddlflags=$loadable_object $object_file,$abs_basename.opt/OPTIONS,${incdir}perlshr_attr.opt/OPTIONS' $perllibs};
+    }
+    else {
+        my @extra;
+        if ( $^O eq 'MSWin32' ) {
+            my $lib = '-l' . ( $libperl =~ /lib([^.]+)\./ )[0];
+            push @extra, "$abs_basename.def", $lib, $perllibs;
+        }
+        elsif ( $^O eq 'cygwin' ) {
+            push @extra,
+                catfile( $incdir,
+                $config->get('useshrplib') ? 'libperl.dll.a' : 'libperl.a' );
+        }
+        elsif ( $^O eq 'aix' ) {
+            $lddlflags =~ s/\Q$(BASEEXT)\E/$abs_basename/;
+            $lddlflags =~ s/\Q$(PERL_INC)\E/$incdir/;
+        }
+        elsif ( $^O eq 'android' ) {
+            push @extra, qq{"-L$incdir"}, '-lperl', $perllibs;
+        }
+        push @commands,
+            qq{$cc $ccflags $optimize "-I$incdir" $cccdlflags -c $source_name -o $object_file};
+        push @commands,
+            qq{$ld $object_file -o $loadable_object $lddlflags @extra};
+    }
 
-	my $shortname = '_Loadable' . $counter++;
-	my $package = "ExtUtils::HasCompiler::$shortname";
-	printf $source_handle $loadable_object_format, $basename, $package or do { carp "Couldn't write to $source_name: $!"; return };
-	close $source_handle or do { carp "Couldn't close $source_name: $!"; return };
+    if ( $prelinking{$^O} ) {
+        require ExtUtils::Mksymlists;
+        ExtUtils::Mksymlists::Mksymlists(
+            NAME    => $basename,
+            FILE    => $abs_basename,
+            IMPORTS => {}
+        );
+    }
 
-	for my $command (@commands) {
-		print $output "$command\n" if not $args{quiet};
-		system $command and do { carp "Couldn't execute $command: $!"; return };
-	}
+    my $shortname = '_Loadable' . $counter++;
+    my $package   = "ExtUtils::HasCompiler::$shortname";
+    printf $source_handle $loadable_object_format, $basename, $package
+        or do { carp "Couldn't write to $source_name: $!"; return };
+    close $source_handle
+        or do { carp "Couldn't close $source_name: $!"; return };
 
-	# Skip loading when cross-compiling
-	return 1 if exists $args{skip_load} ? $args{skip_load} : $config->get('usecrosscompile');
+    for my $command (@commands) {
+        print $output "$command\n" if not $args{quiet};
+        system $command
+            and do { carp "Couldn't execute $command: $!"; return };
+    }
 
-	require DynaLoader;
-	local @DynaLoader::dl_require_symbols = "boot_$basename";
-	my $handle = DynaLoader::dl_load_file(rel2abs($loadable_object), 0);
-	if ($handle) {
-		my $symbol = DynaLoader::dl_find_symbol($handle, "boot_$basename") or do { carp "Couldn't find boot symbol for $basename"; return };
-		my $compilet = DynaLoader::dl_install_xsub('__ANON__::__ANON__', $symbol, $source_name);
-		my $ret = eval { $compilet->(); $package->exported } or carp $@;
-		delete $ExtUtils::HasCompiler::{"$shortname\::"};
-		eval { DynaLoader::dl_unload_file($handle) } or carp $@;
-		return defined $ret && $ret == 42;
-	}
-	else {
-		carp "Couldn't load $loadable_object: " . DynaLoader::dl_error();
-		return;
-	}
+    # Skip loading when cross-compiling
+    return 1
+        if exists $args{skip_load}
+        ? $args{skip_load}
+        : $config->get('usecrosscompile');
+
+    require DynaLoader;
+    local @DynaLoader::dl_require_symbols = "boot_$basename";
+    my $handle = DynaLoader::dl_load_file( rel2abs($loadable_object), 0 );
+    if ($handle) {
+        my $symbol = DynaLoader::dl_find_symbol( $handle, "boot_$basename" )
+            or do { carp "Couldn't find boot symbol for $basename"; return };
+        my $compilet
+            = DynaLoader::dl_install_xsub( '__ANON__::__ANON__', $symbol,
+            $source_name );
+        my $ret = eval { $compilet->(); $package->exported } or carp $@;
+        delete $ExtUtils::HasCompiler::{"$shortname\::"};
+        eval { DynaLoader::dl_unload_file($handle) } or carp $@;
+        return defined $ret && $ret == 42;
+    }
+    else {
+        carp "Couldn't load $loadable_object: " . DynaLoader::dl_error();
+        return;
+    }
 }
 
 my %static_unsupported_on = map { $_ => 1 } qw/VMS aix MSWin32 cygwin/;
+
 sub can_compile_static_library {
-	my %args = @_;
+    my %args = @_;
 
-	my $output = $args{output} || \*STDOUT;
+    my $output = $args{output} || \*STDOUT;
 
-	my $config = $args{config} || 'ExtUtils::HasCompiler::Config';
-	return if $config->get('useshrplib') eq 'true';
+    my $config = $args{config} || 'ExtUtils::HasCompiler::Config';
+    return if $config->get('useshrplib') eq 'true';
 
-	my ($source_handle, $source_name) = tempfile('TESTXXXX', DIR => $tempdir, SUFFIX => '.c', UNLINK => 1);
-	my $basename = basename($source_name, '.c');
-	my $abs_basename = catfile($tempdir, $basename);
+    my ( $source_handle, $source_name ) = tempfile(
+        'TESTXXXX',
+        DIR    => $tempdir,
+        SUFFIX => '.c',
+        UNLINK => 1
+    );
+    my $basename     = basename( $source_name, '.c' );
+    my $abs_basename = catfile( $tempdir, $basename );
 
-	my ($cc, $ccflags, $optimize, $ar, $full_ar, $ranlib, $archlibexp, $_o, $lib_ext) = map { $config->get($_) } qw/cc ccflags optimize ar full_ar ranlib archlibexp _o lib_ext/;
-	my $incdir = catdir($archlibexp, 'CORE');
-	my $object_file = "$abs_basename$_o";
-	my $static_library = $abs_basename.$lib_ext;
+    my ($cc,     $ccflags,    $optimize, $ar, $full_ar,
+        $ranlib, $archlibexp, $_o,       $lib_ext
+        )
+        = map { $config->get($_) }
+        qw/cc ccflags optimize ar full_ar ranlib archlibexp _o lib_ext/;
+    my $incdir         = catdir( $archlibexp, 'CORE' );
+    my $object_file    = "$abs_basename$_o";
+    my $static_library = $abs_basename . $lib_ext;
 
-	my @commands;
-	if ($static_unsupported_on{$^O}) {
-		return;
-	}
-	else {
-		my $my_ar = length $full_ar ? $full_ar : $ar;
-		push @commands, qq{$cc $ccflags $optimize "-I$incdir" -c $source_name -o $object_file};
-		push @commands, qq{$my_ar cr $static_library $object_file};
-		push @commands, qq{$ranlib $static_library} if $ranlib ne ':';
-	}
+    my @commands;
+    if ( $static_unsupported_on{$^O} ) {
+        return;
+    }
+    else {
+        my $my_ar = length $full_ar ? $full_ar : $ar;
+        push @commands,
+            qq{$cc $ccflags $optimize "-I$incdir" -c $source_name -o $object_file};
+        push @commands, qq{$my_ar cr $static_library $object_file};
+        push @commands, qq{$ranlib $static_library} if $ranlib ne ':';
+    }
 
-	my $shortname = '_Loadable' . $counter++;
-	my $package = "ExtUtils::HasCompiler::$shortname";
-	printf $source_handle $loadable_object_format, $basename, $package or do { carp "Couldn't write to $source_name: $!"; return };
-	close $source_handle or do { carp "Couldn't close $source_name: $!"; return };
+    my $shortname = '_Loadable' . $counter++;
+    my $package   = "ExtUtils::HasCompiler::$shortname";
+    printf $source_handle $loadable_object_format, $basename, $package
+        or do { carp "Couldn't write to $source_name: $!"; return };
+    close $source_handle
+        or do { carp "Couldn't close $source_name: $!"; return };
 
-	for my $command (@commands) {
-		print $output "$command\n" if not $args{quiet};
-		system $command and do { carp "Couldn't execute $command: $!"; return };
-	}
-	return 1;
+    for my $command (@commands) {
+        print $output "$command\n" if not $args{quiet};
+        system $command
+            and do { carp "Couldn't execute $command: $!"; return };
+    }
+    return 1;
 }
 
 sub can_compile_extension {
-	my %args = @_;
-	$args{config} ||= 'ExtUtils::HasCompiler::Config';
-	my $linktype = $args{linktype} || ($args{config}->get('usedl') ? 'dynamic' : 'static');
-	return $linktype eq 'static' ? can_compile_static_library(%args) : can_compile_loadable_object(%args);
+    my %args = @_;
+    $args{config} ||= 'ExtUtils::HasCompiler::Config';
+    my $linktype = $args{linktype}
+        || ( $args{config}->get('usedl') ? 'dynamic' : 'static' );
+    return $linktype eq 'static'
+        ? can_compile_static_library(%args)
+        : can_compile_loadable_object(%args);
 }
 
 sub ExtUtils::HasCompiler::Config::get {
-	my (undef, $key) = @_;
-	return $ENV{uc $key} || $Config{$key};
+    my ( undef, $key ) = @_;
+    return $ENV{ uc $key } || $Config{$key};
 }
 
 1;

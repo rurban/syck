@@ -29,7 +29,7 @@ end
 yts_dir = syck_dir + yts_dir
 abort "No YTS directory found" unless File.directory?( yts_dir )
 
-# Load the YTS 
+# Load the YTS
 syck_tests = []
 YAML::load( File.open( yts_dir + "index.yml" ) ).each do |yst|
     ct = 0

@@ -513,4 +513,3 @@ apply_seq_in_map( SyckParser *parser, SyckNode *n )
 
     n->shortcut = NULL;
 }
-

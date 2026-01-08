@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "syck.h"
 #include "CuTest.h"
+#include "syck.h"
 
 /*-------------------------------------------------------------------------*
  * CuStr
@@ -67,8 +67,8 @@ void CuStringAppendChar(CuString *str, char ch) {
   CuStringAppend(str, text);
 }
 
-__attribute__format__(2,3)
-void CuStringAppendFormat(CuString *str, const char *format, ...) {
+__attribute__format__(2, 3) void CuStringAppendFormat(CuString *str,
+                                                      const char *format, ...) {
   va_list argp;
   char buf[HUGE_STRING_LEN];
   va_start(argp, format);
@@ -79,20 +79,42 @@ void CuStringAppendFormat(CuString *str, const char *format, ...) {
 
 void CuStringAppendEscaped(CuString *str, const char *text) {
   unsigned char *p = (unsigned char *)text;
-  while(*p) {
+  while (*p) {
     switch (*p) {
-    //case '"':  CuStringAppendLen(str, "\\\"", 2); break;
-    case '\\': CuStringAppendLen(str, "\\\\", 2); break;
-    case '\0': CuStringAppendLen(str, "\\0",  2); break;
-    case '\a': CuStringAppendLen(str, "\\a",  2); break;
-    case '\b': CuStringAppendLen(str, "\\b",  2); break;
-    case '\f': CuStringAppendLen(str, "\\f",  2); break;
-    case '\r': CuStringAppendLen(str, "\\r",  2); break;
-    case '\t': CuStringAppendLen(str, "\\t",  2); break;
-    case '\v': CuStringAppendLen(str, "\\v",  2); break;
-    case 0x1b: CuStringAppendLen(str, "\\e",  2); break;
-    case '\n': CuStringAppendLen(str, "\\n",  2); break;
-    default: CuStringAppendChar(str, *p); break;
+    // case '"':  CuStringAppendLen(str, "\\\"", 2); break;
+    case '\\':
+      CuStringAppendLen(str, "\\\\", 2);
+      break;
+    case '\0':
+      CuStringAppendLen(str, "\\0", 2);
+      break;
+    case '\a':
+      CuStringAppendLen(str, "\\a", 2);
+      break;
+    case '\b':
+      CuStringAppendLen(str, "\\b", 2);
+      break;
+    case '\f':
+      CuStringAppendLen(str, "\\f", 2);
+      break;
+    case '\r':
+      CuStringAppendLen(str, "\\r", 2);
+      break;
+    case '\t':
+      CuStringAppendLen(str, "\\t", 2);
+      break;
+    case '\v':
+      CuStringAppendLen(str, "\\v", 2);
+      break;
+    case 0x1b:
+      CuStringAppendLen(str, "\\e", 2);
+      break;
+    case '\n':
+      CuStringAppendLen(str, "\\n", 2);
+      break;
+    default:
+      CuStringAppendChar(str, *p);
+      break;
     }
     p++;
   }

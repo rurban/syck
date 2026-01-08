@@ -3,7 +3,8 @@
  *
  * Copyright (C) 2026 Reini Urban
  *
- * Run the complete yaml-test-suite in plain C to check any deviations from libyaml.
+ * Run the complete yaml-test-suite in plain C to check any deviations from
+ * libyaml.
  * - parse all yaml-test-suite/XXXX/in.yaml
  * - emit the node events in a special event stream format,
  *   and compare to yaml-test-suite/XXXX/test.event
@@ -15,17 +16,17 @@
 
 #define _GNU_SOURCE
 #include "CuTest.h"
-#include "syck.h"
 #include "YTS-lib.h"
-#include <string.h>
+#include "syck.h"
 #include <dirent.h>
-#include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
+#include <sys/stat.h>
 
 #define DATA_DIR "yaml-test-suite/"
 
 static int must_skip(const char *name, const char *const skip_tests[]) {
-  for (int i=0; skip_tests[i]; i++) {
+  for (int i = 0; skip_tests[i]; i++) {
     if (strcmp(name, skip_tests[i]) == 0)
       return 1;
   }
@@ -44,9 +45,9 @@ static void yts_test_func(CuTest *tc) {
   int should_fail = 0;
   const char *const skip_tests[] = {NULL};
 
-  strncpy(dirname, tc->name, sizeof(dirname)-1);
-  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/in.yaml", tc->name);
-  fn[sizeof(fn)-1] = '\0';
+  strncpy(dirname, tc->name, sizeof(dirname) - 1);
+  snprintf(fn, sizeof(fn) - 1, DATA_DIR "%s/in.yaml", tc->name);
+  fn[sizeof(fn) - 1] = '\0';
   fh = fopen(fn, "r");
   CuAssert(tc, "in.yaml not found", fh != NULL);
   if (!fh)
@@ -58,11 +59,12 @@ static void yts_test_func(CuTest *tc) {
   nread = fread(yaml, 1, fsize, fh);
   yaml[nread] = '\0';
   if (nread != fsize)
-    fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread, fsize);
+    fprintf(stderr, "Unexpected shortened file %s: %zu != %zu\n", fn, nread,
+            fsize);
   fclose(fh);
 
-  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/===", dirname);
-  fn[sizeof(fn)-1] = '\0';
+  snprintf(fn, sizeof(fn) - 1, DATA_DIR "%s/===", dirname);
+  fn[sizeof(fn) - 1] = '\0';
   fh = fopen(fn, "r");
   free(tc->name);
   if (!fh) {
@@ -71,14 +73,14 @@ static void yts_test_func(CuTest *tc) {
     tc->name = calloc(256, 1);
     strcpy(tc->name, dirname);
     strcat(tc->name, ": ");
-    strcat(tc->name, fgets(s, sizeof(s)-1, fh));
-    tc->name[strlen(tc->name)-1] = '\0';
+    strcat(tc->name, fgets(s, sizeof(s) - 1, fh));
+    tc->name[strlen(tc->name) - 1] = '\0';
     fclose(fh);
   }
 
-  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/error", dirname);
+  snprintf(fn, sizeof(fn) - 1, DATA_DIR "%s/error", dirname);
   if (!file_exists(fn)) {
-    snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/out.yaml", dirname);
+    snprintf(fn, sizeof(fn) - 1, DATA_DIR "%s/out.yaml", dirname);
     outfh = fopen(fn, "r");
     CuAssert(tc, "out.yaml not found", outfh != NULL);
   } else {
@@ -87,15 +89,14 @@ static void yts_test_func(CuTest *tc) {
   }
   fprintf(stderr, "%s/in.yaml: %s\n", dirname, tc->name);
 
-  snprintf(fn, sizeof(fn)-1, DATA_DIR "%s/test.event", dirname);
+  snprintf(fn, sizeof(fn) - 1, DATA_DIR "%s/test.event", dirname);
   testfh = fopen(fn, "r");
   CuAssert(tc, "test.event not found", testfh != NULL);
 
   if (must_skip(dirname, skip_tests)) {
     printf("SKIP use-after-free in %s\n", tc->name);
     S_FREE(yaml);
-  }
-  else {
+  } else {
     cs = CuStringNew();
     ev = CuStringNew();
     test_yaml_and_stream(cs, yaml, ev, should_fail);
@@ -115,8 +116,8 @@ static void yts_test_func(CuTest *tc) {
       CuAssert(tc, "both error and out.yaml missing", 1);
     }
 
-    //CuAssert(tc, "test.event matches", !compare_cs(tc, testfh, ev));
-    // not counting as failure for now. as the stream format is not yet done
+    // CuAssert(tc, "test.event matches", !compare_cs(tc, testfh, ev));
+    //  not counting as failure for now. as the stream format is not yet done
     if (!compare_cs(NULL, testfh, ev))
       printf("OK test.event matches\n");
     else
@@ -134,23 +135,22 @@ static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {
 
   if (dir->d_name[0] == '.')
     return;
-  snprintf(fn, sizeof(fn)-1, "%s/%s/in.yaml", prefix, dir->d_name);
-  fn[sizeof(fn)-1] = '\0';
+  snprintf(fn, sizeof(fn) - 1, "%s/%s/in.yaml", prefix, dir->d_name);
+  fn[sizeof(fn) - 1] = '\0';
   fh = fopen(fn, "r");
   if (!fh) {
     struct dirent **subdirs;
     int n1;
     // some subdirs of data
-    snprintf(fn, sizeof(fn)-1, "%s/%s", prefix, dir->d_name);
-    fn[sizeof(fn)-1] = '\0';
+    snprintf(fn, sizeof(fn) - 1, "%s/%s", prefix, dir->d_name);
+    fn[sizeof(fn) - 1] = '\0';
     n1 = scandir(fn, &subdirs, NULL, alphasort);
     if (n1) {
-      for (int i=0; i<n1; i++) {
+      for (int i = 0; i < n1; i++) {
         char a = subdirs[i]->d_name[0];
         if (a == '.')
           continue;
-        if ((a >= '0' && a <= '9')
-            || (a >= 'A' && a <= 'Z'))
+        if ((a >= '0' && a <= '9') || (a >= 'A' && a <= 'Z'))
           addYTSDir(fn, subdirs[i], suite);
       }
       while (n1--)
@@ -161,9 +161,9 @@ static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {
       fprintf(stderr, "no such dir %s\n", fn);
     }
   }
-  off = sizeof(DATA_DIR)-1;
-  snprintf(name, sizeof(name)-1, "%s/%s", prefix, dir->d_name);
-  name[sizeof(name)-1] = '\0';
+  off = sizeof(DATA_DIR) - 1;
+  snprintf(name, sizeof(name) - 1, "%s/%s", prefix, dir->d_name);
+  name[sizeof(name) - 1] = '\0';
   fh = fopen(fn, "r");
   if (fh) {
     CuSuiteAdd(suite, CuTestNew(&name[off], yts_test_func));
@@ -187,12 +187,11 @@ static CuSuite *SyckGetSuite(int argc, char *argv[]) {
     return NULL;
   }
 
-  for (int i=0; i<n; i++) {
+  for (int i = 0; i < n; i++) {
     char a = flist[i]->d_name[0];
     if (a == '.')
       continue;
-    if ((a >= '1' && a <= '9')
-        || (a >= 'A' && a <= 'Z'))
+    if ((a >= '1' && a <= '9') || (a >= 'A' && a <= 'Z'))
       addYTSDir("yaml-test-suite", flist[i], suite);
   }
   while (n--)

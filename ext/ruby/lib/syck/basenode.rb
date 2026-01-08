@@ -219,4 +219,3 @@ module Syck
     end
 
 end
-

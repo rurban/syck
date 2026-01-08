@@ -4,4 +4,4 @@
 #include "gram.h"
 #endif
 
-int sycklex( YYSTYPE *sycklval, SyckParser *parser );
+int sycklex(YYSTYPE *sycklval, SyckParser *parser);

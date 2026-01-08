@@ -49,7 +49,7 @@ puts
 
 #
 # 2. The same can't be done for Hashes because the key set isn't
-#    predictable.  But if the :SortKeys method is called, then 
+#    predictable.  But if the :SortKeys method is called, then
 #    the Hash will be sorted with Hash#sort.  You could define a
 #    singleton `sort' method to sort certain Hashes.
 #
@@ -78,9 +78,9 @@ puts
 #    into a Hash-like class.
 #
 
-test3 = YAML::Omap[ 
-    'name', 'Alto Saxophone', 
-    'key', 'Eb', 
+test3 = YAML::Omap[
+    'name', 'Alto Saxophone',
+    'key', 'Eb',
     'is_woodwind', true
 ]
 
@@ -125,4 +125,3 @@ test4.key_order = [ 'name', 'key', 'is_woodwind' ]
 puts "** With ordered keys **"
 puts test4.to_yaml.gsub( /^/, '   ' )
 puts
-

@@ -59,7 +59,8 @@ sub yaml_is {
     my $deep_scalar = \$hash;
     yaml_is( Dump($deep_scalar), "--- !!perl/ref\n=:\n  foo: bar\n" );
     bless $deep_scalar, "Foo::Bar";
-    yaml_is( Dump($deep_scalar), "--- !!perl/ref:Foo::Bar\n=:\n  foo: bar\n" );
+    yaml_is( Dump($deep_scalar),
+        "--- !!perl/ref:Foo::Bar\n=:\n  foo: bar\n" );
 }
 
 {
@@ -102,4 +103,3 @@ sub yaml_is {
     is( ref($array), "Foo::Bar" );
     is( $array->[0], 42 );
 }
-

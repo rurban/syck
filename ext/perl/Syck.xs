@@ -9,7 +9,7 @@
 
 typedef PerlIO * OutputStream;
 
-MODULE = YAML::Syck		PACKAGE = YAML::Syck		
+MODULE = YAML::Syck		PACKAGE = YAML::Syck
 
 PROTOTYPES: DISABLE
 
@@ -49,4 +49,3 @@ int
 DumpJSONFile (in, out)
         SV *    in
         OutputStream out
-

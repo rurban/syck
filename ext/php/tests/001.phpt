@@ -6,7 +6,7 @@ Check for syck presence
 --GET--
 --INI--
 --FILE--
-<?php 
+<?php
 echo "syck extension is available";
 /*
 	you can add regression tests for your extension here

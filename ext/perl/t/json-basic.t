@@ -45,7 +45,8 @@ my @tests = (
     '{"foo":""}',
     '["\"://\""]',
     '"~foo"',
-    { TEST => '"\/"',     TODO => "backslashed char not working yet" }, # escaped solidus
+    { TEST => '"\/"', TODO => "backslashed char not working yet" }
+    ,    # escaped solidus
     '"\""',
     { TEST => '"\b"',     TODO => "backslashed char not working yet" },
     { TEST => '"\f"',     TODO => "backslashed char not working yet" },
@@ -67,7 +68,9 @@ TODO: {
 
                 local $TODO;
                 if ( ref $test eq 'HASH' ) {
-                    if ($single_quote or substr($test->{TEST},2,1) =~ m|[u/]|) {
+                    if ( $single_quote
+                        or substr( $test->{TEST}, 2, 1 ) =~ m|[u/]| )
+                    {
                         $TODO = $test->{TODO};
                     }
                     $test = $test->{TEST};
@@ -89,20 +92,23 @@ TODO: {
                     s/([,:]) /$1/eg;
                 }
 
-                my $desc = "roundtrip $test -> " . Dumper($data)
-                  . " -> $json -> sq:$single_quote utf8:$unicode ";
+                my $desc
+                    = "roundtrip $test -> "
+                    . Dumper($data)
+                    . " -> $json -> sq:$single_quote utf8:$unicode ";
                 utf8::encode($desc);
                 is $json, $test, $desc;
 
                 # try parsing the data with JSON.pm
                 if ( $HAS_JSON and !$single_quote ) {
-                    $SIG{__WARN__} = sub { 1 };
-                    utf8::encode($data) if defined($data) && !ref($data) && $unicode;
+                    $SIG{__WARN__} = sub {1};
+                    utf8::encode($data)
+                        if defined($data) && !ref($data) && $unicode;
                     my $data_pp = eval { JSON::jsonToObj($json) };
-                    is_deeply $data_pp, $data, "compatibility with JSON.pm $test";
+                    is_deeply $data_pp, $data,
+                        "compatibility with JSON.pm $test";
                 }
             }
         }
     }
 }
-

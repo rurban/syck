@@ -184,7 +184,7 @@
 
 1.12 (JSON::Syck 0.35 ) Aug 03 2010
 - The tie test proved to be very unstable for 5.8 and it's not
-  relevant for tie actually. I'm converting it to a TODO for 
+  relevant for tie actually. I'm converting it to a TODO for
 
 1.11 (JSON::Syck 0.35 ) Aug 03 2010
 - Tests are now stable. releasing 1.11
@@ -193,7 +193,7 @@
 - META.yml missing
 
 1.10_06 (JSON::Syck 0.34 ) Jul 29 2010
-- Load of in-memory file handles not previously tested (was eval'd 
+- Load of in-memory file handles not previously tested (was eval'd
   out of existance) Corrected code and test to behave correctly.
 - Perl 5.8 required to YAML-ify code refs
 - Perl 5.6 requires {} to print to a scalar GLOB
@@ -452,7 +452,7 @@ Release engineering fixes:
 
 0.85 (JSON::Syck 0.24) Apr 20 2007
 
-- Strings containing both single quotes and newlines were incorrectly 
+- Strings containing both single quotes and newlines were incorrectly
   quoted with backslash-escaped single quotes.  This is a regression
   introduced in YAML::Syck 0.84.
   Reported by: Agent Zhang
@@ -646,7 +646,7 @@ Release engineering fixes:
 
 0.44 (JSON::Syck 0.12) May 04 2006
 
-- Fix tests so they work warninglessly on 5.005. 
+- Fix tests so they work warninglessly on 5.005.
 
 - Fix incorrect indentation level for scalars initialized twice --
   once as string and once as references -- such as the ones produced
@@ -692,7 +692,7 @@ Release engineering fixes:
 - Support for loading blessed scalar references.
   Requested by: Dan Kogai
 
-- 0.40 was missing included Test::More, so tests could fail on a 
+- 0.40 was missing included Test::More, so tests could fail on a
   freshly installed Perl 5.6.x.
   Reported by: Uri Guttman
 

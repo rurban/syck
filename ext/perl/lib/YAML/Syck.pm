@@ -4,7 +4,11 @@ package YAML::Syck;
 
 use strict;
 
-our ( $Headless, $SingleQuote, $ImplicitBinary, $ImplicitTyping, $ImplicitUnicode, $UseCode, $LoadCode, $DumpCode, $DeparseObject );
+our (
+    $Headless,       $SingleQuote,     $ImplicitBinary,
+    $ImplicitTyping, $ImplicitUnicode, $UseCode,
+    $LoadCode,       $DumpCode,        $DeparseObject
+);
 
 use 5.006;
 use Exporter;
@@ -21,26 +25,27 @@ our $LoadBlessed = 0;
 XSLoader::load( 'YAML::Syck', $VERSION );
 
 use constant QR_MAP => {
-    ''   => sub { qr{$_[0]} },
-    x    => sub { qr{$_[0]}x },
-    i    => sub { qr{$_[0]}i },
-    s    => sub { qr{$_[0]}s },
-    m    => sub { qr{$_[0]}m },
-    ix   => sub { qr{$_[0]}ix },
-    sx   => sub { qr{$_[0]}sx },
-    mx   => sub { qr{$_[0]}mx },
-    si   => sub { qr{$_[0]}si },
-    mi   => sub { qr{$_[0]}mi },
-    ms   => sub { qr{$_[0]}sm },
-    six  => sub { qr{$_[0]}six },
-    mix  => sub { qr{$_[0]}mix },
-    msx  => sub { qr{$_[0]}msx },
-    msi  => sub { qr{$_[0]}msi },
-    msix => sub { qr{$_[0]}msix },
+    ''   => sub {qr{$_[0]}},
+    x    => sub {qr{$_[0]}x},
+    i    => sub {qr{$_[0]}i},
+    s    => sub {qr{$_[0]}s},
+    m    => sub {qr{$_[0]}m},
+    ix   => sub {qr{$_[0]}ix},
+    sx   => sub {qr{$_[0]}sx},
+    mx   => sub {qr{$_[0]}mx},
+    si   => sub {qr{$_[0]}si},
+    mi   => sub {qr{$_[0]}mi},
+    ms   => sub {qr{$_[0]}sm},
+    six  => sub {qr{$_[0]}six},
+    mix  => sub {qr{$_[0]}mix},
+    msx  => sub {qr{$_[0]}msx},
+    msi  => sub {qr{$_[0]}msi},
+    msix => sub {qr{$_[0]}msix},
 };
 
 sub __qr_helper {
-    if ( $_[0] =~ /\A  \(\?  ([ixsm]*)  (?:-  (?:[ixsm]*))?  : (.*) \)  \z/x ) {
+    if ( $_[0] =~ /\A  \(\?  ([ixsm]*)  (?:-  (?:[ixsm]*))?  : (.*) \)  \z/x )
+    {
         my $sub = QR_MAP()->{$1} || QR_MAP()->{''};
         &$sub($2);
     }
@@ -51,8 +56,8 @@ sub __qr_helper {
 
 sub Dump {
     $#_
-      ? join( '', map { YAML::Syck::DumpYAML($_) } @_ )
-      : YAML::Syck::DumpYAML( $_[0] );
+        ? join( '', map { YAML::Syck::DumpYAML($_) } @_ )
+        : YAML::Syck::DumpYAML( $_[0] );
 }
 
 sub Load {
@@ -97,7 +102,7 @@ sub DumpFile {
             }
         }
         close $fh
-          or die "Error writing to file $file: $!\n";
+            or die "Error writing to file $file: $!\n";
     }
     return 1;
 }
@@ -132,7 +137,7 @@ sub DumpInto {
 __END__
 =pod
 
-=head1 NAME 
+=head1 NAME
 
 YAML::Syck - Fast, lightweight YAML loader and dumper
 
@@ -254,7 +259,7 @@ properly in all cases.
 
 =head1 CAVEATS
 
-This module implements the YAML 1.0 spec.  To deal with data in YAML 1.1, 
+This module implements the YAML 1.0 spec.  To deal with data in YAML 1.1,
 please use the C<YAML::XS> module instead.
 
 The current implementation bundles libsyck source code; if your system has a

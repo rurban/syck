@@ -14,8 +14,7 @@
 //
 // 1. Test the buffering -- read 4 bytes at a time
 //
-static void
-TestSyckReadString(CuTest *tc) {
+static void TestSyckReadString(CuTest *tc) {
   SyckParser *parser;
   char *tmp;
   int len = 0;
@@ -72,8 +71,7 @@ TestSyckReadString(CuTest *tc) {
 //
 // 2. Test parsing a simple string and handler
 //
-static SYMID
-SyckParseStringHandler(SHIM(SyckParser *p), SyckNode *n) {
+static SYMID SyckParseStringHandler(SHIM(SyckParser *p), SyckNode *n) {
   UNUSED(p);
   if (n->kind != syck_str_kind)
     return 100;
@@ -101,9 +99,8 @@ static void TestSyckParseString(CuTest *tc) {
 //
 // 3.
 //
-__attribute__unused__
-static SYMID
-SyckParseString2Handler(SHIM(SyckParser *p), SyckNode *n) {
+__attribute__unused__ static SYMID SyckParseString2Handler(SHIM(SyckParser *p),
+                                                           SyckNode *n) {
   UNUSED(p);
   if (n->kind != syck_str_kind)
     return 100;
@@ -114,8 +111,7 @@ SyckParseString2Handler(SHIM(SyckParser *p), SyckNode *n) {
   return 1112;
 }
 
-static enum st_retval
-ListAnchors(const char *key, void *_n, void *_tc) {
+static enum st_retval ListAnchors(const char *key, void *_n, void *_tc) {
   SyckNode *n = (SyckNode *)_n;
   CuTest *tc = (CuTest *)_tc;
   char *sd = syck_strndup(n->data.str->ptr, n->data.str->len);

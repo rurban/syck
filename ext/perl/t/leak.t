@@ -6,7 +6,7 @@ use Test::More tests => 11;
 
 SKIP: {
     eval { require Devel::Leak; require 5.8.9; 1; }
-      or skip( "Devel::Leak not installed or perl too old", 11 );
+        or skip( "Devel::Leak not installed or perl too old", 11 );
 
     # check if arrays leak
 
@@ -92,16 +92,15 @@ result: !perl/code: '{ 42 + + 54ih a; $" }'
 
     {
         local $SIG{__WARN__} = sub { };
-        ok(
-            !eval { Load($yaml) },
-            "Load failed on code syntax error (expected)"
-        );
+        ok( !eval { Load($yaml) },
+            "Load failed on code syntax error (expected)" );
 
         $before = Devel::Leak::NoteSV($handle);
         eval { Load($yaml) } for ( 1 .. 10 );
         $diff = Devel::Leak::NoteSV($handle) - $before;
-        local $TODO = "It looks like evals leak, but we're better than Storable"
-          if $diff;
+        local $TODO
+            = "It looks like evals leak, but we're better than Storable"
+            if $diff;
         is( $diff, 0, "No leaks - Load failure (code)" );
     }
 
@@ -119,7 +118,7 @@ result: !perl/code: '{ 42 + + 54ih a; $" }'
     $diff = Devel::Leak::NoteSV($handle) - $before;
     is( $diff, 0, "No leaks - Dump" );
 
-    $todump = sub { 42 };
+    $todump = sub {42};
 
     ok( eval { Dump($todump) }, "Dump succeeded" );
 
@@ -137,6 +136,6 @@ result: !perl/code: '{ 42 + + 54ih a; $" }'
     $diff = Devel::Leak::NoteSV($handle) - $before;
 
     local $TODO = "It looks like evals leak, but we're better than Storable"
-      if $diff;
+        if $diff;
     is( $diff, 0, "No leaks - Dump code" );
 }

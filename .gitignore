@@ -1,4 +1,8 @@
+AGENTS.md
 .gdbinit
+.opencode
+/.rb.sh
+/asan.sh
 Makefile
 Makefile.in
 aclocal.m4

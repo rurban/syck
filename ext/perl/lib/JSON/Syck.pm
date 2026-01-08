@@ -28,7 +28,7 @@ sub DumpFile {
             die "Error writing to file $file: $!\n";
         }
         close $fh
-          or die "Error writing to file $file: $!\n";
+            or die "Error writing to file $file: $!\n";
     }
     return 1;
 }
@@ -74,7 +74,7 @@ JSON::Syck - JSON is YAML (but consider using L<JSON::XS> instead!)
 
 =head1 SYNOPSIS
 
-    use JSON::Syck; # no exports by default 
+    use JSON::Syck; # no exports by default
 
     my $data = JSON::Syck::Load($json);
     my $json = JSON::Syck::Dump($data);

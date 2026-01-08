@@ -9,9 +9,9 @@
 // query your data.
 //
 
-#include "syck.h"
-#include "CuTest.h"
 #include "YTS-lib.h"
+#include "CuTest.h"
+#include "syck.h"
 #include <string.h>
 #include <sys/stat.h>
 
@@ -65,8 +65,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
 
   case syck_map_kind: {
     TestNode *val;
-    TestNode *map =
-        S_ALLOC_N(TestNode, (n->data.pairs->idx * 2) + 1);
+    TestNode *map = S_ALLOC_N(TestNode, (n->data.pairs->idx * 2) + 1);
     tn->type = T_MAP;
     tn->key = NULL;
     tn->style = (enum scalar_style)n->data.pairs->style;
@@ -97,8 +96,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     doc->tag = NULL;
     doc->key = NULL;
     doc->value = NULL;
-    if (p->buffer != NULL &&
-        p->limit - p->buffer >= 4 &&
+    if (p->buffer != NULL && p->limit - p->buffer >= 4 &&
         strEQc(p->buffer, "---\n")) {
       doc->style = 1;
     }
@@ -107,9 +105,8 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
   return syck_add_sym(p, (char *)tn);
 }
 
-enum st_retval
-syck_free_copies(SHIM(const char *key), void *_tn,
-                 SHIM(void *arg)) {
+enum st_retval syck_free_copies(SHIM(const char *key), void *_tn,
+                                SHIM(void *arg)) {
   TestNodeDyn *tn = (TestNodeDyn *)_tn;
   UNUSED(key);
   UNUSED(arg);
@@ -143,8 +140,7 @@ syck_free_copies(SHIM(const char *key), void *_tn,
  * equivalent set of test_node structs.
  * s1 is the expected event stream, s2 the parsed stream.
  */
-void
-CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
+void CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
   int i = 0;
   while (1) {
     CuAssertIntEquals(tc, s1[i].type, s2[i].type);
@@ -153,11 +149,11 @@ CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
     if (s2[i].type == T_END)
       CuFail(tc, "parsed stream ended prematurely");
     if (s1[i].tag != 0 && s2[i].tag != 0)
-      CuAssertStrEquals(tc, s1[i].tag, (char*)s2[i].tag);
+      CuAssertStrEquals(tc, s1[i].tag, (char *)s2[i].tag);
     switch (s1[i].type) {
     case T_ALI:
     case T_STR:
-      CuAssertStrEquals(tc, s1[i].key, (char*)s2[i].key);
+      CuAssertStrEquals(tc, s1[i].key, (char *)s2[i].key);
       break;
     case T_SEQ:
     case T_MAP:
@@ -172,8 +168,7 @@ CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
   }
 }
 
-void
-CuStreamCompare(CuTest *tc, const char *yaml, const TestNode *stream) {
+void CuStreamCompare(CuTest *tc, const char *yaml, const TestNode *stream) {
   int doc_ct = 0;
   TestNode *ystream = S_ALLOC_N(TestNode, doc_ct + 1);
 
@@ -223,8 +218,7 @@ CuStreamCompare(CuTest *tc, const char *yaml, const TestNode *stream) {
 /*
  * Setup for testing N->Y->N.
  */
-void
-test_output_handler(SyckEmitter *emitter, const char *str, long len) {
+void test_output_handler(SyckEmitter *emitter, const char *str, long len) {
   CuString *dest = (CuString *)emitter->bonus;
   CuStringAppendLen(dest, str, len);
 }
@@ -239,7 +233,7 @@ build_symbol_table(SyckEmitter *emitter, TestNode *node) {
       build_symbol_table(emitter, &node->value[i]);
       i++;
     }
-    }
+  }
     return syck_emitter_mark_node(emitter, (st_data_t)node);
 
   case T_STR:
@@ -279,7 +273,7 @@ void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
     syck_emit_end(emitter);
   } break;
   case T_DOC:
-    syck_emitter_write( emitter, "--- ", 4 );
+    syck_emitter_write(emitter, "--- ", 4);
     break;
   case T_END:
   default:
@@ -288,8 +282,7 @@ void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
 }
 
 /* round-trip the stream only, not the yaml */
-void
-CuRoundTrip(CuTest *tc, TestNode *stream) {
+void CuRoundTrip(CuTest *tc, TestNode *stream) {
   int i = 0;
   CuString *cs = CuStringNew();
   SyckEmitter *emitter = syck_new_emitter();
@@ -338,7 +331,8 @@ void emit_stream(CuString *cs, TestNode *s) {
         else
           CuStringAppendFormat(cs, "<%s> ", n->tag);
       }
-      if (n->style == scalar_1quote || n->style == scalar_2quote || n->style == scalar_2quote_1)
+      if (n->style == scalar_1quote || n->style == scalar_2quote ||
+          n->style == scalar_2quote_1)
         CuStringAppend(cs, "'");
       else if (n->style == scalar_fold)
         CuStringAppend(cs, ">");
@@ -383,140 +377,137 @@ void emit_stream(CuString *cs, TestNode *s) {
 
 static void yts_parser_error_handler(SyckParser *p, const char *msg) {
   // ignore all errors when we know it should fail
-  fprintf(stderr, "Error at [Line %d, Col %ld]: %s\n",
-        p->linect,
-        p->cursor - p->lineptr,
-        msg );
+  fprintf(stderr, "Error at [Line %d, Col %ld]: %s\n", p->linect,
+          p->cursor - p->lineptr, msg);
 }
 
 /* parses the in.yaml, builds an event stream, and emits it to a cs string.
  */
 void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
-                          int should_fail)
-{
-    SyckEmitter *emitter = syck_new_emitter();
-    TestNode *ystream = S_ALLOC_N(TestNode, 2);
-    int doc_ct = 0;
-    int i = 0;
+                          int should_fail) {
+  SyckEmitter *emitter = syck_new_emitter();
+  TestNode *ystream = S_ALLOC_N(TestNode, 2);
+  int doc_ct = 0;
+  int i = 0;
 
-    /* Set up parser */
-    SyckParser *parser = syck_new_parser();
-    syck_parser_str_auto(parser, yaml, NULL);
-    syck_parser_handler(parser, syck_copy_handler);
-    if (should_fail)
-      syck_parser_error_handler(parser, yts_parser_error_handler);
-    else
-      syck_parser_error_handler(parser, NULL);
-    syck_parser_implicit_typing(parser, 1);
-    syck_parser_taguri_expansion(parser, 1);
+  /* Set up parser */
+  SyckParser *parser = syck_new_parser();
+  syck_parser_str_auto(parser, yaml, NULL);
+  syck_parser_handler(parser, syck_copy_handler);
+  if (should_fail)
+    syck_parser_error_handler(parser, yts_parser_error_handler);
+  else
+    syck_parser_error_handler(parser, NULL);
+  syck_parser_implicit_typing(parser, 1);
+  syck_parser_taguri_expansion(parser, 1);
 
-    emitter->headless = 1;
+  emitter->headless = 1;
 
-    /* Parse all documents */
-    while (1) {
-        TestNode *ydoc;
-        SYMID oid = syck_parse(parser); // ie root node
-        int res;
+  /* Parse all documents */
+  while (1) {
+    TestNode *ydoc;
+    SYMID oid = syck_parse(parser); // ie root node
+    int res;
 
-        if (!oid) // syntax error, no nodes added
-            break;
-        if (parser->eof == 1) // no more docs
-            break;
+    if (!oid) // syntax error, no nodes added
+      break;
+    if (parser->eof == 1) // no more docs
+      break;
 
-        /* Add document to stream */
-        res = syck_lookup_sym(parser, oid, (char **)&ydoc);
-        if (0 == res) {
-            fprintf(stderr, "ERROR: no root node %lu found\n", oid);
-            break;
-        }
-        {
-          TestNode *ydoc1;
-          int has_doc = syck_lookup_sym(parser, 1, (char **)&ydoc1);
-          if (has_doc && ydoc1->type == T_DOC) {
-            /* prepend the DOC stream at 1 when not YAML 1.2 */
-            if ((parser->version_major || parser->version_minor)
-                && !(parser->version_major == 1 && parser->version_minor == 2)) {
-              emitter->headless = 0;
-              emitter->use_header = 1;
-              emitter->version_major = parser->version_major;
-              emitter->version_minor = parser->version_minor;
-            }
-            emitter->doctype = parser->doctype;
-            S_REALLOC_N(ystream, TestNode, doc_ct + 2);
-            ystream[doc_ct++] = *ydoc1;
-            ystream[doc_ct++] = *ydoc;
-          }
-          else {
-            ystream[doc_ct++] = *ydoc;
-          }
-        }
-        S_REALLOC_N(ystream, TestNode, doc_ct + 1);
+    /* Add document to stream */
+    res = syck_lookup_sym(parser, oid, (char **)&ydoc);
+    if (0 == res) {
+      fprintf(stderr, "ERROR: no root node %lu found\n", oid);
+      break;
     }
-    ystream[doc_ct] = end_node;
-
-    // print it
-    puts(cs->buffer);
-
-    if (doc_ct) {
-      build_symbol_table(emitter, ystream);
-
-      /* Build the stream */
-      syck_output_handler(emitter, test_output_handler);
-      syck_emitter_handler(emitter, test_emitter_handler);
-      emitter->bonus = cs;
-      {
-          int start = 0;
-          if (ystream[0].type == T_DOC) {
-              if (ystream[0].style) {
-                  syck_emitter_write(emitter, "--- ", 4);
-              }
-              start = 1;
-          }
-          for (i = start; ystream[i].type != T_END; i++) {
-            syck_emit(emitter, (st_data_t)&ystream[i]);
-          }
+    {
+      TestNode *ydoc1;
+      int has_doc = syck_lookup_sym(parser, 1, (char **)&ydoc1);
+      if (has_doc && ydoc1->type == T_DOC) {
+        /* prepend the DOC stream at 1 when not YAML 1.2 */
+        if ((parser->version_major || parser->version_minor) &&
+            !(parser->version_major == 1 && parser->version_minor == 2)) {
+          emitter->headless = 0;
+          emitter->use_header = 1;
+          emitter->version_major = parser->version_major;
+          emitter->version_minor = parser->version_minor;
+        }
+        emitter->doctype = parser->doctype;
+        S_REALLOC_N(ystream, TestNode, doc_ct + 2);
+        ystream[doc_ct++] = *ydoc1;
+        ystream[doc_ct++] = *ydoc;
+      } else {
+        ystream[doc_ct++] = *ydoc;
       }
-      syck_emit_end(emitter);
-      syck_emitter_flush(emitter, 0);
-      //puts("\n--- # Parsed Stream");
-      CuStringAppend(ev, "+STR\n");
-      emit_stream(ev, ystream);
-      if (ystream[0].type == T_DOC)
-        CuStringAppend(ev, "-DOC\n");
-      CuStringAppend(ev, "-STR\n");
     }
+    S_REALLOC_N(ystream, TestNode, doc_ct + 1);
+  }
+  ystream[doc_ct] = end_node;
 
-    S_FREE(ystream);
-    if (parser->syms != NULL)
-        st_foreach(parser->syms, syck_free_copies, 0);
-    syck_free_parser(parser);
-    syck_free_emitter(emitter);
+  // print it
+  puts(cs->buffer);
+
+  if (doc_ct) {
+    build_symbol_table(emitter, ystream);
+
+    /* Build the stream */
+    syck_output_handler(emitter, test_output_handler);
+    syck_emitter_handler(emitter, test_emitter_handler);
+    emitter->bonus = cs;
+    {
+      int start = 0;
+      if (ystream[0].type == T_DOC) {
+        if (ystream[0].style) {
+          syck_emitter_write(emitter, "--- ", 4);
+        }
+        start = 1;
+      }
+      for (i = start; ystream[i].type != T_END; i++) {
+        syck_emit(emitter, (st_data_t)&ystream[i]);
+      }
+    }
+    syck_emit_end(emitter);
+    syck_emitter_flush(emitter, 0);
+    // puts("\n--- # Parsed Stream");
+    CuStringAppend(ev, "+STR\n");
+    emit_stream(ev, ystream);
+    if (ystream[0].type == T_DOC)
+      CuStringAppend(ev, "-DOC\n");
+    CuStringAppend(ev, "-STR\n");
+  }
+
+  S_FREE(ystream);
+  if (parser->syms != NULL)
+    st_foreach(parser->syms, syck_free_copies, 0);
+  syck_free_parser(parser);
+  syck_free_emitter(emitter);
 }
 
 // max linelength 256!
 CuString *CuSlurpFile(FILE *fh) {
-    CuString *cs = CuStringNew();
-    char buf[256];
-    while (fgets(buf, sizeof(buf), fh)) {
-        CuStringAppend(cs, buf);
-    }
-    return cs;
+  CuString *cs = CuStringNew();
+  char buf[256];
+  while (fgets(buf, sizeof(buf), fh)) {
+    CuStringAppend(cs, buf);
+  }
+  return cs;
 }
 
 int compare_cs(CuTest *tc, FILE *fh, const CuString *cs) {
-    CuString *file_cs = CuSlurpFile(fh);
-    if (tc) {
-      CuAssertStrEquals(tc, file_cs->buffer, cs->buffer);
+  CuString *file_cs = CuSlurpFile(fh);
+  if (tc) {
+    CuAssertStrEquals(tc, file_cs->buffer, cs->buffer);
+    CuStringFree(file_cs);
+    return 0;
+  } else {
+    if (strcmp(file_cs->buffer, cs->buffer) == 0) {
       CuStringFree(file_cs);
       return 0;
-    } else {
-      if (strcmp(file_cs->buffer, cs->buffer) == 0) {
-        CuStringFree(file_cs);
-        return 0;
-      }
-      // TODO diff
-      fprintf(stderr, "expected <\n%s> but was <\n%s>\n", file_cs->buffer, cs->buffer);
-      CuStringFree(file_cs);
-      return 1;
     }
+    // TODO diff
+    fprintf(stderr, "expected <\n%s> but was <\n%s>\n", file_cs->buffer,
+            cs->buffer);
+    CuStringFree(file_cs);
+    return 1;
+  }
 }

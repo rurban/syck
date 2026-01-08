@@ -14,7 +14,8 @@
 //
 // 1. Test the buffering -- print 10 bytes at a time
 //
-static void TestSyckEmit_Output(SHIM(SyckEmitter *e), const char *str, long len) {
+static void TestSyckEmit_Output(SHIM(SyckEmitter *e), const char *str,
+                                long len) {
   char *tmp = syck_strndup(str, len);
   printf("OUT: %s [%ld]\n", tmp, len);
   S_FREE(tmp);
@@ -60,12 +61,14 @@ static void TestBase64Encode(CuTest *tc) {
   char *enc = syck_base64enc(gif, 185);
   CuAssertStrEquals(
       tc, enc,
-      (char*)"R0lGODlhDAAMAIQAAP//9/"
-      "X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+fn5OTk6enp56enmlpaWNjY6Ojo4SEhP/"
-      "++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/"
-      "++SH+"
-      "Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLCAgjoEwnuNAFOhpEMTRiggcz4BNJHrv/"
-      "zCFcLiwMWYNG84BwwEeECcgggoBADs=");
+      (char *)"R0lGODlhDAAMAIQAAP//9/"
+              "X17unp5WZmZgAAAOfn515eXvPz7Y6OjuDg4J+"
+              "fn5OTk6enp56enmlpaWNjY6Ojo4SEhP/"
+              "++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/"
+              "++SH+"
+              "Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLCAgjoEwnuNAFOhpEMTRiggcz4BN"
+              "JHrv/"
+              "zCFcLiwMWYNG84BwwEeECcgggoBADs=");
   S_FREE(enc);
 }
 

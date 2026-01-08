@@ -8,8 +8,8 @@
 //
 
 #include "CuTest.h"
-#include "syck.h"
 #include "YTS-lib.h"
+#include "syck.h"
 #include <string.h>
 
 extern const struct test_node end_node;
@@ -25,9 +25,9 @@ static void YtsScalars_1(CuTest *tc) {
  */
 static void YtsScalars_2(CuTest *tc) {
   TestNode map[] = {{T_STR, "tag:yaml.org,2002:default", "=", NULL, 0},
-                    {T_STR, 0, "42", NULL, 0}, end_node};
-  TestNode stream[] = {
-    {T_MAP, "tag:yaml.org,2002:ref", 0, map, 0}, end_node};
+                    {T_STR, 0, "42", NULL, 0},
+                    end_node};
+  TestNode stream[] = {{T_MAP, "tag:yaml.org,2002:ref", 0, map, 0}, end_node};
   CuStreamCompare(tc, "!ref\n=: 42\n", stream);
   CuRoundTrip(tc, stream);
 }
@@ -44,8 +44,9 @@ static void YtsScalars_3(CuTest *tc) {
 /* ext/perl/t/2-scalars.t 6: Dump code
  */
 static void YtsScalars_4(CuTest *tc) {
-  TestNode stream[] = {{T_STR, "tag:perl.yaml.org,2002:code:", "{ \"foo\" . \\$_[0] }", NULL, 0},
-                       end_node};
+  TestNode stream[] = {
+      {T_STR, "tag:perl.yaml.org,2002:code:", "{ \"foo\" . \\$_[0] }", NULL, 0},
+      end_node};
   CuStreamCompare(tc, "!perl/code: '{ \"foo\" . \\$_[0] }'\n", stream);
   CuRoundTrip(tc, stream);
 }
@@ -53,15 +54,16 @@ static void YtsScalars_4(CuTest *tc) {
  */
 static void YtsScalars_5(CuTest *tc) {
   TestNode stream[] = {{T_STR, "tag:yaml.org,2002:null", "~", NULL, 0},
-                    end_node};
+                       end_node};
   CuStreamCompare(tc, "~\n", stream);
   CuRoundTrip(tc, stream);
 }
 /* ext/perl/t/2-scalars.t Dump '~'
  */
 static void YtsScalars_6(CuTest *tc) {
-  TestNode stream[] = {{T_STR, "tag:yaml.org,2002:str", "~", NULL, 1}, // style 1quote
-                    end_node};
+  TestNode stream[] = {
+      {T_STR, "tag:yaml.org,2002:str", "~", NULL, 1}, // style 1quote
+      end_node};
   CuStreamCompare(tc, "'~'\n", stream);
   CuRoundTrip(tc, stream);
 }
@@ -69,7 +71,8 @@ static void YtsScalars_6(CuTest *tc) {
  */
 static void YtsScalars_7(CuTest *tc) {
   TestNode map[] = {{T_STR, "tag:yaml.org,2002:str", "a", NULL, 0},
-                    {T_STR, 0, "", NULL, 0}, end_node};
+                    {T_STR, 0, "", NULL, 0},
+                    end_node};
   TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
   CuStreamCompare(tc, "a:\n", stream);
   CuRoundTrip(tc, stream);
@@ -79,7 +82,8 @@ static void YtsScalars_7(CuTest *tc) {
  */
 static void YtsScalars_8(CuTest *tc) {
   TestNode map[] = {{T_STR, "tag:yaml.org,2002:str", "a", NULL, 0},
-                    {T_STR, 0, "", NULL, 0}, end_node};
+                    {T_STR, 0, "", NULL, 0},
+                    end_node};
   TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
   CuStreamCompare(tc, "a: \n", stream);
   CuRoundTrip(tc, stream);
@@ -97,7 +101,8 @@ static void YtsScalars_9(CuTest *tc) {
  */
 static void YtsScalars_10(CuTest *tc) {
   TestNode map[] = {{T_STR, "tag:yaml.org,2002:str", "a", NULL, 0},
-                    {T_STR, 0, "b", NULL, 0}, end_node};
+                    {T_STR, 0, "b", NULL, 0},
+                    end_node};
   TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
   CuStreamCompare(tc, "a: b\n", stream);
   CuRoundTrip(tc, stream);
@@ -113,9 +118,8 @@ static void YtsScalars_11(CuTest *tc) {
 /* ext/perl/t/2-scalars.t Dump aliased seqs
  */
 static void YtsScalars_12(CuTest *tc) {
-  TestNode seq[] = {{T_STR, 0, "baz", NULL, 0},
-                     {T_STR, 0, "troz", NULL, 0},
-                     end_node};
+  TestNode seq[] = {
+      {T_STR, 0, "baz", NULL, 0}, {T_STR, 0, "troz", NULL, 0}, end_node};
   TestNode map[] = {{T_STR, 0, "bar", NULL, 0},
                     {T_SEQ, 0, 0, seq, 0},
                     {T_STR, 0, "foo", NULL, 0},
@@ -181,10 +185,10 @@ static void YtsScalars_16(CuTest *tc) {
 -DOC
 -STR
   */
-  CuStreamCompare(tc, "--- &1\nFoo:\n  parent: *1\nTroz:\n  parent: *1\n", stream);
+  CuStreamCompare(tc, "--- &1\nFoo:\n  parent: *1\nTroz:\n  parent: *1\n",
+                  stream);
   CuRoundTrip(tc, stream);
 }
-
 
 static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
@@ -212,7 +216,7 @@ int main(void) {
   CuSuite *suite = SyckGetSuite();
   int count;
 
-  CuSuiteRun/*NoJmp*/(suite); // this leaks the parser on errors
+  CuSuiteRun /*NoJmp*/ (suite); // this leaks the parser on errors
   CuSuiteSummary(suite, output);
   CuSuiteDetails(suite, output);
 

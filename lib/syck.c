@@ -178,7 +178,7 @@ syck_new_parser(void)
     p = S_ALLOC( SyckParser );
     S_MEMZERO( p, SyckParser, 1 );
     p->lvl_capa = ALLOC_CT;
-    p->levels = S_ALLOC_N( SyckLevel, p->lvl_capa ); 
+    p->levels = S_ALLOC_N( SyckLevel, p->lvl_capa );
     p->input_type = syck_yaml_utf8;
     p->io_type = syck_io_str;
     p->io.str = NULL;

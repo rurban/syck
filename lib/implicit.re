@@ -66,7 +66,7 @@ MON = DIGIT DIGIT ;
 SIGN = [-+] ;
 HEX = [0-9a-fA-F,] ;
 OCT = [0-7,] ;
-INTHEX = SIGN? "0x" HEX+ ; 
+INTHEX = SIGN? "0x" HEX+ ;
 INTOCT = SIGN? "0" OCT+ ;
 INTSIXTY = SIGN? DIGIT DIGITSC* ( ":" [0-5]? DIGIT )+ ;
 INTCANON = SIGN? ( "0" | [1-9] DIGITSC* ) ;
@@ -89,43 +89,24 @@ MERGE = "<<" ;
 DEFAULTKEY = "=" ;
 
 NULLTYPE NULL       {   return "null"; }
-
 BOOLYES NULL        {   return "bool#yes"; }
-
 BOOLNO NULL         {   return "bool#no"; }
-
 INTHEX NULL         {   return "int#hex"; }
-
 INTOCT NULL         {   return "int#oct"; }
-
 INTSIXTY NULL       {   return "int#base60"; }
-
 INTCANON NULL       {   return "int"; }
-
 FLOATFIX NULL       {   return "float#fix"; }
-
 FLOATEXP NULL       {   return "float#exp"; }
-
 FLOATSIXTY NULL     {   return "float#base60"; }
-
 FLOATINF NULL       {   return "float#inf"; }
-
 FLOATNEGINF NULL    {   return "float#neginf"; }
-
 FLOATNAN NULL       {   return "float#nan"; }
-
 TIMEYMD NULL        {   return "timestamp#ymd"; }
-
 TIMEISO NULL        {   return "timestamp#iso8601"; }
-
 TIMESPACED NULL     {   return "timestamp#spaced"; }
-
 TIMECANON NULL      {   return "timestamp"; }
-
 DEFAULTKEY NULL     {   return "default"; }
-
 MERGE NULL          {   return "merge"; }
-
 ANY                 {   return "str"; }
 
 */

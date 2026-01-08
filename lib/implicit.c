@@ -101,7 +101,7 @@ yy1:
 yy2:
 	++YYCURSOR;
 yy3:
-#line 129 "implicit.re"
+#line 110 "implicit.re"
 	{   return "str"; }
 #line 106 "implicit.c"
 yy4:
@@ -343,7 +343,7 @@ yy31:
 	}
 yy32:
 	++YYCURSOR;
-#line 103 "implicit.re"
+#line 97 "implicit.re"
 	{   return "int"; }
 #line 348 "implicit.c"
 yy33:
@@ -462,7 +462,7 @@ yy41:
 	goto yy23;
 yy42:
 	++YYCURSOR;
-#line 125 "implicit.re"
+#line 108 "implicit.re"
 	{   return "default"; }
 #line 467 "implicit.c"
 yy43:
@@ -593,12 +593,12 @@ yy62:
 	}
 yy63:
 	++YYCURSOR;
-#line 99 "implicit.re"
+#line 95 "implicit.re"
 	{   return "int#oct"; }
 #line 598 "implicit.c"
 yy64:
 	++YYCURSOR;
-#line 105 "implicit.re"
+#line 98 "implicit.re"
 	{   return "float#fix"; }
 #line 603 "implicit.c"
 yy65:
@@ -756,7 +756,7 @@ yy74:
 	}
 yy75:
 	++YYCURSOR;
-#line 127 "implicit.re"
+#line 109 "implicit.re"
 	{   return "merge"; }
 #line 761 "implicit.c"
 yy76:
@@ -773,7 +773,7 @@ yy77:
 	}
 yy78:
 	++YYCURSOR;
-#line 95 "implicit.re"
+#line 93 "implicit.re"
 	{   return "bool#no"; }
 #line 778 "implicit.c"
 yy79:
@@ -790,7 +790,7 @@ yy80:
 	}
 yy81:
 	++YYCURSOR;
-#line 93 "implicit.re"
+#line 92 "implicit.re"
 	{   return "bool#yes"; }
 #line 795 "implicit.c"
 yy82:
@@ -843,7 +843,7 @@ yy90:
 	}
 yy91:
 	++YYCURSOR;
-#line 101 "implicit.re"
+#line 96 "implicit.re"
 	{   return "int#base60"; }
 #line 848 "implicit.c"
 yy92:
@@ -867,7 +867,7 @@ yy92:
 	}
 yy93:
 	++YYCURSOR;
-#line 97 "implicit.re"
+#line 94 "implicit.re"
 	{   return "int#hex"; }
 #line 872 "implicit.c"
 yy94:
@@ -898,12 +898,12 @@ yy98:
 	goto yy23;
 yy99:
 	++YYCURSOR;
-#line 111 "implicit.re"
+#line 101 "implicit.re"
 	{   return "float#inf"; }
 #line 903 "implicit.c"
 yy100:
 	++YYCURSOR;
-#line 115 "implicit.re"
+#line 103 "implicit.re"
 	{   return "float#nan"; }
 #line 908 "implicit.c"
 yy101:
@@ -942,17 +942,17 @@ yy103:
 	}
 yy104:
 	++YYCURSOR;
-#line 109 "implicit.re"
+#line 100 "implicit.re"
 	{   return "float#base60"; }
 #line 947 "implicit.c"
 yy105:
 	++YYCURSOR;
-#line 113 "implicit.re"
+#line 102 "implicit.re"
 	{   return "float#neginf"; }
 #line 952 "implicit.c"
 yy106:
 	++YYCURSOR;
-#line 107 "implicit.re"
+#line 99 "implicit.re"
 	{   return "float#exp"; }
 #line 957 "implicit.c"
 yy107:
@@ -1026,7 +1026,7 @@ yy111:
 	}
 yy112:
 	++YYCURSOR;
-#line 117 "implicit.re"
+#line 104 "implicit.re"
 	{   return "timestamp#ymd"; }
 #line 1031 "implicit.c"
 yy113:
@@ -1378,7 +1378,7 @@ yy141:
 	}
 yy142:
 	++YYCURSOR;
-#line 119 "implicit.re"
+#line 105 "implicit.re"
 	{   return "timestamp#iso8601"; }
 #line 1383 "implicit.c"
 yy143:
@@ -1398,7 +1398,7 @@ yy143:
 	}
 yy144:
 	++YYCURSOR;
-#line 121 "implicit.re"
+#line 106 "implicit.re"
 	{   return "timestamp#spaced"; }
 #line 1403 "implicit.c"
 yy145:
@@ -1476,7 +1476,7 @@ yy150:
 		default: goto yy23;
 	}
 }
-#line 131 "implicit.re"
+#line 112 "implicit.re"
 
 
 }
@@ -1594,12 +1594,12 @@ yy152:
 yy153:
 	++YYCURSOR;
 yy154:
-#line 208 "implicit.re"
+#line 189 "implicit.re"
 	{   return syck_taguri( YAML_DOMAIN, type_id, strlen( type_id ) ); }
 #line 1599 "implicit.c"
 yy155:
 	++YYCURSOR;
-#line 182 "implicit.re"
+#line 163 "implicit.re"
 	{   return syck_xprivate( type_id + 1, strlen( type_id ) - 1 ); }
 #line 1604 "implicit.c"
 yy156:
@@ -1977,7 +1977,7 @@ yy162:
 	}
 yy163:
 	++YYCURSOR;
-#line 184 "implicit.re"
+#line 165 "implicit.re"
 	{   char *domain = S_ALLOC_N( char, ( YYCURSOR - type_id ) + 15 );
                     char *uri;
 
@@ -2424,7 +2424,7 @@ yy181:
 	}
 yy182:
 	++YYCURSOR;
-#line 197 "implicit.re"
+#line 178 "implicit.re"
 	{   char *domain = S_ALLOC_N( char, YYCURSOR - type_id );
                                char *uri;
 
@@ -2554,7 +2554,7 @@ yy192:
 	}
 yy193:
 	++YYCURSOR;
-#line 180 "implicit.re"
+#line 161 "implicit.re"
 	{   return syck_strndup( type_id, strlen( type_id ) ); }
 #line 2559 "implicit.c"
 yy194:
@@ -2589,7 +2589,7 @@ yy195:
 	}
 yy196:
 	++YYCURSOR;
-#line 178 "implicit.re"
+#line 159 "implicit.re"
 	{   return syck_strndup( type_id, strlen( type_id ) ); }
 #line 2594 "implicit.c"
 yy197:
@@ -2657,7 +2657,7 @@ yy202:
 		default: goto yy152;
 	}
 }
-#line 210 "implicit.re"
+#line 191 "implicit.re"
 
 
 }

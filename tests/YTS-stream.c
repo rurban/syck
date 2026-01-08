@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 
    cs = CuStringNew();
    ev = CuStringNew();
-   test_yaml_and_stream(cs, yaml, ev);
+   test_yaml_and_stream(cs, yaml, ev, 0); // display the errors
 
    if (outfh) {
        //CuStringAppend(cs, "---\n");

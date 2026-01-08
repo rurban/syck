@@ -49,6 +49,7 @@ REC = @REC@
 	  echo "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */" > $@; \
 	  cat $@.new >>$@;\
 	  chmod -w $@;\
+	  rm -f $@.new;\
 	fi
 
 # emacs flymake-mode

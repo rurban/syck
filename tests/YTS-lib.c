@@ -299,9 +299,15 @@ void emit_stream(CuString *cs, struct test_node *s) {
   }
 }
 
+static void yts_parser_error_handler(SyckParser *p, const char *s) {
+    // ignore all errors when we know it should fail
+    UNUSED(p);
+    UNUSED(s);
+}
+
 /* parses the in.yaml, builds an event stream, and emits it to a cs string.
  */
-void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev) {
+void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev, int should_fail) {
     SyckEmitter *emitter = syck_new_emitter();
     struct test_node *ystream = S_ALLOC_N(struct test_node, 1);
     int doc_ct = 0;
@@ -311,7 +317,10 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev) {
     SyckParser *parser = syck_new_parser();
     syck_parser_str_auto(parser, yaml, NULL);
     syck_parser_handler(parser, syck_copy_handler);
-    syck_parser_error_handler(parser, NULL);
+    if (should_fail)
+      syck_parser_error_handler(parser, yts_parser_error_handler);
+    else
+      syck_parser_error_handler(parser, NULL);
     syck_parser_implicit_typing(parser, 1);
     syck_parser_taguri_expansion(parser, 1);
 

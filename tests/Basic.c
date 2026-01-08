@@ -16,7 +16,7 @@
 static void TestSyckNodeAlloc(CuTest *tc) {
   SyckNode *n;
 
-  n = syck_new_str((char*)"YAML", scalar_plain);
+  n = syck_new_str((char *)"YAML", scalar_plain);
 
   CuAssert(tc, "Allocated 'str' node reporting as 'seq'.",
            n->kind != syck_seq_kind);

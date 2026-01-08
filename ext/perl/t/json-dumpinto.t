@@ -21,7 +21,7 @@ same( { foo => [qw<bar baz>] } );    # 4
 {
     my $buf;
     DumpInto( \$buf, 1 );
-    is( $buf, Dump(1) );             # 5
+    is( $buf, Dump(1) );                  # 5
     DumpInto( \$buf, 2 );
     is( $buf, ( Dump(1) . Dump(2) ) );    # 6
 }
@@ -31,4 +31,3 @@ same( { foo => [qw<bar baz>] } );    # 4
     DumpInto( \$buf, 42 );
     is( $buf, ( "HEWWO " . Dump(42) ) );    # 7
 }
-

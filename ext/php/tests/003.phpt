@@ -6,7 +6,7 @@ Check invalid-yaml parsing
 --GET--
 --INI--
 --FILE--
-<?php 
+<?php
 $yaml = <<<EOY
 ---
 test:

@@ -6,18 +6,18 @@ docLicense("BSD revised")
 #ifndef IOYAML_DEFINED
 #define IOYAML_DEFINED 1
 
+#include "IoList.h"
 #include "IoObject.h"
 #include "IoSeq.h"
-#include "IoList.h"
 #include "syck.h"
 
-#define ISYAML(self) IoObject_hasCloneFunc_(self, (TagCloneFunc *)IoYAML_rawClone)
+#define ISYAML(self)                                                           \
+  IoObject_hasCloneFunc_(self, (TagCloneFunc *)IoYAML_rawClone)
 
 typedef IoObject IoYAML;
 
-typedef struct
-{
-    IoSymbol *path;
+typedef struct {
+  IoSymbol *path;
 } IoYAMLData;
 
 IoYAML *IoYAML_rawClone(IoYAML *self);

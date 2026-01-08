@@ -269,7 +269,7 @@
 
 - version: 0.17
   date: 2002-07-10
-  changes: 
+  changes:
     - Implicit Time elements added (without timezones).
     - Folded and literal blocks alot closer.
     - Spanned strings making progress.
@@ -277,7 +277,7 @@
 
 - version: 0.16
   date: 2002-07-09
-  changes: 
+  changes:
     - Nearing completion of scalar blocks, literal and folded both implemented.
     - Improvements to the Struct class round-trip.
     - Adjunct words are combined to prevent odd errors.
@@ -300,4 +300,3 @@
     - Transfer methods now parsed.
     - Cleaned up the grammar a bit more.
     - Anchors and aliases.
-

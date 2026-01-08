@@ -32,4 +32,3 @@ use JSON::Syck;
     my $crlf = JSON::Syck::Dump( { foo => "\r\n" } );
     like $crlf, qr/'\\r\\n'/;
 }
-

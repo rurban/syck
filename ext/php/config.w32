@@ -21,4 +21,3 @@ if (PHP_SYCK != "no") {
 		WARNING("syck not enabled; libraries and headers not found");
 	}
 }
-

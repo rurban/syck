@@ -1,5 +1,5 @@
 
- 
+
 
                              . syck .
 
@@ -26,7 +26,7 @@ ABOUT
 The whole point of Syck is to make parsing and emitting YAML very
 simple for scripting languages through C bindings.  It doesn't strive
 to be a pull parser or very extendible.  It just is concerned with
-loading a YAML document into a C structure which can be easily 
+loading a YAML document into a C structure which can be easily
 translated into a scripting language's internal native data type.
 
 Syck was the first YAML library by _why, later superceded by libyaml,

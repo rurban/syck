@@ -33,7 +33,7 @@ status: >
   can load from a string containing YAML.
 
   Ruby has support for stream loading, type handling, YPath, Okay.
-  This release includes an amount of Ruby code comprising the 0.60 
+  This release includes an amount of Ruby code comprising the 0.60
   release of YAML.rb.
 
 benchmarks: >
@@ -110,16 +110,16 @@ examples:
      Interactive mode enabled
 
      <? dl( 'syck.so' ); print_r( syck_load( implode( '', file( 'RELEASE' ) ) ) ); ?>
-  
+
      .. php then outputs ..
 
      X-Powered-By: PHP/4.2.3
      Content-type: text/html
-     
+
      Array
-     (   
+     (
          [released] => Array
-             (   
+             (
                  [name] => Syck
                  [version] => 0.70
              )
@@ -129,11 +129,10 @@ examples:
   To load this document in Python: |
 
      ($:~)$ python
-     Python 2.1.3 (#1, Jul 11 2002, 17:52:24) 
+     Python 2.1.3 (#1, Jul 11 2002, 17:52:24)
      [GCC 2.95.3 20010315 (release) [FreeBSD]] on freebsd4
      Type "copyright", "credits" or "license" for more information.
      >>> import syck
      >>> f = open( 'RELEASE' )
      >>> syck.load( f.read() )
      {'by': 'why the lucky stiff', ... }
-

@@ -1,6 +1,6 @@
 [![](https://github.com/toddr/YAML-Syck/workflows/linux/badge.svg)](https://github.com/toddr/YAML-Syck/actions) [![](https://github.com/toddr/YAML-Syck/workflows/macos/badge.svg)](https://github.com/toddr/YAML-Syck/actions) [![](https://github.com/toddr/YAML-Syck/workflows/windows/badge.svg)](https://github.com/toddr/YAML-Syck/actions)
 
-# NAME 
+# NAME
 
 YAML::Syck - Fast, lightweight YAML loader and dumper
 
@@ -122,7 +122,7 @@ properly in all cases.
 
 # CAVEATS
 
-This module implements the YAML 1.0 spec.  To deal with data in YAML 1.1, 
+This module implements the YAML 1.0 spec.  To deal with data in YAML 1.1,
 please use the `YAML::XS` module instead.
 
 The current implementation bundles libsyck source code; if your system has a

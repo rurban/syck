@@ -46,4 +46,3 @@ plan tests => 8;
     DumpInto( \$buf, 42 );
     is( $buf, "HEWWO\n--- 42\n" );                    # 8
 }
-

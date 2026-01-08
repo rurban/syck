@@ -42,12 +42,19 @@ write_file( 'loadfile.json',  "---\na simple scalar" );
 write_file( 'emptyfile.json', "" );
 
 END {
-    unlink 'loadfile.json'  or die "can't delete 'loadfile.json': $!"  if -e 'loadfile.json';
-    unlink 'emptyfile.json' or die "can't delete 'emptyfile.json': $!" if -e 'emptyfile.json';
+    unlink 'loadfile.json'
+        or die "can't delete 'loadfile.json': $!"
+        if -e 'loadfile.json';
+    unlink 'emptyfile.json'
+        or die "can't delete 'emptyfile.json': $!"
+        if -e 'emptyfile.json';
 }
 
 # using file names
-is( LoadFile('loadfile.json'), "a simple scalar", 'LoadFile works with file names' );
+is( LoadFile('loadfile.json'),
+    "a simple scalar",
+    'LoadFile works with file names'
+);
 
 # read via IO::File
 {
@@ -59,10 +66,14 @@ is( LoadFile('loadfile.json'), "a simple scalar", 'LoadFile works with file name
 
 # read via indirect file handles
 SKIP: {
-    skip "indirect file handles require 5.6 or later", 1 unless $] >= 5.006000;
+    skip "indirect file handles require 5.6 or later", 1
+        unless $] >= 5.006000;
 
     open( my $h, 'loadfile.json' );
-    is( LoadFile($h), "a simple scalar", 'LoadFile works with indirect filehandles' );
+    is( LoadFile($h),
+        "a simple scalar",
+        'LoadFile works with indirect filehandles'
+    );
     close($h);
 }
 
@@ -70,7 +81,10 @@ SKIP: {
 {
     local *H;
     open( H, 'loadfile.json' );
-    is( LoadFile(*H), "a simple scalar", 'LoadFile works with ordinary filehandles' );
+    is( LoadFile(*H),
+        "a simple scalar",
+        'LoadFile works with ordinary filehandles'
+    );
     close(H);
 }
 
@@ -87,20 +101,31 @@ SKIP: {
     skip "in-memory files require 5.8 or later", 1 unless $] >= 5.00800;
 
     open( my $h, '<', \'a simple scalar' );
-    is( LoadFile($h), "a simple scalar", 'LoadFile works with in-memory files' );
+    is( LoadFile($h),
+        "a simple scalar",
+        'LoadFile works with in-memory files'
+    );
     close($h);
 }
 
 {    # Load empty file fails
     my $json = eval { LoadFile('emptyfile.json') };
-    like( $@, qr/^'emptyfile.json' is non-existent or empty at/ms, "LoadFile dies loading an empty file" );
+    like(
+        $@,
+        qr/^'emptyfile.json' is non-existent or empty at/ms,
+        "LoadFile dies loading an empty file"
+    );
     is( $json, undef, "LoadFile returns undef loading an empty file" );
 }
 
 {    # Load empty file handle fails with an obscure message. See RT 70933
     open( my $fh, '<', 'emptyfile.json' ) or die;
     my $json = eval { LoadFile($fh) };
-    like( $@, qr/^Usage: YAML::Syck::LoadJSON\(s\) at /ms, "LoadFile dies loading an empty file" );
+    like(
+        $@,
+        qr/^Usage: YAML::Syck::LoadJSON\(s\) at /ms,
+        "LoadFile dies loading an empty file"
+    );
     is( $json, undef, "LoadFile returns undef loading an empty file" );
 }
 

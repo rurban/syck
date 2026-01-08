@@ -16,24 +16,24 @@
   |          Alexey Zakhlestin <indeyets@gmail.com>                      |
   +----------------------------------------------------------------------+
 
-  $Id: php_syck.h 266 2007-07-10 21:41:32Z indeyets $ 
+  $Id: php_syck.h 266 2007-07-10 21:41:32Z indeyets $
 */
 
 #ifndef PHP_SYCK_H
-# define PHP_SYCK_H
+#define PHP_SYCK_H
 
 extern zend_module_entry syck_module_entry;
-# define phpext_syck_ptr &syck_module_entry
+#define phpext_syck_ptr &syck_module_entry
 
-# ifdef PHP_WIN32
-#  define PHP_SYCK_API __declspec(dllexport)
-# else
-#  define PHP_SYCK_API
-# endif
+#ifdef PHP_WIN32
+#define PHP_SYCK_API __declspec(dllexport)
+#else
+#define PHP_SYCK_API
+#endif
 
-# ifdef ZTS
-#  include "TSRM.h"
-# endif
+#ifdef ZTS
+#include "TSRM.h"
+#endif
 
 PHP_MINIT_FUNCTION(syck);
 PHP_MINFO_FUNCTION(syck);
@@ -41,13 +41,13 @@ PHP_MINFO_FUNCTION(syck);
 PHP_FUNCTION(syck_load);
 PHP_FUNCTION(syck_dump);
 
-/* 
-	Declare any global variables you may need between the BEGIN
-	and END macros here:     
+/*
+        Declare any global variables you may need between the BEGIN
+        and END macros here:
 
 ZEND_BEGIN_MODULE_GLOBALS(syck)
-	int   global_value;
-	char *global_string;
+        int   global_value;
+        char *global_string;
 ZEND_END_MODULE_GLOBALS(syck)
 
 #ifdef ZTS
@@ -57,8 +57,7 @@ ZEND_END_MODULE_GLOBALS(syck)
 #endif
 */
 
-#endif	/* PHP_SYCK_H */
-
+#endif /* PHP_SYCK_H */
 
 /*
  * Local variables:

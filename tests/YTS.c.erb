@@ -182,7 +182,7 @@ void CuStreamCompare( CuTest* tc, char *yaml, struct test_node *stream ) {
 /*
  * Setup for testing N->Y->N.
  */
-void 
+void
 test_output_handler( emitter, str, len )
     SyckEmitter *emitter;
     char *str;
@@ -202,7 +202,7 @@ build_symbol_table( SyckEmitter *emitter, struct test_node *node ) {
             while ( node->value[i].type != T_END ) {
                 build_symbol_table( emitter, &node->value[i] );
                 i++;
-            }        
+            }
         }
         return syck_emitter_mark_node( emitter, (st_data_t)node );
 
@@ -225,7 +225,7 @@ test_emitter_handler( SyckEmitter *emitter, st_data_t data ) {
             while ( node->value[i].type != T_END ) {
                 syck_emit_item( emitter, (st_data_t)&node->value[i] );
                 i++;
-            }        
+            }
             syck_emit_end( emitter );
         }
         break;
@@ -236,7 +236,7 @@ test_emitter_handler( SyckEmitter *emitter, st_data_t data ) {
             while ( node->value[i].type != T_END ) {
                 syck_emit_item( emitter, (st_data_t)&node->value[i] );
                 i++;
-            }        
+            }
             syck_emit_end( emitter );
         }
         break;
@@ -286,7 +286,7 @@ void
 
     CuStreamCompare( tc,
 
-        /* YAML document */ 
+        /* YAML document */
 <%= yt['yaml'].gsub( /\\/, '\\\\\\\\' ).gsub( '"', '\"' ).gsub( "\t", "\\t" ).gsub( /^(.*)$/, '"\1\n"' ) %>
         ,
 

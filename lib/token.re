@@ -1151,4 +1151,3 @@ syckerror( SyckParser *parser, const char *msg )
     parser->root = parser->root_on_error;
     (parser->error_handler)(parser, msg);
 }
-

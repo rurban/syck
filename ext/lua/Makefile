@@ -41,7 +41,7 @@ uninstall:
 	rm -f $(LUA_LIBDIR)/$(T)
 
 test: $(T)
-	lua test.lua 
+	lua test.lua
 	@echo "built and tested successfully. run make install to install, or just move the libs manually"
 
 $(T):	$(OBJS)

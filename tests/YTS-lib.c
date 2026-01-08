@@ -273,11 +273,13 @@ void emit_stream(CuString *cs, struct test_node *s) {
     switch (n->type) {
     case T_STR:
       CuStringAppend(cs, "=VAL ");
-      if (0 && n->tag) {
-        // FIXME: print the tag
-        CuStringAppend(cs, " <");
-        CuStringAppend(cs, n->tag);
-        CuStringAppend(cs, "> ");
+      // TODO anchor
+      if (n->tag) {
+        // FIXME get rid of x-private internally
+        if (memcmp(n->tag, "x-private:", sizeof("x-private:")-1) == 0)
+          CuStringAppendFormat(cs, "<tag:yaml.org,2002:%s> ", &n->tag[sizeof("x-private:")-1]);
+        else if (memcmp(n->tag, "tag:yaml.org,2002:", sizeof("tag:yaml.org,2002:")-1) != 0)
+          CuStringAppendFormat(cs, "<%s> ", n->tag);
       }
       if (n->style == scalar_1quote || n->style == scalar_2quote)
         CuStringAppend(cs, "'");

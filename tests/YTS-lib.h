@@ -34,4 +34,4 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev, int shou
 // max linelength 256!
 __attribute__malloc__
 CuString *CuSlurpFile(FILE *fh);
-int compare_cs(CuTest *tc, FILE *fh, CuString *cs);
+int compare_cs(CuTest *tc, FILE *fh, const CuString *cs);

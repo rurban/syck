@@ -382,7 +382,7 @@ CuString *CuSlurpFile(FILE *fh) {
     return cs;
 }
 
-int compare_cs(CuTest *tc, FILE *fh, CuString *cs) {
+int compare_cs(CuTest *tc, FILE *fh, const CuString *cs) {
     CuString *file_cs = CuSlurpFile(fh);
     if (tc) {
       CuAssertStrEquals(tc, file_cs->buffer, cs->buffer);

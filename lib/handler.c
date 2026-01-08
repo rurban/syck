@@ -23,7 +23,7 @@ syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 
     if ( n->anchor == NULL )
     {
-        syck_free_node( n );
+        syck_free_node( &n );
     }
     return id;
 }
@@ -57,7 +57,7 @@ syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
     {
         if ( ntmp != (void *)1 )
         {
-            syck_free_node( ntmp );
+            syck_free_node( &ntmp );
         }
     }
     st_insert( p->anchors, (st_data_t)a, (st_data_t)n );
@@ -78,7 +78,7 @@ assert(p->anchors != NULL);
     {
         if ( ntmp != (void *)1 )
         {
-            syck_free_node( ntmp );
+            syck_free_node( &ntmp );
         }
     }
     st_insert( p->anchors, (st_data_t)a, (st_data_t)1 );

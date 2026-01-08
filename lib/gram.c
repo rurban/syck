@@ -1717,7 +1717,7 @@ yyreduce:
                 {
                     apply_seq_in_map( (SyckParser *)parser, (yyvsp[-2].nodeData) );
                     syck_map_update( (yyvsp[-2].nodeData), (yyvsp[0].nodeData) );
-                    syck_free_node( (yyvsp[0].nodeData) );
+                    syck_free_node( &(yyvsp[0].nodeData) );
                     (yyvsp[0].nodeData) = NULL;
                     (yyval.nodeData) = (yyvsp[-2].nodeData);
                 }
@@ -1762,7 +1762,7 @@ yyreduce:
 #line 445 "gram.y"
                 {
                     syck_map_update( (yyvsp[-2].nodeData), (yyvsp[0].nodeData) );
-                    syck_free_node( (yyvsp[0].nodeData) );
+                    syck_free_node( &(yyvsp[0].nodeData) );
                     (yyvsp[0].nodeData) = NULL;
                     (yyval.nodeData) = (yyvsp[-2].nodeData);
 		}

@@ -34,8 +34,9 @@ syck_alloc_node( enum syck_kind_tag type )
 }
 
 void
-syck_free_node( SyckNode *n )
+syck_free_node( SyckNode **np )
 {
+    SyckNode *n = *np;
     syck_free_members( n );
 #ifndef HAVE_RUBY_ST_H
     if ( n->type_id != NULL && n->type_id != (void*)1UL)
@@ -49,7 +50,7 @@ syck_free_node( SyckNode *n )
         n->anchor = NULL;
     }
     S_FREE( n );
-    n = NULL;
+    *np = NULL;
 #endif
 }
 

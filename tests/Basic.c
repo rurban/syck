@@ -26,7 +26,7 @@ static void TestSyckNodeAlloc(CuTest *tc) {
            n->kind == syck_str_kind);
   CuAssertStrEquals(tc, "YAML", syck_str_read(n));
 
-  syck_free_node(n);
+  syck_free_node(&n);
 }
 
 //
@@ -45,7 +45,7 @@ static void TestSyckSeqAlloc(CuTest *tc) {
   CuAssert(tc, "Invalid value at '1'", 11001 == syck_seq_read(n, 1));
   CuAssert(tc, "Invalid value at '200'", 15801 == syck_seq_read(n, 201));
 
-  syck_free_node(n);
+  syck_free_node(&n);
 }
 
 //
@@ -80,7 +80,7 @@ static void TestSyckMapAlloc(CuTest *tc) {
   CuAssert(tc, "Invalid value at '6'", 24059 == syck_map_read(n, map_value, 6));
   CuAssert(tc, "Invalid value at '7'", 24159 == syck_map_read(n, map_value, 7));
 
-  syck_free_node(n);
+  syck_free_node(&n);
 }
 
 //
@@ -102,8 +102,8 @@ static void TestSyckMapUpdate(CuTest *tc) {
   CuAssert(tc, "Invalid value at '3'",
            51129 == syck_map_read(n1, map_value, 3));
 
-  syck_free_node(n2);
-  syck_free_node(n1);
+  syck_free_node(&n2);
+  syck_free_node(&n1);
 }
 
 static CuSuite *SyckGetSuite(void) {

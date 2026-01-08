@@ -508,6 +508,23 @@ delete_never(SHIM(const char *key), void *value, void *never)
     return ST_CONTINUE;
 }
 
+static void
+delete_anchor_duplicates(st_table *table, void *record) {
+    st_table_entry *ptr, *last, *tmp;
+    enum st_retval retval;
+    int i;
+
+    for(i = 0; i < table->num_bins; i++) {
+	last = NULL;
+	for(ptr = table->bins[i]; ptr != NULL;) {
+            if (ptr->record == record)
+                ptr->record = NULL;
+            last = ptr;
+            ptr = ptr->next;
+        }
+    }
+}    
+
 void
 st_foreach(st_table *table,
            enum st_retval (*func)(const char *key, void *record, void *arg),
@@ -518,11 +535,11 @@ st_foreach(st_table *table,
     int i;
 
     for(i = 0; i < table->num_bins; i++) {
-	last = 0;
-	for(ptr = table->bins[i]; ptr != 0;) {
+	last = NULL;
+	for(ptr = table->bins[i]; ptr != NULL;) {
 	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
-            if (func == syck_st_free_nodes)
-                ptr->record = NULL;
+            if (func == syck_st_free_nodes && ptr->record)
+                delete_anchor_duplicates(table, (void*)ptr->record);
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = ptr;

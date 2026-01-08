@@ -14,7 +14,7 @@
 #include "YTS-lib.h"
 #include <string.h>
 
-const struct test_node end_node = {T_END, NULL, NULL, NULL};
+const struct test_node end_node = {T_END, NULL, NULL, NULL, 0};
 
 #define strEQc(a,c) (strcmp((a),(c))==0)
 
@@ -28,6 +28,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     tn->type = T_STR;
     tn->key = syck_strndup(n->data.str->ptr, n->data.str->len);
     tn->value = 0;
+    tn->style = n->data.str->style;
     break;
 
   case syck_seq_kind: {
@@ -35,6 +36,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     struct test_node *seq = S_ALLOC_N(struct test_node, n->data.list->idx + 1);
     tn->type = T_SEQ;
     tn->key = NULL;
+    tn->style = (enum scalar_style)n->data.list->style;
     for (i = 0; i < n->data.list->idx; i++) {
       SYMID oid = syck_seq_read(n, i);
       syck_lookup_sym(p, oid, (char **)&val);
@@ -50,6 +52,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
         S_ALLOC_N(struct test_node, (n->data.pairs->idx * 2) + 1);
     tn->type = T_MAP;
     tn->key = NULL;
+    tn->style = (enum scalar_style)n->data.pairs->style;
     for (i = 0; i < n->data.pairs->idx; i++) {
       SYMID oid = syck_map_read(n, map_key, i);
       syck_lookup_sym(p, oid, (char **)&val);
@@ -264,32 +267,41 @@ CuRoundTrip(CuTest *tc, struct test_node *stream) {
 void emit_stream(CuString *cs, struct test_node *s) {
   int i = 0;
   while (1) {
-    if (s[i].type == T_END)
+    struct test_node *n = &s[i];
+    if (n->type == T_END)
       return;
-    switch (s[i].type) {
+    switch (n->type) {
     case T_STR:
       CuStringAppend(cs, "=VAL ");
-      if (s[i].tag) {
-        // FIXME: no
-        if (!strcmp(s[i].tag, "tag:yaml.org,2002:str"))
+      if (0 && n->tag) {
+        // FIXME: only when quoted
+        if (!strcmp(n->tag, "tag:yaml.org,2002:str"))
           CuStringAppend(cs, "'");
-        else if (!strcmp(s[i].tag, "tag:yaml.org,2002:int"))
+        else if (!strcmp(n->tag, "tag:yaml.org,2002:int"))
           CuStringAppend(cs, ":");
       }
+      if (n->style == scalar_1quote || n->style == scalar_2quote)
+        CuStringAppend(cs, "'");
+      else
+        CuStringAppend(cs, ":");
       // TODO string escape the key
-      CuStringAppend(cs, s[i].key);
+      CuStringAppend(cs, n->key);
       CuStringAppendLen(cs, "\n", 1);
       break;
     case T_SEQ:
-      // TODO [] style?
-      CuStringAppend(cs, "+SEQ\n");
-      emit_stream(cs, s[i].value);
+      if (n->style == 1)
+        CuStringAppend(cs, "+SEQ []\n");
+      else
+        CuStringAppend(cs, "+SEQ\n");
+      emit_stream(cs, n->value);
       CuStringAppend(cs, "-SEQ\n");
       break;
     case T_MAP:
-      // TODO {} style?
-      CuStringAppend(cs, "+MAP\n");
-      emit_stream(cs, s[i].value);
+      if (n->style == 1)
+        CuStringAppend(cs, "+MAP {}\n");
+      else
+        CuStringAppend(cs, "+MAP\n");
+      emit_stream(cs, n->value);
       CuStringAppend(cs, "-MAP\n");
       break;
     default:

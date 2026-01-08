@@ -13,12 +13,14 @@ struct test_node {
   const char *tag;
   const char *key;
   struct test_node *value;
+  enum scalar_style style;
 };
 struct test_node_dyn {
   int type;
   char *tag;
   char *key;
   struct test_node *value;
+  enum scalar_style style;
 };
 
 SYMID syck_copy_handler(SyckParser *p, SyckNode *n);

@@ -274,18 +274,16 @@ void emit_stream(CuString *cs, struct test_node *s) {
     case T_STR:
       CuStringAppend(cs, "=VAL ");
       if (0 && n->tag) {
-        // FIXME: only when quoted
-        if (!strcmp(n->tag, "tag:yaml.org,2002:str"))
-          CuStringAppend(cs, "'");
-        else if (!strcmp(n->tag, "tag:yaml.org,2002:int"))
-          CuStringAppend(cs, ":");
+        // FIXME: print the tag
+        CuStringAppend(cs, " <");
+        CuStringAppend(cs, n->tag);
+        CuStringAppend(cs, "> ");
       }
       if (n->style == scalar_1quote || n->style == scalar_2quote)
         CuStringAppend(cs, "'");
       else
         CuStringAppend(cs, ":");
-      // TODO string escape the key
-      CuStringAppend(cs, n->key);
+      CuStringAppendEscaped(cs, n->key);
       CuStringAppendLen(cs, "\n", 1);
       break;
     case T_SEQ:

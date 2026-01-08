@@ -24,6 +24,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+extern const struct test_node end_node;
+
 static int is_dir(FILE *f) {
     struct stat st;
     if (fstat(fileno(f), &st) == -1)
@@ -32,7 +34,13 @@ static int is_dir(FILE *f) {
     return S_ISDIR(st.st_mode);
 }
 
-extern const struct test_node end_node;
+static FILE *open_path(const char *path, const char *fname) {
+    char fn[512];
+    strncpy(fn, path, sizeof(fn)-1);
+    strncat(fn, "/", sizeof(fn)-strlen(fn)-1);
+    strncat(fn, fname, sizeof(fn)-strlen(fn)-1);
+    return fopen(fn, "r");
+}
 
 /*
    - emit and compare to out.yaml if parallel file exists
@@ -64,25 +72,23 @@ int main(int argc, char **argv) {
                if (a == '.')
                    continue;
                if (!strcmp(files[i]->d_name, "in.yaml")) {
-                   strncpy(fn, argv[1], sizeof(fn)-1);
-                   strncat(fn, "/", sizeof(fn)-strlen(fn)-1);
-                   strncat(fn, files[i]->d_name, sizeof(fn)-strlen(fn)-1);
-                   fh = fopen(fn, "r");
+                   fh = open_path(argv[1], "in.yaml");
                    found = 1;
                }
                else if (!strcmp(files[i]->d_name, "out.yaml")) {
-                   strncpy(fn, argv[1], sizeof(fn)-1);
-                   strncat(fn, "/", sizeof(fn)-strlen(fn)-1);
-                   strncat(fn, files[i]->d_name, sizeof(fn)-strlen(fn)-1);
-                   outfh = fopen(fn, "r");
+                   outfh = open_path(argv[1], "out.yaml");
                    more++;
                }
                else if (!strcmp(files[i]->d_name, "test.event")) {
-                   strncpy(fn, argv[1], sizeof(fn)-1);
-                   strncat(fn, "/", sizeof(fn)-strlen(fn)-1);
-                   strncat(fn, files[i]->d_name, sizeof(fn)-strlen(fn)-1);
-                   testfh = fopen(fn, "r");
+                   testfh = open_path(argv[1], "test.event");
                    more++;
+               }
+               else if (!strcmp(files[i]->d_name, "===")) {
+                   FILE *cmt = open_path(argv[1], "===");
+                   CuString *cmt_cs = CuSlurpFile(cmt);
+                   puts(cmt_cs->buffer);
+                   fclose(cmt);
+                   CuStringFree(cmt_cs);
                }
            }
            while (n--) {

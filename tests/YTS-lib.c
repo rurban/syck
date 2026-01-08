@@ -16,6 +16,8 @@
 
 const struct test_node end_node = {T_END, NULL, NULL, NULL};
 
+#define strEQc(a,c) (strcmp((a),(c))==0)
+
 SYMID
 syck_copy_handler(SyckParser *p, SyckNode *n) {
   int i = 0;
@@ -361,12 +363,18 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev) {
     syck_free_emitter(emitter);
 }
 
-int compare_cs(CuTest *tc, FILE *fh, CuString *cs) {
-    CuString *file_cs = CuStringNew();
+// max linelength 256!
+CuString *CuSlurpFile(FILE *fh) {
+    CuString *cs = CuStringNew();
     char buf[256];
     while (fgets(buf, sizeof(buf), fh)) {
-        CuStringAppend(file_cs, buf);
+        CuStringAppend(cs, buf);
     }
+    return cs;
+}
+
+int compare_cs(CuTest *tc, FILE *fh, CuString *cs) {
+    CuString *file_cs = CuSlurpFile(fh);
     if (tc) {
       CuAssertStrEquals(tc, file_cs->buffer, cs->buffer);
       CuStringFree(file_cs);

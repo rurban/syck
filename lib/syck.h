@@ -777,12 +777,15 @@ EXPORT long syck_seq_count( SyckNode *seq )
  */
 EXPORT void syckerror( SyckParser *parser, const char *msg )
 	/*@*/;
-// already defined in gram.h
-//int syckparse( void * )/*@globals fileSystem @*//*@modifies fileSystem @*/;
+#if defined(__APPLE__) && defined(__MACH__)
+// defined in gram.h. but for some unknown reason macOS does not see that decl in syck.c
+int syckparse(void *parser)/*@globals fileSystem @*//*@modifies fileSystem @*/;
+#endif
 
 /* XXX union YYSTYPE *sycklval has issues on Mac OS X. */
 /* Value type from gram.h.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+
 union YYSTYPE
 {
     SYMID nodeId;

@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
    FILE *fh, *outfh = NULL, *testfh = NULL;
    size_t fsize, nread;
    int retval = 0;
+   int should_fail = 0;
 
    if (argc != 2) {
        fprintf(stderr, "yaml-file argument missing\n");
@@ -86,9 +87,12 @@ int main(int argc, char **argv) {
                else if (!strcmp(files[i]->d_name, "===")) {
                    FILE *cmt = open_path(argv[1], "===");
                    CuString *cmt_cs = CuSlurpFile(cmt);
-                   puts(cmt_cs->buffer);
+                   printf("%s %s\n", argv[1], cmt_cs->buffer);
                    fclose(cmt);
                    CuStringFree(cmt_cs);
+               }
+               else if (!strcmp(files[i]->d_name, "error")) {
+                   should_fail = 1;
                }
            }
            while (n--) {
@@ -99,9 +103,8 @@ int main(int argc, char **argv) {
                fprintf(stderr, "No in.yaml in %s\n", argv[1]);
                return 1;
            }
-           if (more) {
-               fprintf(stderr, "Also found %d more files in %s\n", more, argv[1]);
-           }
+           //if (more)
+           //    fprintf(stderr, "Also found %d more files in %s\n", more, argv[1]);
        } else {
            fprintf(stderr, "Could not open file: %s\n", argv[1]);
            return 1;
@@ -131,11 +134,20 @@ int main(int argc, char **argv) {
        if (!compare_cs(NULL, outfh, cs))
            printf("OK out.yaml matches\n");
        else {
-           printf("FAIL out.yaml does not match\n");
+           if (should_fail)
+               printf("FAIL out.yaml but shold fail\n");
+           else
+               printf("FAIL out.yaml does not match\n");
            retval++;
        }
        fclose(outfh);
+   } else if (should_fail && cs->length == 0) {
+       printf("OK parse should fail\n");
+   } else {
+       printf("FAIL out.yaml missing\n");
+       retval++;
    }
+
    if (testfh) {
        if (!compare_cs(NULL, testfh, ev))
            printf("OK test.event matches\n");

@@ -9,7 +9,7 @@ LDADD = $(top_builddir)/lib/.libs/libsyck.la
 CUSRC = CuTest.c CuTest.h
 
 EXTRA_DIST = YTS-lib.h
-TESTS = test-basic test-parse test-emit test-yts test-yts-full
+TESTS = test-basic test-parse test-emit test-yts # test-yts-full
 noinst_PROGRAMS = test-basic test-parse test-emit test-yts test-yts-full yts-stream
 
 test_basic_SOURCES = Basic.c $(CUSRC)

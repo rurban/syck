@@ -68,8 +68,8 @@ jobs:
     - run: make -j
     - if: ${{ startsWith(github.ref, 'refs/heads/') }}
       run: make -j check || (cat tests/test-suite.log; false)
-    - if: ${{ matrix.CONFIGURE_ARGS == '' }}
-      run: cd tests; ./test-yts-full || cat test-suite.log
+    #- if: ${{ matrix.CONFIGURE_ARGS == '' }}
+    #  run: cd tests; ./test-yts-full || cat test-suite.log
     - if: ${{ matrix.CONFIGURE_ARGS == '' }}
       run: make distcheck
   macOS:

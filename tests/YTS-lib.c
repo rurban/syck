@@ -270,6 +270,7 @@ void emit_stream(CuString *cs, struct test_node *s) {
     case T_STR:
       CuStringAppend(cs, "=VAL ");
       if (s[i].tag) {
+        // FIXME: no
         if (!strcmp(s[i].tag, "tag:yaml.org,2002:str"))
           CuStringAppend(cs, "'");
         else if (!strcmp(s[i].tag, "tag:yaml.org,2002:int"))

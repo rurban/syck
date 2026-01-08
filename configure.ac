@@ -9,7 +9,7 @@ LT_INIT
 # Bump REVISION if there's no API or ABI changes.
 # Bump AGE and CURRENT and reset REVISION if there's no ABI changes.
 # Bump CURRENT and reset AGE and REVISION if there's ABI changes.
-AC_SUBST([SYCK_SO_VERSION], [0:55:0])
+AC_SUBST([SYCK_SO_VERSION], [1:0:0])
 
 AM_INIT_AUTOMAKE([1.14 gnu])
 AC_CONFIG_HEADERS([config.h])

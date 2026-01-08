@@ -98,13 +98,15 @@ used by the parser to workaround parser ambiguities!!
     It's up to your handler function to do that.
 
   void
-  syck_free_node( SyckNode *n )
+  syck_free_node( SyckNode **np )
 
     While the Syck parser will free nodes it creates, use
     this to free your own nodes.  This function will free
     all of its internals, its type_id and its anchor.  If
     you don't need those members free, please be sure they
     are set to NULL.
+    We had to change the API with 0.70 to fix use-after-free
+    with two aliase to a single node.
 
   SyckNode *
   syck_new_str( char *str, enum scalar_style style )

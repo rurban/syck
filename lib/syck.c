@@ -230,7 +230,7 @@ syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
     UNUSED(key);
     UNUSED(arg);
     if ( n != NULL && n != (void *)1 )
-        syck_free_node( n );
+        syck_free_node( &n );
     return ST_CONTINUE;
 }
 
@@ -239,7 +239,8 @@ syck_st_free( SyckParser *p )
 	/*@modifies p @*/
 {
     /*
-     * Free the anchor tables
+     * Free the anchor tables. We have mult. anchors to the same node
+     * in a anchor table->bins->record. Ensure to zero all of them.
      */
     if ( p->anchors != NULL )
     {

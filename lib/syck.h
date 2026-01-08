@@ -707,7 +707,7 @@ EXPORT __attribute__malloc__
 /*@null@*/
 SyckNode *syck_alloc_str(void)
 	/*@*/;
-EXPORT void syck_free_node( SyckNode *n )
+EXPORT void syck_free_node( SyckNode **np )
 	/*@modifies n @*/;
 EXPORT void syck_free_members( SyckNode *n )
 	/*@modifies n @*/;

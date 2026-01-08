@@ -409,7 +409,7 @@ in_implicit_map : complex_mapping
                 {
                     apply_seq_in_map( (SyckParser *)parser, $1 );
                     syck_map_update( $1, $3 );
-                    syck_free_node( $3 );
+                    syck_free_node( &$3 );
                     $3 = NULL;
                     $$ = $1;
                 }
@@ -444,7 +444,7 @@ in_inline_map	: inline_map_atom
 		| in_inline_map ',' inline_map_atom
 		{
                     syck_map_update( $1, $3 );
-                    syck_free_node( $3 );
+                    syck_free_node( &$3 );
                     $3 = NULL;
                     $$ = $1;
 		}

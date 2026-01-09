@@ -1,0 +1,10 @@
+#!/bin/sh
+# still memory leaks
+if ! test -d yaml-test-suite && test -f ../.git; then
+    git submodule update --init
+fi
+if test -d yaml-test-suite; then
+    env ASAN_OPTIONS=detect_leaks=0 ./test-yts-full
+else
+    echo "yaml-test-suite not found, skipping YTS tests"
+fi

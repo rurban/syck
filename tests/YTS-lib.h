@@ -23,6 +23,8 @@ struct test_node_dyn {
   enum scalar_style style;
 };
 
+int file_exists(const char *fn);
+int dir_exists(const char *fn);
 SYMID syck_copy_handler(SyckParser *p, SyckNode *n);
 enum st_retval syck_free_copies(SHIM(const char *key), void *_tn, SHIM(void *arg));
 void CuStreamCompareX(CuTest *tc, struct test_node *s1, struct test_node *s2);

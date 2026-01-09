@@ -21,17 +21,10 @@
 #include <stdio.h>
 
 #include <dirent.h>
-#include <sys/stat.h>
+#include <libgen.h>
 #include <unistd.h>
 
 extern const struct test_node end_node;
-
-static int is_dir(FILE *f) {
-    struct stat st;
-    if (fstat(fileno(f), &st) == -1)
-        return 0;
-    return S_ISDIR(st.st_mode);
-}
 
 static FILE *open_path(const char *path, const char *fname) {
     char fn[512];
@@ -46,80 +39,91 @@ static FILE *open_path(const char *path, const char *fname) {
    - compare stream to test.event if parallel file exists.
 */
 int main(int argc, char **argv) {
-   char *yaml;
    struct test_node *stream;
+   char fn[512];
+   char *yaml;
    CuString *cs, *ev;
-   FILE *fh, *outfh = NULL, *testfh = NULL;
+   FILE *fh = NULL, *outfh = NULL, *testfh = NULL;
+   struct dirent **files;
    size_t fsize, nread;
    int retval = 0;
-   int should_fail = 0;
+   int n, should_fail = 0;
 
    if (argc != 2) {
        fprintf(stderr, "yaml-file argument missing\n");
        exit(1);
    }
-   fh = fopen(argv[1], "r");
-   if (!fh || is_dir(fh)) {
-       // check if dir with in.yaml
-       struct dirent **files;
-       int n = scandir(argv[1], &files, NULL, alphasort);
-       if (n > 0) {
-           int found = 0;
-           int more = 0;
-           fh = open_path(argv[1], "error");
-           if (fh) {
+   strcpy(fn, argv[1]);
+   if (file_exists(fn)) {
+       fh = fopen(fn,"r");
+       strcpy(fn, dirname(argv[1]));
+   } else if (!dir_exists(fn)) {
+       fprintf(stderr, "Could not open file or directory: %s\n", fn);
+       exit(1);
+   }
+   // check if dir with in.yaml
+   n = scandir(fn, &files, NULL, alphasort);
+   if (n > 0) {
+       FILE *fh1;
+       int found = 0;
+       int more = 0;
+       fh1 = open_path(fn, "error");
+       if (fh1) {
+           should_fail = 1;
+           fclose(fh1);
+       }
+       for (int i=0; i<n; i++) {
+           char a = files[i]->d_name[0];
+           if (a == '.')
+               continue;
+           if (!strcmp(files[i]->d_name, "in.yaml")) {
+               if (fh)
+                   fclose(fh);
+               fh = open_path(fn, "in.yaml");
+               found = 1;
+           }
+           else if (!strcmp(files[i]->d_name, "out.yaml")) {
+               outfh = open_path(fn, "out.yaml");
+               more++;
+           }
+           else if (!strcmp(files[i]->d_name, "test.event")) {
+               testfh = open_path(fn, "test.event");
+               more++;
+           }
+           else if (!should_fail && !strcmp(files[i]->d_name, "error")) {
                should_fail = 1;
-               fclose(fh);
-               fh = NULL;
            }
-           for (int i=0; i<n; i++) {
-               char a = files[i]->d_name[0];
-               char fn[512];
-               if (a == '.')
-                   continue;
-               if (!strcmp(files[i]->d_name, "in.yaml")) {
-                   fh = open_path(argv[1], "in.yaml");
-                   found = 1;
-               }
-               else if (!strcmp(files[i]->d_name, "out.yaml")) {
-                   outfh = open_path(argv[1], "out.yaml");
-                   more++;
-               }
-               else if (!strcmp(files[i]->d_name, "test.event")) {
-                   testfh = open_path(argv[1], "test.event");
-                   more++;
-               }
-               else if (!should_fail && !strcmp(files[i]->d_name, "error")) {
-                   should_fail = 1;
-               }
-               else if (!strcmp(files[i]->d_name, "===")) {
-                   FILE *cmt = open_path(argv[1], "===");
-                   cs = CuSlurpFile(cmt);
-                   // skip the ending \n
-                   if (cs->length)
-                       cs->buffer[cs->length-1] = '\0';
-                   if (should_fail)
-                       printf("%s \"%s\". Does not parse.\n", argv[1], cs->buffer);
-                   else
-                       printf("%s \"%s\"\n", argv[1], cs->buffer);
-                   fclose(cmt);
-                   CuStringFree(cs);
-               }
+           else if (!strcmp(files[i]->d_name, "===")) {
+               FILE *cmt = open_path(fn, "===");
+               cs = CuSlurpFile(cmt);
+               // skip the ending \n
+               if (cs->length)
+                   cs->buffer[cs->length-1] = '\0';
+               if (should_fail)
+                   printf("%s \"%s\". Does not parse.\n", fn, cs->buffer);
+               else
+                   printf("%s \"%s\"\n", fn, cs->buffer);
+               fclose(cmt);
+               CuStringFree(cs);
            }
-           while (n--) {
-               free(files[n]);
-           }
-           free(files);
-           if (!found) {
-               fprintf(stderr, "No in.yaml in %s\n", argv[1]);
-               return 1;
-           }
-           //if (more)
-           //    fprintf(stderr, "Also found %d more files in %s\n", more, argv[1]);
-       } else {
-           fprintf(stderr, "Could not open file: %s\n", argv[1]);
+       }
+       while (n--) {
+           free(files[n]);
+       }
+       free(files);
+       if (!found) {
+           fprintf(stderr, "No in.yaml in %s\n", fn);
            return 1;
        }
+       //if (more)
+       //    fprintf(stderr, "Also found %d more files in %s\n", more, fn);
+   } else {
+       fprintf(stderr, "Could not open dir: %s\n", fn);
+       exit(1);
+   }
+   if (!fh) {
+       perror("fopen");
+       exit(1);
    }
    fseek(fh, 0, SEEK_END);
    fsize = ftell(fh);
@@ -129,7 +133,7 @@ int main(int argc, char **argv) {
    nread = fread(yaml, 1, fsize, fh);
    if (nread != fsize) {
        fprintf(stderr, "Unexpected file size %s: %zu != %zu read",
-               argv[1], fsize, nread);
+               fn, fsize, nread);
        exit(1);
    }
 
@@ -139,7 +143,7 @@ int main(int argc, char **argv) {
 
    cs = CuStringNew();
    ev = CuStringNew();
-   test_yaml_and_stream(cs, yaml, ev, 0); // display the errors
+   test_yaml_and_stream(cs, yaml, ev, should_fail); // display the errors
 
    if (outfh) {
        //CuStringAppend(cs, "---\n");
@@ -164,11 +168,13 @@ int main(int argc, char **argv) {
    }
 
    if (testfh) {
-       if (!compare_cs(NULL, testfh, ev))
-           printf("OK test.event matches\n");
-       else {
-           printf("TODO test.event does not match\n");
-           //retval++;
+       if (!should_fail) { // we have no event stream on parser errors
+           if (!compare_cs(NULL, testfh, ev))
+               printf("OK test.event matches\n");
+           else {
+               printf("TODO test.event does not match\n");
+               //retval++;
+           }
        }
        fclose(testfh);
    }

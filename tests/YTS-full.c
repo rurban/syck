@@ -24,11 +24,6 @@
 
 #define DATA_DIR "yaml-test-suite/"
 
-static int file_exists(const char *fn) {
-  struct stat st;
-  return stat(fn, &st) == 0;
-}
-
 static int must_skip(const char *name, const char *const skip_tests[]) {
   for (int i=0; skip_tests[i]; i++) {
     if (strcmp(name, skip_tests[i]) == 0)

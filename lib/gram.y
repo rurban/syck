@@ -51,6 +51,7 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n )
 %left               '[' ']' '{' '}' ',' '?'
 
 %destructor { syck_safe_free_node((SyckParser *)parser, &$$); } <nodeData>
+%destructor { free($$); $$ = NULL; } <name>
 
 %%
 

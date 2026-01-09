@@ -8,8 +8,8 @@ AM_LIBTOOLFLAGS = --tag=CC
 LDADD = $(top_builddir)/lib/.libs/libsyck.la
 CUSRC = CuTest.c CuTest.h
 
-EXTRA_DIST = YTS-lib.h
-TESTS = test-basic test-parse test-emit test-yts test-yts-full
+EXTRA_DIST = YTS-lib.h test-yts-full-asan
+TESTS = test-basic test-parse test-emit test-yts test-yts-full-asan
 noinst_PROGRAMS = test-basic test-parse test-emit test-yts test-yts-full yts-stream
 
 test_basic_SOURCES = Basic.c $(CUSRC)

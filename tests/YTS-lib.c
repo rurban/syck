@@ -17,8 +17,6 @@
 
 const struct test_node end_node = {T_END, NULL, NULL, NULL, 0};
 
-#define strEQc(a,c) (strcmp((a),(c))==0)
-
 int file_exists(const char *fn) {
   struct stat st;
   if (stat(fn, &st) != 0)

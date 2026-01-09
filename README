@@ -23,14 +23,20 @@ pass on those machines.  If tests aren't passing, then that's a problem.
 
 ABOUT
 
-Syck is the Scripters' YAML Cobble-Yourself-a-Parser Kit.  I don't
-much care if the acronym works, as long as the library does!
-
 The whole point of Syck is to make parsing and emitting YAML very
 simple for scripting languages through C bindings.  It doesn't strive
 to be a pull parser or very extendible.  It just is concerned with
 loading a YAML document into a C structure which can be easily 
 translated into a scripting language's internal native data type.
+
+Syck was the first YAML library by _why, later superceded by libyaml,
+as _why stepped down maintaining it, and nobody upgraded to the later
+YAML standards. The php and perl teams kept it alive independently,
+because it was much faster than libyaml. It is still used as CPAN
+module to parse cpan module yaml files much faster than YAML.pm and more
+compatible then YAML::XS, which is based on libyaml.
+
+Until 0.70 it parsed !!str to x-private:str tags.
 
 RUBY INSTALLATION
 

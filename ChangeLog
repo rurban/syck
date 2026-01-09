@@ -1,8 +1,14 @@
 --- %YAML:1.0
 - version: 0.70
-  date: 2009-09-30
+  date: 2026-01-??
   changes:
-    - 64-bit compatibility
+  - 64-bit compatibility
+  - fixed memory leaks. Had to bump the API for this to libsyck.so.1.0.0
+  - fixed use-after-free security problems when cleaning up
+    duplicate aliases to a single node.
+  - Revived the extensions and added a github actions CI.
+  - Added the full external YTS yaml-test-suite for testing full
+    1.0, 1.1, 1.2 and 1.3 compliance.
 
 - version: 0.60
   date: 2005-09-19

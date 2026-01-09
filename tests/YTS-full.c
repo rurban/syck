@@ -54,6 +54,8 @@ static void yts_test_func(CuTest *tc) {
   fn[sizeof(fn)-1] = '\0';
   fh = fopen(fn, "r");
   CuAssert(tc, "in.yaml not found", fh != NULL);
+  if (!fh)
+    return;
   fseek(fh, 0, SEEK_END);
   fsize = ftell(fh);
   yaml = S_ALLOC_N(char, fsize + 1);
@@ -96,18 +98,25 @@ static void yts_test_func(CuTest *tc) {
 
   if (must_skip(dirname, skip_tests)) {
     printf("SKIP use-after-free in %s\n", tc->name);
+    S_FREE(yaml);
   }
   else {
     cs = CuStringNew();
     ev = CuStringNew();
     test_yaml_and_stream(cs, yaml, ev, should_fail);
+    S_FREE(yaml);
 
     if (outfh) {
-      CuAssert(tc, "out.yaml matches", !compare_cs(tc, outfh, cs));
+      int result = !compare_cs(tc, outfh, cs);
+      CuStringFree(cs);
       fclose(outfh);
+      CuAssert(tc, "out.yaml matches", result);
     } else if (should_fail) {
-      CuAssert(tc, "parse should fail", cs->length == 0);
+      int result = cs->length == 0;
+      CuStringFree(cs);
+      CuAssert(tc, "parse should fail", result);
     } else {
+      CuStringFree(cs);
       CuAssert(tc, "both error and out.yaml missing", 1);
     }
 
@@ -118,11 +127,8 @@ static void yts_test_func(CuTest *tc) {
     else
       printf("TODO test.event does not match yet\n");
     fclose(testfh);
-
-    CuStringFree(cs);
     CuStringFree(ev);
   }
-  S_FREE(yaml);
 }
 
 static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {
@@ -152,6 +158,8 @@ static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {
             || (a >= 'A' && a <= 'Z'))
           addYTSDir(fn, subdirs[i], suite);
       }
+      while (n1--)
+        free(subdirs[n1]);
       free(subdirs);
       subdirs = NULL;
     } else {
@@ -192,9 +200,8 @@ static CuSuite *SyckGetSuite(int argc, char *argv[]) {
         || (a >= 'A' && a <= 'Z'))
       addYTSDir("yaml-test-suite", flist[i], suite);
   }
-  while (n--) {
+  while (n--)
     free(flist[n]);
-  }
   free(flist);
   return suite;
 }
@@ -206,7 +213,7 @@ int main(int argc, char *argv[]) {
 
   if (!suite)
     return 1;
-  CuSuiteRun(suite);
+  CuSuiteRunNoJmp(suite);
   CuSuiteSummary(suite, output);
   CuSuiteDetails(suite, output);
 

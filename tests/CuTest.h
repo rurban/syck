@@ -60,6 +60,7 @@ void CuAssertIntEquals(CuTest *tc, int expected, int actual);
 void CuAssertPtrEquals(CuTest *tc, void *expected, void *actual);
 void CuAssertPtrNotNull(CuTest *tc, void *pointer);
 void CuTestRun(CuTest *tc);
+void CuTestRunNoJmp(CuTest *tc);
 
 /* CuSuite */
 
@@ -80,6 +81,7 @@ void CuSuiteFree(CuSuite *testSuite);
 void CuSuiteAdd(CuSuite *testSuite, CuTest *testCase);
 void CuSuiteAddSuite(CuSuite *testSuite, CuSuite *testSuite2);
 void CuSuiteRun(CuSuite *testSuite);
+void CuSuiteRunNoJmp(CuSuite *testSuite);
 void CuSuiteSummary(CuSuite *testSuite, CuString *summary);
 void CuSuiteDetails(CuSuite *testSuite, CuString *details);
 

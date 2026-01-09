@@ -126,6 +126,7 @@ CuTest *CuTestNew(const char *name, TestFunction function) {
 
 void CuTestFree(CuTest *t) {
   if (t != NULL) {
+    free(t->message);
     free(t->name);
     free(t);
   }
@@ -152,6 +153,7 @@ void CuAssertTrue(CuTest *tc, int condition) {
 
 void CuAssertStrEquals(CuTest *tc, const char *expected, char *actual) {
   CuString *message;
+  char *s;
   if (strcmp(expected, actual) == 0)
     return;
   message = CuStringNew();
@@ -160,7 +162,10 @@ void CuAssertStrEquals(CuTest *tc, const char *expected, char *actual) {
   CuStringAppend(message, "> but was <");
   CuStringAppend(message, actual);
   CuStringAppend(message, ">");
-  CuFail(tc, message->buffer);
+  s = strdup(message->buffer);
+  CuStringFree(message);
+  CuFail(tc, s);
+  free(s);
 }
 
 void CuAssertIntEquals(CuTest *tc, int expected, int actual) {
@@ -194,7 +199,17 @@ void CuTestRun(CuTest *tc) {
     tc->ran = 1;
     (tc->function)(tc);
   }
+  if (tc->ran) {
+    free(tc->message);
+    tc->message = NULL;
+  }
   tc->jumpBuf = 0;
+}
+
+void CuTestRunNoJmp(CuTest *tc) {
+  tc->jumpBuf = 0;
+  (tc->function)(tc);
+  tc->ran = 1;
 }
 
 /*-------------------------------------------------------------------------*
@@ -239,6 +254,17 @@ void CuSuiteRun(CuSuite *testSuite) {
   for (i = 0; i < testSuite->count; ++i) {
     CuTest *testCase = testSuite->list[i];
     CuTestRun(testCase);
+    if (testCase->failed) {
+      testSuite->failCount += 1;
+    }
+  }
+}
+
+void CuSuiteRunNoJmp(CuSuite *testSuite) {
+  int i;
+  for (i = 0; i < testSuite->count; ++i) {
+    CuTest *testCase = testSuite->list[i];
+    CuTestRunNoJmp(testCase);
     if (testCase->failed) {
       testSuite->failCount += 1;
     }

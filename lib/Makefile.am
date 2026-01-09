@@ -15,14 +15,16 @@ include_HEADERS = syck.h syck_st.h
 noinst_HEADERS = yamlbyte.h gram.h bytecode.h
 DISTCLEANFILES = gram.c gram.h token.c implicit.c bytecode.c
 
+noinst_LTLIBRARIES = libsyck_nowarn.la
+libsyck_nowarn_la_SOURCES = \
+	gram.c emitter.c bytecode.c
+libsyck_nowarn_la_CFLAGS = $(AM_CFLAGS) @WNO_SWITCH_ENUM@
+
 libsyck_a_SOURCES = \
-	emitter.c \
 	handler.c \
 	node.c \
 	syck.c \
 	syck_st.c \
-	gram.c \
-	bytecode.c \
 	token.c \
 	implicit.c \
 	yaml2byte.c
@@ -31,11 +33,10 @@ EXTRA_DIST = bytecode.re \
 	implicit.re \
 	gram.y
 
-emitter_lo_CFLAGS = $(AM_CFLAGS) -Wno-switch-enum
-bytecode_lo_CFLAGS = $(AM_CFLAGS) -Wno-switch-enum
 libsyck_la_CFLAGS = $(AM_CFLAGS)
 libsyck_la_LDFLAGS = -version-info $(SYCK_SO_VERSION)
 libsyck_la_SOURCES = $(libsyck_a_SOURCES)
+libsyck_la_LIBADD = libsyck_nowarn.la
 
 .c.i:
 	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

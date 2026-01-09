@@ -1,6 +1,8 @@
 #include "syck.h"
 #include "CuTest.h"
 
+#define strEQc(a,c) (strcmp((a),(c))==0)
+
 /* YAML test node structures */
 #define T_STR 10
 #define T_SEQ 20

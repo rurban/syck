@@ -25,6 +25,7 @@
 #include <unistd.h>
 
 extern const struct test_node end_node;
+extern int syckdebug;
 
 static FILE *open_path(const char *path, const char *fname) {
     char fn[512];
@@ -49,11 +50,17 @@ int main(int argc, char **argv) {
    int retval = 0;
    int n, should_fail = 0;
 
+   if (argc > 2 && strEQc(argv[1], "--debug")) {
+       argc--;
+       syckdebug = 1;
+       strcpy(fn, argv[2]);
+   }
    if (argc != 2) {
        fprintf(stderr, "yaml-file argument missing\n");
        exit(1);
    }
-   strcpy(fn, argv[1]);
+   if (!syckdebug)
+       strcpy(fn, argv[1]);
    if (file_exists(fn)) {
        fh = fopen(fn,"r");
        strcpy(fn, dirname(argv[1]));

@@ -87,10 +87,11 @@ jobs:
         key: ${{ github.job }}-${{ matrix.os }}
     - name: prep
       run: |
-        brew install automake autoconf libtool
+        brew install automake autoconf libtool bison
+        echo "$(brew --prefix)/opt/bison/bin" >> $GITHUB_PATH
     - run: autoreconf -fi
-      # their bison was too old
-    - run: ./configure
+      # their system bison was too old
+    - run: ./configure || (cat config.log;false)
     - run: make -j
     - run: make -j check || (cat tests/test-suite.log; false)
   windows:

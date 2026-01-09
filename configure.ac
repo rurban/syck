@@ -43,6 +43,7 @@ _ACEOF
   else
     AC_MSG_RESULT([no, patching lib/gram.y])
     sed -i.orig 's/^%define api.pure/%pure-parser/' lib/gram.y
+    sed -i.orig '/^%destructor/ s/^/\/\//' lib/gram.y
   fi
   rm -f _test.y _test.tab.c test.tab.h 2>/dev/null
 fi

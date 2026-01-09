@@ -30,7 +30,6 @@ static int is_dir(FILE *f) {
     struct stat st;
     if (fstat(fileno(f), &st) == -1)
         return 0;
-
     return S_ISDIR(st.st_mode);
 }
 
@@ -67,6 +66,12 @@ int main(int argc, char **argv) {
        if (n > 0) {
            int found = 0;
            int more = 0;
+           fh = open_path(argv[1], "error");
+           if (fh) {
+               should_fail = 1;
+               fclose(fh);
+               fh = NULL;
+           }
            for (int i=0; i<n; i++) {
                char a = files[i]->d_name[0];
                char fn[512];
@@ -84,15 +89,21 @@ int main(int argc, char **argv) {
                    testfh = open_path(argv[1], "test.event");
                    more++;
                }
+               else if (!should_fail && !strcmp(files[i]->d_name, "error")) {
+                   should_fail = 1;
+               }
                else if (!strcmp(files[i]->d_name, "===")) {
                    FILE *cmt = open_path(argv[1], "===");
-                   CuString *cmt_cs = CuSlurpFile(cmt);
-                   printf("%s %s\n", argv[1], cmt_cs->buffer);
+                   cs = CuSlurpFile(cmt);
+                   // skip the ending \n
+                   if (cs->length)
+                       cs->buffer[cs->length-1] = '\0';
+                   if (should_fail)
+                       printf("%s \"%s\". Does not parse.\n", argv[1], cs->buffer);
+                   else
+                       printf("%s \"%s\"\n", argv[1], cs->buffer);
                    fclose(cmt);
-                   CuStringFree(cmt_cs);
-               }
-               else if (!strcmp(files[i]->d_name, "error")) {
-                   should_fail = 1;
+                   CuStringFree(cs);
                }
            }
            while (n--) {
@@ -117,7 +128,8 @@ int main(int argc, char **argv) {
    yaml[fsize] = '\0';
    nread = fread(yaml, 1, fsize, fh);
    if (nread != fsize) {
-       fprintf(stderr, "Unexpected file size %s: %zu != %zu read", argv[1], fsize, nread);
+       fprintf(stderr, "Unexpected file size %s: %zu != %zu read",
+               argv[1], fsize, nread);
        exit(1);
    }
 
@@ -144,7 +156,10 @@ int main(int argc, char **argv) {
    } else if (should_fail && cs->length == 0) {
        printf("OK parse should fail\n");
    } else {
-       printf("FAIL out.yaml missing\n");
+       if (should_fail)
+           printf("FAIL should not parse\n");
+       else
+           printf("FAIL out.yaml missing\n");
        retval++;
    }
 

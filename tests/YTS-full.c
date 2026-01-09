@@ -8,6 +8,9 @@
  * - emit the node events in a special event stream format,
  *   and compare to yaml-test-suite/XXXX/test.event
  * - and emit it, comparing to yaml-test-suite/XXXX/out.yaml
+ *
+ * Options: --tags name (see yaml-test-suite/tags/)
+ * Runs only those tests.
  */
 
 #define _GNU_SOURCE
@@ -17,6 +20,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #define DATA_DIR "yaml-test-suite/"
 
@@ -164,14 +168,22 @@ static void addYTSDir(const char *prefix, struct dirent *dir, CuSuite *suite) {
   }
 }
 
-static CuSuite *SyckGetSuite(void) {
+static CuSuite *SyckGetSuite(int argc, char *argv[]) {
   CuSuite *suite = CuSuiteNew();
   struct dirent **flist;
-  int n = scandir("yaml-test-suite", &flist, NULL, alphasort);
+  char dir[128];
+  int n;
+  strcpy(dir, "yaml-test-suite");
+  if (argc > 2 && strcmp(argv[1], "--tags") == 0) {
+    strcat(dir, "/tags/");
+    strcat(dir, argv[2]);
+  }
+  n = scandir(dir, &flist, NULL, alphasort);
   if (n < 0) {
-    perror("scandir yaml-test-suite");
+    fprintf(stderr, "%s: %s\n", dir, strerror(errno));
     return NULL;
   }
+  
   for (int i=0; i<n; i++) {
     char a = flist[i]->d_name[0];
     if (a == '.')
@@ -187,9 +199,9 @@ static CuSuite *SyckGetSuite(void) {
   return suite;
 }
 
-int main(void) {
+int main(int argc, char *argv[]) {
   CuString *output = CuStringNew();
-  CuSuite *suite = SyckGetSuite();
+  CuSuite *suite = SyckGetSuite(argc, argv);
   int count;
 
   if (!suite)

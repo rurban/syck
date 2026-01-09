@@ -1,10 +1,10 @@
 released: { name: Syck, version: 0.70 }
 for: [ Ruby, PHP, Python, Perl ]
-by: why the lucky stiff
+by: why the lucky stiff and Reini Urban
 about: >
 
   Syck is a YAML 1.0 parser, an extension for scripting
-  languages, written in C.  
+  languages, written in C.
 
   So what is YAML?  YAML is a simple language for data, similar to JSON.
   Describe objects in plain text.  Load the data into
@@ -26,10 +26,10 @@ status: >
   The latest YAML updates after 1.0 added more support
   for tags (i.e. types, classes) and anchors which led to various
   security problems when decoding these.
-  Hence many distros still prefer the old 1.0 spec, or need to white
-  list allowed classes.
+  Hence many distros still prefer the old pre-1.0 spec, or need to
+  white-list allowed classes.
 
-  The extensions are quite usable.  Ruby, PHP, Perl and Python
+  The extensions are quite usable.  Ruby, PHP, Perl, Python or Lua
   can load from a string containing YAML.
 
   Ruby has support for stream loading, type handling, YPath, Okay.
@@ -53,8 +53,8 @@ benchmarks: >
 
 installation: >
 
-  Syck contains working extensions for the Ruby, PHP, Perl and Python
-  languages.  Each requires compilation of the libsyck library,
+  Syck contains working extensions for the Ruby, PHP, Perl, Python
+  and Lua languages.  Each requires compilation of the libsyck library,
   followed by compilation of the extension.
 
   To compile libsyck, first download libsyck.
@@ -63,14 +63,13 @@ installation: >
     cd syck-0.70
     ./configure
     make
+    make check
     sudo make install
 
   To install the Ruby extension:
 
     cd ext/ruby
-    ruby install.rb config
-    ruby install.rb setup
-    sudo ruby install.rb install
+    make
 
   To install the Python extension:
 
@@ -80,9 +79,20 @@ installation: >
 
   To install the PHP extension:
 
-    sh make_module.sh
-    sudo make install (if you weren't root during make_module.sh)
+    cd ext/php
+    phpize
+    ./configure
+    make
+    sudo make install
     php -q syck.php
+
+  To install the Perl extension:
+
+    cd ext/perl
+    perl Makefile.PL
+    make
+    make test
+    sudo make install
 
 examples:
 

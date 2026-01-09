@@ -23,14 +23,14 @@ The Syck distribution is laid out as follows:
     node.c         node allocation and access
     syck.c         parser funcs, central funcs
     syck.h         libsyck definitions
-    syck_st.c      symbol table functions
-    syck_st.h      symbol table definitions
+    syck_st.c      symbol table functions, from Ruby
+    syck_st.h      symbol table definitions, from Ruby
     token.re       lexer for YAML plaintext (re2c)
     yaml2byte.c    simple bytecode emitter
-  ext/             ruby, python, php, cocoa extensions
+  ext/             ruby, python, php, perl, cocoa, lua extensions
   tests/           unit tests for libsyck
-    YTS.c.rb       generates YAML Testing Suite unit test
-                   (use: ruby YTS.c.rb > YTS.c)
+    YTS.c          Runs a few selected YAML Test Suite unit tests
+    YTS-full.c     Runs the full YAML Test Suite unit tests
     Basic.c        allocation and buffering tests
     Parse.c        parser sanity
     Emit.c         emitter sanity
@@ -102,11 +102,11 @@ used by the parser to workaround parser ambiguities!!
 
     While the Syck parser will free nodes it creates, use
     this to free your own nodes.  This function will free
-    all of its internals, its type_id and its anchor.  If
+    all of its internals, its type_id and its anchors.  If
     you don't need those members free, please be sure they
     are set to NULL.
     We had to change the API with 0.70 to fix use-after-free
-    with two aliase to a single node.
+    with two aliases to a single node.
 
   SyckNode *
   syck_new_str( char *str, enum scalar_style style )

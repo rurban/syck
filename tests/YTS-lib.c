@@ -13,10 +13,24 @@
 #include "CuTest.h"
 #include "YTS-lib.h"
 #include <string.h>
+#include <sys/stat.h>
 
 const struct test_node end_node = {T_END, NULL, NULL, NULL, 0};
 
 #define strEQc(a,c) (strcmp((a),(c))==0)
+
+int file_exists(const char *fn) {
+  struct stat st;
+  if (stat(fn, &st) != 0)
+    return 0;
+  return S_ISREG(st.st_mode) || S_ISLNK(st.st_mode);
+}
+int dir_exists(const char *fn) {
+  struct stat st;
+  if (stat(fn, &st) != 0)
+    return 0;
+  return S_ISDIR(st.st_mode);
+}
 
 SYMID
 syck_copy_handler(SyckParser *p, SyckNode *n) {

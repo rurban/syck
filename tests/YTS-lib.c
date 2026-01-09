@@ -326,15 +326,19 @@ void emit_stream(CuString *cs, struct test_node *s) {
   }
 }
 
-static void yts_parser_error_handler(SyckParser *p, const char *s) {
-    // ignore all errors when we know it should fail
-    UNUSED(p);
-    UNUSED(s);
+static void yts_parser_error_handler(SyckParser *p, const char *msg) {
+  // ignore all errors when we know it should fail
+  fprintf(stderr, "Error at [Line %d, Col %ld]: %s\n",
+        p->linect,
+        p->cursor - p->lineptr,
+        msg );
 }
 
 /* parses the in.yaml, builds an event stream, and emits it to a cs string.
  */
-void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev, int should_fail) {
+void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
+                          int should_fail)
+{
     SyckEmitter *emitter = syck_new_emitter();
     struct test_node *ystream = S_ALLOC_N(struct test_node, 1);
     int doc_ct = 0;
@@ -359,6 +363,8 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev, int shou
         SYMID oid = syck_parse(parser);
         int res;
 
+        if (!oid) // syntax error, no nodes added
+            break;
         if (parser->eof == 1)
             break;
 
@@ -373,24 +379,26 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev, int shou
     }
     ystream[doc_ct] = end_node;
 
-    build_symbol_table(emitter, ystream);
+    // print it
+    puts(cs->buffer);
+ 
+    if (doc_ct) {
+      build_symbol_table(emitter, ystream);
 
-    /* Build the stream */
-    syck_output_handler(emitter, test_output_handler);
-    syck_emitter_handler(emitter, test_emitter_handler);
-    emitter->bonus = cs;
-    while (ystream[i].type != T_END) {
+      /* Build the stream */
+      syck_output_handler(emitter, test_output_handler);
+      syck_emitter_handler(emitter, test_emitter_handler);
+      emitter->bonus = cs;
+      while (ystream[i].type != T_END) {
         syck_emit(emitter, (st_data_t)&ystream[i]);
         syck_emitter_flush(emitter, 0);
         i++;
+      }
+      //puts("\n--- # Parsed Stream");
+      CuStringAppend(ev, "+STR\n+DOC\n");
+      emit_stream(ev, ystream);
+      CuStringAppend(ev, "-DOC\n-STR\n");
     }
-    // print it
-    puts(cs->buffer);
-
-    //puts("\n--- # Parsed Stream");
-    CuStringAppend(ev, "+STR\n+DOC\n");
-    emit_stream(ev, ystream);
-    CuStringAppend(ev, "-DOC\n-STR\n");
 
     S_FREE(ystream);
     if (parser->syms != NULL)

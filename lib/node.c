@@ -33,6 +33,15 @@ syck_alloc_node( enum syck_kind_tag type )
 /*@=uniondef@*/
 }
 
+void syck_safe_free_node(SyckParser *parser, SyckNode **np) {
+    SyckNode *n = *np;
+    if (parser->anchors)
+        st_cleanup_safe(parser->anchors, (char*)n);
+    if (parser->bad_anchors)
+        st_cleanup_safe(parser->bad_anchors, (char*)n);
+    syck_free_node(np);
+}
+
 void
 syck_free_node( SyckNode **np )
 {

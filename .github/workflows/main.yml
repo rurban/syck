@@ -87,7 +87,7 @@ jobs:
         key: ${{ github.job }}-${{ matrix.os }}
     - name: prep
       run: |
-        brew install automake autoconf libtool bison
+        brew install automake autoconf libtool
     - run: autoreconf -fi
       # their bison was too old
     - run: ./configure

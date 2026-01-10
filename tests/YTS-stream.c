@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
            free(files[n]);
        }
        free(files);
-       if (!found) {
+       if (!found && !fh) {
            fprintf(stderr, "No in.yaml in %s\n", fn);
            return 1;
        }

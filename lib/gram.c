@@ -1,10 +1,3 @@
-/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */
-/*@-globs -mods -modnomods -moduncon -modunconnomods @*/
-/*@-noeffect -noeffectuncon @*/
-/*@-nullassign @*/
-/*@-readonlytrans @*/
-/*@-uniondef @*/
-/*@-warnlintcomments @*/
 /* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
@@ -2177,9 +2170,3 @@ apply_seq_in_map( SyckParser *parser, SyckNode *n )
     n->shortcut = NULL;
 }
 
-/*@=warnlintcomments @*/
-/*@=uniondef @*/
-/*@=readonlytrans @*/
-/*@=nullassign @*/
-/*@=noeffect =noeffectuncon @*/
-/*@=globs =mods =modnomods =moduncon =modunconnomods @*/

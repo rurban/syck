@@ -29,8 +29,6 @@ void syck_assert( const char *file_name, unsigned line_num )
 }
 #endif
 
-/*@-modfilesys@*/
-/*@only@*/ /*@null@*/
 static
 __attribute__unused__
 __attribute__noreturn__
@@ -39,9 +37,7 @@ void syck_vmefail(size_t size)
     fprintf(stderr, "memory alloc (%u bytes) returned NULL.\n", (unsigned)size);
     fflush( stderr );
     exit(EXIT_FAILURE);
-    /*@notreached@*/
 }
-/*@=modfilesys@*/
 
 /*
  * Allocates and copies a string
@@ -114,7 +110,6 @@ syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
 
 static void
 syck_parser_reset_levels( SyckParser *p )
-	/*@modifies p @*/
 {
     while ( p->lvl_idx > 1 )
     {
@@ -133,7 +128,6 @@ syck_parser_reset_levels( SyckParser *p )
 
 static void
 syck_parser_reset_cursor( SyckParser *p )
-	/*@modifies p @*/
 {
     if ( p->buffer == NULL )
     {
@@ -217,14 +211,13 @@ syck_lookup_sym( SyckParser *p, SYMID id, char **data )
 
 #ifdef HAVE_RUBY_ST_H
 int
-syck_st_free_nodes( st_data_t key, /*@only@*/ st_data_t record,
+syck_st_free_nodes( st_data_t key, st_data_t record,
                     st_data_t arg )
 #else
 enum st_retval
-syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
+syck_st_free_nodes( SHIM(const char *key), void *record,
                     SHIM(void *arg) )
 #endif
-/*@modifies record @*/
 {
     SyckNode *n = (SyckNode *)record;
     UNUSED(key);
@@ -236,7 +229,6 @@ syck_st_free_nodes( SHIM(const char *key), /*@only@*/ void *record,
 
 static void
 syck_st_free( SyckParser *p )
-	/*@modifies p @*/
 {
     /*
      * Free the anchor tables. We have mult. anchors to the same node
@@ -320,7 +312,6 @@ syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler hdlr )
 
 void
 syck_parser_set_input_type( SyckParser *p, enum syck_parser_input input_type )
-	/*@modifies p @*/
 {
     ASSERT( p != NULL );
     p->input_type = input_type;
@@ -437,7 +428,6 @@ free_any_io( SyckParser *p )
 
 static long
 syck_move_tokens( SyckParser *p )
-	/*@modifies p @*/
 {
     long count, skip;
     ASSERT( p->buffer != NULL );
@@ -466,7 +456,6 @@ syck_move_tokens( SyckParser *p )
 
 static void
 syck_check_limit( SyckParser *p, long len )
-	/*@modifies p @*/
 {
     if ( p->cursor == NULL )
     {
@@ -535,9 +524,7 @@ syck_parse( SyckParser *p )
 
     syck_st_free( p );
     syck_parser_reset_levels( p );
-/*@-noeffect@*/
     syckparse( p );
-/*@=noeffect@*/
     return p->root;
 }
 

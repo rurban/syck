@@ -16,7 +16,6 @@
 __attribute__malloc__
 static SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
-	/*@*/
 {
     SyckNode *s;
 
@@ -28,9 +27,7 @@ syck_alloc_node( enum syck_kind_tag type )
     s->anchor = NULL;
     s->shortcut = NULL;
 
-/*@-uniondef@*/
     return s;
-/*@=uniondef@*/
 }
 
 void syck_safe_free_node(SyckParser *parser, SyckNode **np) {

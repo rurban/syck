@@ -30,17 +30,14 @@
 #define HASH ((long)0xCAFECAFE)
 typedef struct {
    long hash;
-/*@null@*/
    char *buffer;
    long length;
    long remaining;
    int  printed;
 } bytestring_t;
 
-/*@null@*/
 static
 bytestring_t *bytestring_alloc(void)
-	/*@*/
 {
     bytestring_t *ret;
     /*TRACE0("bytestring_alloc()");*/
@@ -56,8 +53,7 @@ bytestring_t *bytestring_alloc(void)
 
 static
 void bytestring_append(bytestring_t *str, char code,
-                       /*@null@*/ char *start, /*@null@*/ char *finish)
-	/*@modifies str @*/
+                       char *start, char *finish)
 {
     long grow;
     long length = 2;   /* CODE + LF */
@@ -91,8 +87,7 @@ void bytestring_append(bytestring_t *str, char code,
 }
 
 static
-void bytestring_extend(bytestring_t *str, /*@null@*/ bytestring_t *ext)
-	/*@modifies str, ext @*/
+void bytestring_extend(bytestring_t *str, bytestring_t *ext)
 {
     char *from;
     char *curr;
@@ -101,7 +96,7 @@ void bytestring_extend(bytestring_t *str, /*@null@*/ bytestring_t *ext)
     long length;
     assert(str != NULL && HASH == str->hash);
     assert(ext != NULL && HASH == ext->hash);
-assert(ext->buffer != NULL);
+    assert(ext->buffer != NULL);
     if(ext->printed) {
         assert(ext->buffer[0] ==YAMLBYTE_ANCHOR);
         curr = ext->buffer;
@@ -143,7 +138,7 @@ syck_yaml2byte_handler(SyckParser *p, SyckNode *n)
     bytestring_t *sav = NULL;
     /*TRACE0("syck_yaml2byte_handler()");*/
     val = bytestring_alloc();
-assert(val != NULL);
+    assert(val != NULL);
     if(n->anchor!= NULL )
 	bytestring_append(val,YAMLBYTE_ANCHOR, n->anchor, NULL);
     if ( n->type_id != NULL )
@@ -179,7 +174,7 @@ assert(val != NULL);
                     start = current + 1;
                     if(current > finish)
                     {
-                        /*@loopbreak@*/ break;
+                        break;
                     }
                     else if('\n' == ch )
                     {
@@ -236,7 +231,7 @@ syck_yaml2byte(char *yamlstr)
     bytestring_t *sav;
 
     SyckParser *parser = syck_new_parser();
-assert(parser != NULL);
+    assert(parser != NULL);
     syck_parser_str_auto( parser, yamlstr, NULL );
     syck_parser_handler( parser, syck_yaml2byte_handler );
     syck_parser_error_handler( parser, NULL );
@@ -245,7 +240,7 @@ assert(parser != NULL);
     oid = syck_parse( parser );
 
     if ( syck_lookup_sym( parser, oid, (char **)&sav ) == 1 ) {
-assert(sav != NULL && sav->buffer != NULL);
+        assert(sav != NULL && sav->buffer != NULL);
         ret = S_ALLOC_N( char, strlen( sav->buffer ) + 3 );
         ret[0] = '\0';
         strcat( ret, "D\n" );

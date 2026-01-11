@@ -42,9 +42,7 @@ syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
             if ( n->kind != syck_str_kind )
             {
                 n->id = bad->id;
-/*@-noeffectuncon@*/
                 (p->handler)( p, n );
-/*@=noeffectuncon@*/
             }
         }
     }
@@ -86,7 +84,6 @@ assert(p->anchors != NULL);
 
 SyckNode *
 syck_hdlr_get_anchor( SyckParser *p, char *a )
-	/*@modifies p, a @*/
 {
     SyckNode *n = NULL;
 

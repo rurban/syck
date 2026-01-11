@@ -77,23 +77,7 @@ gram.c:	gram.y
 	-chmod +w gram.c gram.h
 	$(YACC) $(AM_YFLAGS) -o gram.c $<
 	-@if test -f gram.c; then \
-	{ \
-	  echo "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */";\
-	  echo "/*@-globs -mods -modnomods -moduncon -modunconnomods @*/";\
-	  echo "/*@-noeffect -noeffectuncon @*/";\
-	  echo "/*@-nullassign @*/";\
-	  echo "/*@-readonlytrans @*/";\
-	  echo "/*@-uniondef @*/";\
-	  echo "/*@-warnlintcomments @*/";\
-	  cat gram.c;\
-	  echo "/*@=warnlintcomments @*/";\
-	  echo "/*@=uniondef @*/";\
-	  echo "/*@=readonlytrans @*/";\
-	  echo "/*@=nullassign @*/";\
-	  echo "/*@=noeffect =noeffectuncon @*/";\
-	  echo "/*@=globs =mods =modnomods =moduncon =modunconnomods @*/";\
-	} > _gram.c ;\
-	  mv _gram.c gram.c;\
+	  chmod +w gram.c gram.h; \
 	  sed -i 's,int syckparse (void),int syckparse (void*),' gram.h; \
 	  sed -i 's,^yyparse (void),yyparse (void *parser),' gram.c; \
 	  sed -i 's/yylex (\&yylval)/yylex (\&yylval, parser)/' gram.c; \

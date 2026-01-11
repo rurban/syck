@@ -16,8 +16,7 @@
 
 #include "syck.h"
 
-void apply_seq_in_map( SyckParser *parser, SyckNode *n )
-	/*@*/;
+void apply_seq_in_map( SyckParser *parser, SyckNode *n );
 
 #define NULL_NODE(parser, node) \
         SyckNode *node = syck_new_str( "", scalar_plain ); \

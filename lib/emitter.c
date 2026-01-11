@@ -14,10 +14,8 @@
 
 #define DEFAULT_ANCHOR_FORMAT "id%03d"
 
-/*@unchecked@*/ /*@observer@*/
 const char hex_table[] = 
 "0123456789ABCDEF";
-/*@unchecked@*/ /*@observer@*/
 static char b64_table[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -145,14 +143,13 @@ syck_new_emitter(void)
 
 #ifdef HAVE_RUBY_ST_H
 static int
-syck_st_free_anchors( st_data_t key, /*@only@*/ st_data_t name,
+syck_st_free_anchors( st_data_t key, st_data_t name,
                     st_data_t arg )
 #else
 static enum st_retval
-syck_st_free_anchors( SHIM(const char *key), /*@only@*/ void *name,
+syck_st_free_anchors( SHIM(const char *key), void *name,
                       SHIM(void *arg) )
 #endif
-/*@modifies name @*/
 {
     UNUSED(key);
     UNUSED(arg);
@@ -162,7 +159,6 @@ syck_st_free_anchors( SHIM(const char *key), /*@only@*/ void *name,
 
 static void
 syck_emitter_st_free( SyckEmitter *e )
-	/*@modifies e @*/
 {
     /*
      * Free the anchor tables
@@ -360,9 +356,7 @@ syck_emitter_flush( SyckEmitter *e, long check_room )
     {
         check_room = e->marker - e->buffer;
     }
-/*@-noeffectuncon@*/
     (e->output_handler)( e, e->buffer, check_room );
-/*@=noeffectuncon@*/
     e->bufpos += check_room;
     e->marker -= check_room;
 }
@@ -449,9 +443,7 @@ assert(anchor_name != NULL);
         }
     }
 
-/*@-noeffectuncon@*/
     (e->emitter_handler)( e, n );
-/*@=noeffectuncon@*/
 
     /* Pop the level */
 end_emit:
@@ -856,7 +848,7 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
             do_indent = 0;
         }
         switch ( *mark ) {
-            case '\'':  syck_emitter_write( e, "'", 1 ); /*@switchbreak@*/ break;
+            case '\'':  syck_emitter_write( e, "'", 1 ); break;
 
             case '\n':
                 end = mark + 1;
@@ -867,7 +859,7 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
                 }
                 do_indent = 1;
                 start = mark + 1;
-            /*@switchbreak@*/ break;
+            break;
 
             case ' ':
                 if ( width > 0 && *start != ' ' && mark - end > width ) {
@@ -876,11 +868,11 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
                 } else {
                     syck_emitter_write( e, " ", 1 );
                 }
-            /*@switchbreak@*/ break;
+            break;
 
             default:
                 syck_emitter_write( e, mark, 1 );
-            /*@switchbreak@*/ break;
+            break;
         }
         mark++;
     }
@@ -908,16 +900,16 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
         switch ( *mark ) {
 
             /* Escape sequences allowed within double quotes. */
-            case '"':  syck_emitter_write( e, "\\\"", 2 ); /*@switchbreak@*/ break;
-            case '\\': syck_emitter_write( e, "\\\\", 2 ); /*@switchbreak@*/ break;
-            case '\0': syck_emitter_write( e, "\\0",  2 ); /*@switchbreak@*/ break;
-            case '\a': syck_emitter_write( e, "\\a",  2 ); /*@switchbreak@*/ break;
-            case '\b': syck_emitter_write( e, "\\b",  2 ); /*@switchbreak@*/ break;
-            case '\f': syck_emitter_write( e, "\\f",  2 ); /*@switchbreak@*/ break;
-            case '\r': syck_emitter_write( e, "\\r",  2 ); /*@switchbreak@*/ break;
-            case '\t': syck_emitter_write( e, "\\t",  2 ); /*@switchbreak@*/ break;
-            case '\v': syck_emitter_write( e, "\\v",  2 ); /*@switchbreak@*/ break;
-            case 0x1b: syck_emitter_write( e, "\\e",  2 ); /*@switchbreak@*/ break;
+            case '"':  syck_emitter_write( e, "\\\"", 2 ); break;
+            case '\\': syck_emitter_write( e, "\\\\", 2 ); break;
+            case '\0': syck_emitter_write( e, "\\0",  2 ); break;
+            case '\a': syck_emitter_write( e, "\\a",  2 ); break;
+            case '\b': syck_emitter_write( e, "\\b",  2 ); break;
+            case '\f': syck_emitter_write( e, "\\f",  2 ); break;
+            case '\r': syck_emitter_write( e, "\\r",  2 ); break;
+            case '\t': syck_emitter_write( e, "\\t",  2 ); break;
+            case '\v': syck_emitter_write( e, "\\v",  2 ); break;
+            case 0x1b: syck_emitter_write( e, "\\e",  2 ); break;
 
             case '\n':
                 end = mark + 1;
@@ -927,7 +919,7 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
                 if ( start < str + len && ( *start == ' ' || *start == '\n' ) ) {
                     do_indent = 0;
                 }
-            /*@switchbreak@*/ break;
+            break;
 
             case ' ':
                 if ( width > 0 && *start != ' ' && mark - end > width ) {
@@ -936,11 +928,11 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
                 } else {
                     syck_emitter_write( e, " ", 1 );
                 }
-            /*@switchbreak@*/ break;
+            break;
 
             default:
                 syck_emitter_escape( e, (unsigned char*)mark, 1 );
-            /*@switchbreak@*/ break;
+            break;
         }
         mark++;
     }
@@ -1076,7 +1068,7 @@ void syck_emit_folded( SyckEmitter *e, int width, char keep_nl, const char *str,
                     syck_emit_indent( e );
                 }
                 start = mark + 1;
-            /*@switchbreak@*/ break;
+            break;
 
             case ' ':
                 if ( *start != ' ' ) {
@@ -1086,7 +1078,7 @@ void syck_emit_folded( SyckEmitter *e, int width, char keep_nl, const char *str,
                         end = mark + 1;
                     }
                 }
-            /*@switchbreak@*/ break;
+            break;
             default:
                 break;
         }
@@ -1371,11 +1363,9 @@ syck_emitter_mark_node( SyckEmitter *e, st_data_t n, unsigned flags )
             sz = strlen( anc ) + 10;
             anchor_name = S_ALLOC_N( char, sz );
             S_MEMZERO( anchor_name, char, sz );
-/*@-formatconst@*/
             /* requires -Wno-format-nonliteral */
             snprintf( anchor_name, sz - 1, anc, idx );
             anchor_name[sz-1] = '\0';
-/*@=formatconst@*/
 
             /*
              * Insert into anchors table

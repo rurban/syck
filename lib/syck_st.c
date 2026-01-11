@@ -11,20 +11,16 @@ typedef struct st_table_entry st_table_entry;
 
 struct st_table_entry {
     unsigned int hash;
-/*@owned@*/
     const char *key;
-/*@owned@*/
     const void *record;
-/*@relnull@*/ /*@owned@*/
     st_table_entry *next;
 };
 
 #define ST_DEFAULT_MAX_DENSITY 5
 #define ST_DEFAULT_INIT_TABLE_SIZE 11
 
-/*@unused@*/ static inline /*@null@*/
-void * _free(/*@only@*/ /*@null@*/ /*@out@*/ const void * p)
-             /*@modifies p @*/
+static inline
+void * _free(const void * p)
 {
     if (p != NULL)
         free((void *)p);
@@ -42,7 +38,6 @@ void * _free(/*@only@*/ /*@null@*/ /*@out@*/ const void * p)
      */
 static int
 numcmp(const void * _x, const void * _y)
-	/*@*/
 {
     long x = (long)_x;
     long y = (long)_y;
@@ -51,13 +46,11 @@ numcmp(const void * _x, const void * _y)
 
 static int
 numhash(const void * _n)
-	/*@*/
 {
     long n = (long)_n;
     return n;
 }
 
-/*@unchecked@*/
 static struct st_hash_type type_numhash = {
     numcmp,
     numhash,
@@ -66,7 +59,6 @@ static struct st_hash_type type_numhash = {
 
 static int
 strhash(const void *arg)
-	/*@*/
 {
     const char * string = arg;
     register int c;
@@ -111,7 +103,6 @@ strhash(const void *arg)
 #endif
 }
 
-/*@unchecked@*/
 static struct st_hash_type type_strhash = {
     (int (*)(const void *, const void *))strcmp,
     strhash,
@@ -134,7 +125,6 @@ static struct st_hash_type type_strhash = {
 /*
 Table of prime numbers 2^n+a, 2<=n<=30.
 */
-/*@unchecked@*/
 static long primes[] = {
 	8 + 3,
 	16 + 3,
@@ -169,7 +159,6 @@ static long primes[] = {
 
 static int
 new_size(int size)
-	/*@*/
 {
     unsigned long i;
 
@@ -323,7 +312,6 @@ st_lookup(st_table *table, const char *key, const void **value)
 
 static void
 rehash(st_table *table)
-	/*@modifies *table @*/
 {
     register st_table_entry *ptr, *next, **new_bins;
     int i, old_num_bins = table->num_bins, new_num_bins;
@@ -431,7 +419,7 @@ st_copy(st_table *old_table)
 	    ptr = ptr->next;
 	}
     }
-/*@i@*/    return new_table;
+    return new_table;
 }
 
 int
@@ -544,7 +532,7 @@ st_foreach(st_table *table,
 	    case ST_CONTINUE:
 		last = ptr;
 		ptr = ptr->next;
-		/*@switchbreak@*/ break;
+		break;
 	    case ST_STOP:
 	    default:
 		return;

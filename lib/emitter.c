@@ -201,8 +201,7 @@ syck_emitter_parent_level( SyckEmitter *e )
 void
 syck_emitter_pop_level( SyckEmitter *e )
 {
-    ASSERT( e != NULL );
-
+    assert(e);
     /* The root level should never be popped */
     if ( e->lvl_idx <= 1 ) return;
 
@@ -213,19 +212,19 @@ syck_emitter_pop_level( SyckEmitter *e )
 void
 syck_emitter_add_level( SyckEmitter *e, int len, enum syck_level_status status )
 {
-    ASSERT( e != NULL );
+    assert(e);
     if ( e->lvl_idx + 1 > e->lvl_capa )
     {
         e->lvl_capa += ALLOC_CT;
         S_REALLOC_N( e->levels, SyckLevel, e->lvl_capa );
     }
 
-    ASSERT( len > e->levels[e->lvl_idx-1].spaces );
+    assert(len > e->levels[e->lvl_idx-1].spaces );
     e->levels[e->lvl_idx].spaces = len;
     e->levels[e->lvl_idx].ncount = 0;
+    e->levels[e->lvl_idx].anctag = 0;
     e->levels[e->lvl_idx].domain = syck_strndup( e->levels[e->lvl_idx-1].domain, strlen( e->levels[e->lvl_idx-1].domain ) );
     e->levels[e->lvl_idx].status = status;
-    e->levels[e->lvl_idx].anctag = 0;
     e->lvl_idx += 1;
 }
 
@@ -242,8 +241,8 @@ syck_emitter_reset_levels( SyckEmitter *e )
         e->lvl_idx = 1;
         e->levels[0].spaces = -1;
         e->levels[0].ncount = 0;
-        e->levels[0].domain = syck_strndup( "", 0 );
         e->levels[0].anctag = 0;
+        e->levels[0].domain = syck_strndup( "", 0 );
     }
     e->levels[0].status = syck_lvl_header;
 }
@@ -297,7 +296,7 @@ void
 syck_emitter_write( SyckEmitter *e, const char *str, long len )
 {
     long at;
-    ASSERT( str != NULL )
+    assert(str);
     if ( e->buffer == NULL )
     {
         syck_emitter_clear( e );
@@ -668,7 +667,7 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     SyckLevel *lvl = syck_emitter_current_level( e );
     int scan = 0;
     char *implicit;
-    
+
     if ( str == NULL ) str = "";
 
     /* No empty nulls as map keys */

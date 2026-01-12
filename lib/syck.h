@@ -38,18 +38,6 @@ extern "C" {
  * Memory Allocation (using ruby's xmalloc with ext/ruby)
  */
 
-#ifdef DEBUG
-//__attribute__noreturn__
-void syck_assert( const char *file_name, unsigned line_num );
-# define ASSERT(f) if ( !f ) syck_assert( __FILE__, __LINE__ )
-#else
-# define ASSERT(f)
-#endif
-
-#ifndef NULL
-# define NULL (void *)0
-#endif
-
 #if !defined(xmalloc)
 #define	xmalloc(_n)	malloc(_n)
 #define	xrealloc(_p,_n) realloc((_p), (_n))
@@ -77,6 +65,17 @@ void syck_assert( const char *file_name, unsigned line_num );
 #define S_MEMCPY(p1,p2,type,n) memcpy((p1), (p2), sizeof(type)*(n))
 #define S_MEMMOVE(p1,p2,type,n) memmove((p1), (p2), sizeof(type)*(n))
 #define S_MEMCMP(p1,p2,type,n) memcmp((p1), (p2), sizeof(type)*(n))
+
+#ifdef DEBUG
+# include <stdio.h>
+# define DPRINTF(Args)                          \
+    do {                                        \
+        if (syckdebug)                          \
+            fprintf Args;                       \
+} while (0)
+#else /* !DEBUG */
+# define DPRINTF(Args) ((void) 0)
+#endif
 
 /*
  * Compiler attributes
@@ -145,6 +144,18 @@ void syck_assert( const char *file_name, unsigned line_num );
 #endif
 #define SHIM(a) a __attribute__unused__
 
+#ifdef DEBUG
+__attribute__noreturn__
+void syck_assert( const char *file_name, unsigned line_num );
+# define ASSERT(f) if ( !f ) syck_assert( __FILE__, __LINE__ )
+#else
+# define ASSERT(f)
+#endif
+
+#ifndef NULL
+# define NULL (void *)0
+#endif
+
 /*
  * Node definitions
  */
@@ -207,7 +218,7 @@ struct _syck_node {
     /* Fully qualified tag-uri for type */
     char *type_id;
     /* Anchor name */
-    char *anchor;
+    const char *anchor;
     union {
         /* Storage for map data */
         struct SyckMap {
@@ -298,7 +309,7 @@ struct _syck_str {
 struct _syck_level {
     /* Indent */
     int spaces;
-    /* Counts nodes emitted at this level, useful for parsing 
+    /* Counts nodes emitted at this level, useful for parsing
      * keys and pairs in bytecode */
     int ncount;
     /* Does node have anchors or tags? */
@@ -575,9 +586,13 @@ EXPORT __attribute__malloc__
 SyckNode *syck_alloc_seq(void);
 EXPORT __attribute__malloc__
 SyckNode *syck_alloc_str(void);
+EXPORT __attribute__warn_unused_result__
+__attribute__returns_nonnull__
+const char *syck_node_kind( SyckNode *n );
 EXPORT void syck_safe_free_node( SyckParser *p, SyckNode **np );
 EXPORT void syck_free_node( SyckNode **np );
 EXPORT void syck_free_members( SyckNode *n );
+EXPORT void syck_free_name( char *name );
 
 EXPORT __attribute__malloc__
 __attribute__warn_unused_result__

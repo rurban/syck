@@ -428,7 +428,7 @@ yaml_org_handler( SyckNode *n, VALUE *ref )
 
     switch (n->kind)
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             transferred = 1;
             if ( type_id == NULL )
             {
@@ -1053,7 +1053,7 @@ syck_resolver_node_import(VALUE self, VALUE node)
 
     switch (n->kind)
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             obj = rb_str_new( n->data.str->ptr, n->data.str->len );
         break;
 
@@ -1374,7 +1374,7 @@ syck_genericresolver_node_import(VALUE self, VALUE node)
 
     switch (n->kind)
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
         {
             v = rb_str_new( n->data.str->ptr, n->data.str->len );
 	    rb_enc_associate(v, rb_utf8_encoding());
@@ -1515,7 +1515,7 @@ syck_node_mark(SyckNode *n)
             }
         break;
 
-	case syck_str_kind:
+	case syck_scalar_kind:
 	default:
 	    /* nothing */
 	break;
@@ -1971,7 +1971,7 @@ syck_node_transform(VALUE self)
             }
         break;
 
-        case syck_str_kind:
+        case syck_scalar_kind:
             DATA_PTR(t) = n = syck_new_str2( orig_n->data.str->ptr, orig_n->data.str->len, orig_n->data.str->style );
         break;
     }
@@ -2030,7 +2030,7 @@ rb_syck_emitter_handler(SyckEmitter *e, st_data_t data)
             }
         break;
 
-        case syck_str_kind:
+        case syck_scalar_kind:
             {
                 syck_emit_scalar( e, n->type_id, n->data.str->style, 0, 0, 0, n->data.str->ptr, n->data.str->len );
             }

@@ -110,7 +110,7 @@ syck_alloc_str(void)
     s->ptr = NULL;
     s->style = scalar_none;
 
-    n = syck_alloc_node( syck_str_kind );
+    n = syck_alloc_node( syck_scalar_kind );
     n->data.str = s;
 
     return n;
@@ -396,7 +396,7 @@ syck_free_members( SyckNode *n )
 
     switch ( n->kind  )
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             if ( n->data.str != NULL )
             {
                 S_FREE( n->data.str->ptr );

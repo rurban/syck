@@ -15,7 +15,7 @@ syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 {
     SYMID id;
 
-    if ( ! n->id ) 
+    if ( ! n->id )
     {
         n->id = (p->handler)( p, n );
     }
@@ -28,18 +28,21 @@ syck_hdlr_add_node( SyckParser *p, SyckNode *n )
     return id;
 }
 
+/* a must be freshly allocated, owned by the table.
+   n is shared with the parser and the table.
+ */
 SyckNode *
-syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
+syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
 {
     SyckNode *ntmp = NULL;
 
-    n->anchor = a;
+    n->anchor = (char*)a;
     if ( p->bad_anchors != NULL )
     {
         SyckNode *bad;
         if ( st_lookup( p->bad_anchors, (st_data_t)a, (void *)&bad ) )
         {
-            if ( n->kind != syck_str_kind )
+            if ( n->kind != syck_scalar_kind )
             {
                 n->id = bad->id;
                 (p->handler)( p, n );
@@ -63,15 +66,15 @@ syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
 }
 
 void
-syck_hdlr_remove_anchor( SyckParser *p, char *a )
+syck_hdlr_remove_anchor( SyckParser *p, const char *a )
 {
-    char *atmp = a;
+    const char *atmp = a;
     SyckNode *ntmp;
     if ( p->anchors == NULL )
     {
         p->anchors = st_init_strtable();
     }
-assert(p->anchors != NULL);
+    assert(p->anchors != NULL);
     if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
     {
         if ( ntmp != (void *)1 )

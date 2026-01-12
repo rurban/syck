@@ -158,7 +158,7 @@ syck_yaml2byte_handler(SyckParser *p, SyckNode *n)
     }
     switch (n->kind)
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             nextcode = YAMLBYTE_SCALAR;
             start  = n->data.str->ptr;
             finish = start + n->data.str->len - 1;

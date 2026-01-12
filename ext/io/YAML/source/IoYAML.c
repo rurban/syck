@@ -89,7 +89,7 @@ SYMID IoYAML_parseHandler(SyckParser *p, SyckNode *n)
 	int i;
 
 	switch (n->kind) {
-		case syck_str_kind:
+		case syck_scalar_kind:
 			if (n->type_id == NULL || strcmp(n->type_id, "str") == 0) {
         o = IOSEQ(n->data.str->ptr, n->data.str->len);
 			}

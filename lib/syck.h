@@ -168,8 +168,10 @@ typedef struct _syck_node SyckNode;
 enum syck_kind_tag {
     syck_map_kind,
     syck_seq_kind,
-    syck_str_kind
+    syck_scalar_kind
 };
+/* syck_scalar_kind is deprecated. should be named scalar_kind instead */
+#define syck_str_kind syck_scalar_kind
 
 enum map_part {
     map_key,
@@ -462,8 +464,8 @@ struct _syck_emitter_node {
 EXPORT __attribute__warn_unused_result__
 SYMID syck_hdlr_add_node( SyckParser *p, SyckNode *n );
 EXPORT __attribute__warn_unused_result__
-SyckNode *syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n );
-EXPORT void syck_hdlr_remove_anchor( SyckParser *p, char *a );
+SyckNode *syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n );
+EXPORT void syck_hdlr_remove_anchor( SyckParser *p, const char *a );
 EXPORT __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckNode *syck_hdlr_get_anchor( SyckParser *p, char *a );

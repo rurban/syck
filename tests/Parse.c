@@ -75,7 +75,7 @@ TestSyckReadString(CuTest *tc) {
 static SYMID
 SyckParseStringHandler(SHIM(SyckParser *p), SyckNode *n) {
   UNUSED(p);
-  if (n->kind != syck_str_kind)
+  if (n->kind != syck_scalar_kind)
     return 100;
 
   if (strcmp(syck_str_read(n), "a_test_string") != 0)
@@ -105,7 +105,7 @@ __attribute__unused__
 static SYMID
 SyckParseString2Handler(SHIM(SyckParser *p), SyckNode *n) {
   UNUSED(p);
-  if (n->kind != syck_str_kind)
+  if (n->kind != syck_scalar_kind)
     return 100;
 
   if (strcmp(syck_str_read(n), "a_test_string") != 0)

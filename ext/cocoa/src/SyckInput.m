@@ -25,7 +25,7 @@ SYMID cocoa_syck_parse_handler(SyckParser *p, SyckNode *n)
 	
     switch ( n->kind )
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             transferred = 1;
 			if ( type_id == NULL || strcmp( type_id, "str" ) == 0 )
             {

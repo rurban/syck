@@ -25,7 +25,7 @@ try_tag_implicit( SyckNode *n, int taguri )
     const char *tid = "";
     switch ( n->kind )
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             tid = syck_match_implicit( n->data.str->ptr, n->data.str->len );
             break;
 

@@ -23,7 +23,7 @@ static void TestSyckNodeAlloc(CuTest *tc) {
   CuAssert(tc, "Allocated 'str' node reporting as 'map'.",
            n->kind != syck_map_kind);
   CuAssert(tc, "Allocated 'str' not reporting as 'str'.",
-           n->kind == syck_str_kind);
+           n->kind == syck_scalar_kind);
   CuAssertStrEquals(tc, "YAML", syck_str_read(n));
 
   syck_free_node(&n);

@@ -134,7 +134,7 @@ static SYMID php_syck_handler(SyckParser *p, SyckNode *n)
     ZVAL_NULL(&rv);
 
     switch (n->kind) {
-        case syck_str_kind:
+        case syck_scalar_kind:
             if (!n->type_id || strcmp(n->type_id, "str") == 0) {
                 ZVAL_STRINGL(&rv, n->data.str->ptr, n->data.str->len);
             }

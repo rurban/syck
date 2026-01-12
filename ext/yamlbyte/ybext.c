@@ -128,7 +128,7 @@ yb_handler(SyckParser *p, SyckNode *n)
     if(n->type_id) bytestring_append(val,YAMLBYTE_TRANSFER, n->type_id, NULL);
     switch (n->kind)
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             nextcode = YAMLBYTE_SCALAR;
             start  = n->data.str->ptr;
             finish = start + n->data.str->len - 1;

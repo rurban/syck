@@ -36,7 +36,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
   struct test_node *tn = S_ALLOC_N(struct test_node, 1);
 
   switch (n->kind) {
-  case syck_str_kind:
+  case syck_scalar_kind:
     tn->type = T_STR;
     tn->key = syck_strndup(n->data.str->ptr, n->data.str->len);
     tn->value = 0;

@@ -60,7 +60,7 @@ PyObject pointers.)
 
 Three kinds of SyckNodes are available:
 
-1. scalar nodes (syck_str_kind):
+1. scalar nodes (syck_scalar_kind):
    These nodes store a string, a length for the string
    and a style (indicating the format used in the YAML
    document).

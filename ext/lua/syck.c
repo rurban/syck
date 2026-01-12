@@ -72,7 +72,7 @@ lua_syck_parser_handler(SyckParser *p, SyckNode *n)
 		luaL_error(bonus->orig,"syck parser wanted too much stack space.");
 	
 	switch (n->kind) {
-		case syck_str_kind:
+		case syck_scalar_kind:
 			if (n->type_id == NULL || strcmp(n->type_id, "str") == 0) {
 				lua_pushlstring(bonus->L, n->data.str->ptr, n->data.str->len);
 				o = lua_gettop(bonus->L);

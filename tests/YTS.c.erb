@@ -45,7 +45,7 @@ syck_copy_handler(p, n)
 
     switch ( n->kind )
     {
-        case syck_str_kind:
+        case syck_scalar_kind:
             tn->type = T_STR;
             tn->key = syck_strndup( n->data.str->ptr, n->data.str->len );
             tn->value = 0;

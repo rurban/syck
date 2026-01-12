@@ -165,7 +165,7 @@ yaml_syck_parser_handler
     while (id && (*id == '!')) { id++; }
 
     switch (n->kind) {
-        case syck_str_kind:
+        case syck_scalar_kind:
             if (TYPE_IS_NULL(id)) {
                 if (strnEQ( n->data.str->ptr, NULL_LITERAL, 1+NULL_LITERAL_LENGTH)
                     && (n->data.str->style == scalar_plain)) {

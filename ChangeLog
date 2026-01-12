@@ -4,6 +4,7 @@
   changes:
   - 64-bit compatibility
   - fixed memory leaks. Had to bump the API for this to libsyck.so.1.0.0
+  - Renamed syck_str_kind to syck_scalar_kind. syck_str_kind is deprecated.
   - fixed use-after-free security problems when cleaning up
     duplicate aliases to a single node.
   - Revived the extensions and added a github actions CI.

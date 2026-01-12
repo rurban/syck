@@ -19,7 +19,7 @@
  */
 #ifdef DEBUG
 __attribute__noreturn__
-void syck_assert( const char *file_name, unsigned line_num )
+void syck_assert(const char *file_name, unsigned line_num )
 {
     fflush( NULL );
     fprintf( stderr, "\nAssertion failed: %s, line %u\n",
@@ -59,7 +59,7 @@ syck_io_file_read( char *buf, SyckIoFile *file, long max_size, long skip )
 {
     long len = 0;
 
-    ASSERT( file != NULL );
+    assert(file);
 
     max_size -= skip;
     len = fread( buf + skip, sizeof( char ), max_size, file->ptr );
@@ -78,7 +78,7 @@ syck_io_str_read( char *buf, SyckIoStr *str, long max_size, long skip )
     const char *beg = str ? str->ptr : NULL;
     long len = 0;
 
-    ASSERT( str != NULL );
+    assert(str);
     if ( max_size >= 0 )
     {
         max_size -= skip;
@@ -220,10 +220,13 @@ syck_st_free_nodes( SHIM(const char *key), void *record,
 #endif
 {
     SyckNode *n = (SyckNode *)record;
-    UNUSED(key);
-    UNUSED(arg);
     if ( n != NULL && n != (void *)1 )
         syck_free_node( &n );
+    if (0 && arg) { //FIXME: they are also n->anchor's, and free'd there
+        // free only stringtable keys, not numeric syms
+        DPRINTF ((stderr, "DEBUG: %s free key '%s'\n", __FUNCTION__, key));
+        free((char*)key);
+    }
     return ST_CONTINUE;
 }
 
@@ -236,14 +239,16 @@ syck_st_free( SyckParser *p )
      */
     if ( p->anchors != NULL )
     {
-        st_foreach( p->anchors, syck_st_free_nodes, 0UL );
+        DPRINTF ((stderr, "DEBUG: %s free p->anchors %p\n", __FUNCTION__, p->anchors));
+        st_foreach( p->anchors, syck_st_free_nodes, (void*)1UL );
         st_free_table( p->anchors );
         p->anchors = NULL;
     }
 
     if ( p->bad_anchors != NULL )
     {
-        st_foreach( p->bad_anchors, syck_st_free_nodes, 0UL );
+        DPRINTF ((stderr, "DEBUG: %s free p->bad_anchors %p\n", __FUNCTION__, p->bad_anchors));
+        st_foreach( p->bad_anchors, syck_st_free_nodes, (void*)1UL );
         st_free_table( p->bad_anchors );
         p->bad_anchors = NULL;
     }
@@ -271,6 +276,7 @@ syck_free_parser( SyckParser *p )
 
     if ( p->buffer != NULL )
     {
+        DPRINTF ((stderr, "DEBUG: %s free p->buffer %p\n", __FUNCTION__, p->buffer));
         S_FREE( p->buffer );
     }
     free_any_io( p );
@@ -280,7 +286,7 @@ syck_free_parser( SyckParser *p )
 void
 syck_parser_handler( SyckParser *p, SyckNodeHandler hdlr )
 {
-    ASSERT( p != NULL );
+    assert(p);
     p->handler = hdlr;
 }
 
@@ -299,28 +305,28 @@ syck_parser_taguri_expansion( SyckParser *p, int flag )
 void
 syck_parser_error_handler( SyckParser *p, SyckErrorHandler hdlr )
 {
-    ASSERT( p != NULL );
+    assert(p);
     p->error_handler = hdlr;
 }
 
 void
 syck_parser_bad_anchor_handler( SyckParser *p, SyckBadAnchorHandler hdlr )
 {
-    ASSERT( p != NULL );
+    assert(p);
     p->bad_anchor_handler = hdlr;
 }
 
 void
 syck_parser_set_input_type( SyckParser *p, enum syck_parser_input input_type )
 {
-    ASSERT( p != NULL );
+    assert(p);
     p->input_type = input_type;
 }
 
 void
 syck_parser_file( SyckParser *p, FILE *fp, SyckIoFileRead read )
 {
-    ASSERT( p != NULL );
+    assert(p);
     free_any_io( p );
     syck_parser_reset_cursor( p );
     p->io_type = syck_io_file;
@@ -339,7 +345,7 @@ syck_parser_file( SyckParser *p, FILE *fp, SyckIoFileRead read )
 void
 syck_parser_str( SyckParser *p, char *ptr, long len, SyckIoStrRead read )
 {
-    ASSERT( p != NULL );
+    assert(p);
     free_any_io( p );
 	syck_parser_reset_cursor( p );
     p->io_type = syck_io_str;
@@ -372,7 +378,7 @@ syck_parser_current_level( SyckParser *p )
 void
 syck_parser_pop_level( SyckParser *p )
 {
-    ASSERT( p != NULL );
+    assert(p);
 
     /* The root level should never be popped */
     if ( p->lvl_idx <= 1 ) return;
@@ -384,14 +390,14 @@ syck_parser_pop_level( SyckParser *p )
 void
 syck_parser_add_level( SyckParser *p, int len, enum syck_level_status status )
 {
-    ASSERT( p != NULL );
+    assert(p);
     if ( p->lvl_idx + 1 > p->lvl_capa )
     {
         p->lvl_capa += ALLOC_CT;
         S_REALLOC_N( p->levels, SyckLevel, p->lvl_capa );
     }
 
-    ASSERT( len > p->levels[p->lvl_idx-1].spaces );
+    assert(len > p->levels[p->lvl_idx-1].spaces );
     p->levels[p->lvl_idx].spaces = len;
     p->levels[p->lvl_idx].ncount = 0;
     p->levels[p->lvl_idx].domain = syck_strndup( p->levels[p->lvl_idx-1].domain, strlen( p->levels[p->lvl_idx-1].domain ) );
@@ -402,7 +408,7 @@ syck_parser_add_level( SyckParser *p, int len, enum syck_level_status status )
 void
 free_any_io( SyckParser *p )
 {
-    ASSERT( p != NULL );
+    assert(p);
     switch ( p->io_type )
     {
         case syck_io_str:
@@ -430,7 +436,7 @@ static long
 syck_move_tokens( SyckParser *p )
 {
     long count, skip;
-    ASSERT( p->buffer != NULL );
+    assert(p->buffer);
 
     if ( p->token == NULL )
         return 0;
@@ -472,7 +478,7 @@ syck_parser_read( SyckParser *p )
 {
     long len = 0;
     long skip = 0;
-    ASSERT( p != NULL );
+    assert(p);
     switch ( p->io_type )
     {
         case syck_io_str:
@@ -497,7 +503,7 @@ syck_parser_readlen( SyckParser *p, long max_size )
 {
     long len = 0;
     long skip = 0;
-    ASSERT( p != NULL );
+    assert(p);
     switch ( p->io_type )
     {
         case syck_io_str:
@@ -520,8 +526,7 @@ syck_parser_readlen( SyckParser *p, long max_size )
 SYMID
 syck_parse( SyckParser *p )
 {
-    ASSERT( p != NULL );
-
+    assert(p);
     syck_st_free( p );
     syck_parser_reset_levels( p );
     syckparse( p );

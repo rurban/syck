@@ -489,6 +489,7 @@ CDELIMS             {   POP_LEVEL();
                     }
 
 "&" YWORDC+         {   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
+                        DPRINTF ((stderr, "DEBUG Anchor '%s'\n", sycklval->name));
 
                         /*
                          * Remove previous anchors of the same name.  Since the parser will likely
@@ -501,6 +502,7 @@ CDELIMS             {   POP_LEVEL();
 
 "*" YWORDC+         {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
+                        DPRINTF ((stderr, "DEBUG Alias '%s'\n", sycklval->name));
                         return YAML_ALIAS;
                     }
 
@@ -868,7 +870,6 @@ TransferMethod2:
         YYTOKTMP = YYCURSOR;
 
 /*!re2c
-
 ( ENDSPC | NULL )   {   SyckLevel *lvl;
                         YYCURSOR = YYTOKTMP;
                         if ( YYCURSOR == YYTOKEN + 1 )
@@ -916,6 +917,7 @@ TransferMethod2:
                             }
                         }
 
+                        DPRINTF ((stderr, "DEBUG Transfer name '%s'\n", sycklval->name));
                         return YAML_TRANSFER;
                     }
 
@@ -939,8 +941,6 @@ TransferMethod2:
 ANY                 {   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto TransferMethod2;
                     }
-
-
 */
     }
 

@@ -201,8 +201,7 @@ syck_emitter_parent_level( SyckEmitter *e )
 void
 syck_emitter_pop_level( SyckEmitter *e )
 {
-    ASSERT( e != NULL );
-
+    assert(e);
     /* The root level should never be popped */
     if ( e->lvl_idx <= 1 ) return;
 
@@ -213,14 +212,14 @@ syck_emitter_pop_level( SyckEmitter *e )
 void
 syck_emitter_add_level( SyckEmitter *e, int len, enum syck_level_status status )
 {
-    ASSERT( e != NULL );
+    assert(e);
     if ( e->lvl_idx + 1 > e->lvl_capa )
     {
         e->lvl_capa += ALLOC_CT;
         S_REALLOC_N( e->levels, SyckLevel, e->lvl_capa );
     }
 
-    ASSERT( len > e->levels[e->lvl_idx-1].spaces );
+    assert(len > e->levels[e->lvl_idx-1].spaces );
     e->levels[e->lvl_idx].spaces = len;
     e->levels[e->lvl_idx].ncount = 0;
     e->levels[e->lvl_idx].domain = syck_strndup( e->levels[e->lvl_idx-1].domain, strlen( e->levels[e->lvl_idx-1].domain ) );
@@ -297,7 +296,7 @@ void
 syck_emitter_write( SyckEmitter *e, const char *str, long len )
 {
     long at;
-    ASSERT( str != NULL )
+    assert(str);
     if ( e->buffer == NULL )
     {
         syck_emitter_clear( e );

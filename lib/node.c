@@ -10,6 +10,10 @@
 #include "syck.h"
 #include <assert.h>
 
+#ifdef DEBUG
+extern int syckdebug;
+#endif
+
 /*
  * Node allocation functions
  */
@@ -183,7 +187,7 @@ syck_str_blow_away_commas( SyckNode *n )
 char *
 syck_str_read( SyckNode *n )
 {
-    ASSERT( n != NULL );
+    assert( n );
     return n->data.str->ptr;
 }
 
@@ -193,7 +197,7 @@ syck_new_map( SYMID key, SYMID value )
     SyckNode *n;
 
     n = syck_alloc_map();
-    assert(n != NULL);
+    assert(n);
     syck_map_add( n, key, value );
 
     return n;
@@ -203,8 +207,8 @@ void
 syck_map_empty( SyckNode *n )
 {
     struct SyckMap *m;
-    ASSERT( n != NULL );
-    ASSERT( n->data.list != NULL );
+    assert(n);
+    assert(n->data.list);
 
     S_FREE( n->data.pairs->keys );
     S_FREE( n->data.pairs->values );
@@ -221,8 +225,8 @@ syck_map_add( SyckNode *map, SYMID key, SYMID value )
     struct SyckMap *m;
     long idx;
 
-    ASSERT( map != NULL );
-    ASSERT( map->data.pairs != NULL );
+    assert(map);
+    assert(map->data.pairs);
 
     m = map->data.pairs;
     idx = m->idx;
@@ -242,8 +246,8 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
 {
     struct SyckMap *m1, *m2;
     long new_idx, new_capa;
-    ASSERT( map1 != NULL );
-    ASSERT( map2 != NULL );
+    assert(map1);
+    assert(map2);
 
     m1 = map1->data.pairs;
     m2 = map2->data.pairs;
@@ -272,8 +276,8 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
 long
 syck_map_count( SyckNode *map )
 {
-    ASSERT( map != NULL );
-    ASSERT( map->data.pairs != NULL );
+    assert(map);
+    assert(map->data.pairs);
     return map->data.pairs->idx;
 }
 
@@ -282,9 +286,9 @@ syck_map_assign( SyckNode *map, enum map_part p, long idx, SYMID id )
 {
     struct SyckMap *m;
 
-    ASSERT( map != NULL );
+    assert(map);
     m = map->data.pairs;
-    ASSERT( m != NULL );
+    assert(m);
     if ( p == map_key )
     {
         m->keys[idx] = id;
@@ -300,9 +304,9 @@ syck_map_read( SyckNode *map, enum map_part p, long idx )
 {
     struct SyckMap *m;
 
-    ASSERT( map != NULL );
+    assert( map != NULL );
     m = map->data.pairs;
-    ASSERT( m != NULL );
+    assert( m != NULL );
     if ( p == map_key )
     {
         return m->keys[idx];
@@ -329,8 +333,8 @@ void
 syck_seq_empty( SyckNode *n )
 {
     struct SyckSeq *s;
-    ASSERT( n != NULL );
-    ASSERT( n->data.list != NULL );
+    assert( n != NULL );
+    assert( n->data.list != NULL );
 
     S_FREE( n->data.list->items );
     s = n->data.list;
@@ -345,8 +349,8 @@ syck_seq_add( SyckNode *arr, SYMID value )
     struct SyckSeq *s;
     long idx;
 
-    ASSERT( arr != NULL );
-    ASSERT( arr->data.list != NULL );
+    assert( arr != NULL );
+    assert( arr->data.list != NULL );
     
     s = arr->data.list;
     idx = s->idx;
@@ -362,8 +366,8 @@ syck_seq_add( SyckNode *arr, SYMID value )
 long
 syck_seq_count( SyckNode *seq )
 {
-    ASSERT( seq != NULL );
-    ASSERT( seq->data.list != NULL );
+    assert( seq != NULL );
+    assert( seq->data.list != NULL );
     return seq->data.list->idx;
 }
 
@@ -372,9 +376,9 @@ syck_seq_assign( SyckNode *seq, long idx, SYMID id )
 {
     struct SyckSeq *s;
 
-    ASSERT( map != NULL );
+    assert(seq);
     s = seq->data.list;
-    ASSERT( m != NULL );
+    assert(s);
     s->items[idx] = id;
 }
 
@@ -383,9 +387,9 @@ syck_seq_read( SyckNode *seq, long idx )
 {
     struct SyckSeq *s;
 
-    ASSERT( seq != NULL );
+    assert( seq != NULL );
     s = seq->data.list;
-    ASSERT( s != NULL );
+    assert( s != NULL );
     return s->items[idx];
 }
 

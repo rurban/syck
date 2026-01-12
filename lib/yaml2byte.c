@@ -53,7 +53,7 @@ bytestring_t *bytestring_alloc(void)
 
 static
 void bytestring_append(bytestring_t *str, char code,
-                       char *start, char *finish)
+                       const char *start, const char *finish)
 {
     long grow;
     long length = 2;   /* CODE + LF */
@@ -62,8 +62,8 @@ void bytestring_append(bytestring_t *str, char code,
     /*TRACE0("bytestring_append()");*/
     if(start != NULL) {
         if(finish == NULL)
-            finish = start + strlen(start);
-        length += (finish-start);
+            finish = (char*)start + strlen(start);
+        length += (finish - start);
     }
     if(length > str->remaining) {
         grow = (length - str->remaining) + CHUNKSIZE;

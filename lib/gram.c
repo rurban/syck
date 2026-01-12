@@ -1004,31 +1004,31 @@ yydestruct (const char *yymsg,
     {
     case YYSYMBOL_YAML_ANCHOR: /* YAML_ANCHOR  */
 #line 53 "gram.y"
-            { free(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
+            { syck_free_name(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
 #line 1009 "gram.c"
         break;
 
     case YYSYMBOL_YAML_ALIAS: /* YAML_ALIAS  */
 #line 53 "gram.y"
-            { free(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
+            { syck_free_name(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
 #line 1015 "gram.c"
         break;
 
     case YYSYMBOL_YAML_TRANSFER: /* YAML_TRANSFER  */
 #line 53 "gram.y"
-            { free(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
+            { syck_free_name(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
 #line 1021 "gram.c"
         break;
 
     case YYSYMBOL_YAML_TAGURI: /* YAML_TAGURI  */
 #line 53 "gram.y"
-            { free(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
+            { syck_free_name(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
 #line 1027 "gram.c"
         break;
 
     case YYSYMBOL_YAML_ITRANSFER: /* YAML_ITRANSFER  */
 #line 53 "gram.y"
-            { free(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
+            { syck_free_name(((*yyvaluep).name)); ((*yyvaluep).name) = NULL; }
 #line 1033 "gram.c"
         break;
 

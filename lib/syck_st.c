@@ -5,7 +5,13 @@
 #include "syck_st.h"
 #include "syck.h"
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
+
+#ifdef DEBUG
+#include <stdint.h>
+extern int syckdebug;
+#endif
 
 typedef struct st_table_entry st_table_entry;
 
@@ -61,10 +67,10 @@ static int
 strhash(const void *arg)
 {
     const char * string = arg;
-    register int c;
+    int c;
 
 #ifdef HASH_ELFHASH
-    register unsigned int h = 0, g;
+    unsigned int h = 0, g;
 
     while ((c = *string++) != '\0') {
 	h = ( h << 4 ) + c;
@@ -74,7 +80,7 @@ strhash(const void *arg)
     }
     return h;
 #elif defined(HASH_PERL)
-    register int val = 0;
+    int val = 0;
 
     while ((c = *string++) != '\0') {
 	val = val*33 + c;
@@ -82,8 +88,8 @@ strhash(const void *arg)
 
     return val + (val>>5);
 #elif defined(HASH_JENKINS)
-    register const unsigned char *s_PeRlHaSh = (const unsigned char *)string;
-    register uint32_t hash_PeRlHaSh = 0;
+    const unsigned char *s_PeRlHaSh = (const unsigned char *)string;
+    uint32_t hash_PeRlHaSh = 0;
     while ((c = *s_PeRlHaSh++) != '\0') {
         hash_PeRlHaSh += c;
         hash_PeRlHaSh += (hash_PeRlHaSh << 10);
@@ -93,7 +99,7 @@ strhash(const void *arg)
     hash_PeRlHaSh ^= (hash_PeRlHaSh >> 11);
     return (hash_PeRlHaSh + (hash_PeRlHaSh << 15));
 #else
-    register int val = 0;
+    int val = 0;
 
     while ((c = *string++) != '\0') {
 	val = val*997 + c;
@@ -166,7 +172,7 @@ new_size(int size)
     for (i=3; i<31; i++) {
 	if ((1<<i) > (unsigned long)size) return 1<<i;
     }
-    fprintf(stderr, "st_table: hash table size %d too large", size);
+    fprintf (stderr, "st_table: hash table size %d too large", size);
     fflush(stderr);
     exit(EXIT_FAILURE);
     return -1;
@@ -256,13 +262,15 @@ st_init_strtable_with_size(int size)
 void
 st_free_table(st_table *table)
 {
-    register st_table_entry *ptr, *next;
+    st_table_entry *ptr, *next;
     int i;
 
+    DPRINTF ((stderr, "DEBUG %s with %d bins: %p\n", __FUNCTION__, table->num_bins, table));
     for(i = 0; i < table->num_bins; i++) {
 	ptr = table->bins[i];
 	while (ptr != 0) {
 	    next = ptr->next;
+            DPRINTF ((stderr, "DEBUG %s free table[%d] entry %p\n", __FUNCTION__, i, ptr));
 	    ptr = _free(ptr);
 	    ptr = next;
 	}
@@ -296,7 +304,7 @@ int
 st_lookup(st_table *table, const char *key, const void **value)
 {
     unsigned int hash_val, bin_pos;
-    register st_table_entry *ptr;
+    st_table_entry *ptr;
 
     hash_val = do_hash(key, table);
     FIND_ENTRY(table, ptr, hash_val, bin_pos);
@@ -313,7 +321,7 @@ st_lookup(st_table *table, const char *key, const void **value)
 static void
 rehash(st_table *table)
 {
-    register st_table_entry *ptr, *next, **new_bins;
+    st_table_entry *ptr, *next, **new_bins;
     int i, old_num_bins = table->num_bins, new_num_bins;
     unsigned int hash_val;
 
@@ -344,7 +352,10 @@ do {\
     }\
     \
     entry = alloc(st_table_entry);\
-    \
+    if ((uintptr_t)key > (uintptr_t)table->num_bins) {\
+        DPRINTF ((stderr, "DEBUG %s new table entry %p: '%s' %p\n", __FUNCTION__, \
+                  entry, key, value));\
+    }\
     entry->hash = hash_val;\
     entry->key = key;\
     entry->record = value;\
@@ -357,8 +368,16 @@ int
 st_insert(st_table *table, const char *key, const void *value)
 {
     unsigned int hash_val, bin_pos;
-    register st_table_entry *ptr;
+    st_table_entry *ptr;
 
+#ifdef DEBUG
+    if ((uintptr_t)key > (uintptr_t)table->num_bins)
+        DPRINTF ((stderr, "DEBUG %s table:%p key:'%s' value:%p\n", __FUNCTION__,
+                  table, key, value));
+    else
+        DPRINTF ((stderr, "DEBUG %s table:%p key:'%lx' value:%p\n", __FUNCTION__,
+                  table, (uintptr_t)key, value));
+#endif
     hash_val = do_hash(key, table);
     FIND_ENTRY(table, ptr, hash_val, bin_pos);
 
@@ -368,6 +387,8 @@ st_insert(st_table *table, const char *key, const void *value)
     }
     else {
 	ptr->record = value;
+        DPRINTF ((stderr, "DEBUG %s change table entry value to %p\n", __FUNCTION__,
+                  value));
 	return 1;
     }
 }
@@ -427,7 +448,7 @@ st_delete(st_table *table, const void **key, const void **value)
 {
     unsigned int hash_val;
     st_table_entry *tmp;
-    register st_table_entry *ptr;
+    st_table_entry *ptr;
 
     hash_val = do_hash_bin(*key, table);
     ptr = table->bins[hash_val];
@@ -465,7 +486,7 @@ int
 st_delete_safe(st_table *table, const void **key, const void **value, char *never)
 {
     unsigned int hash_val;
-    register st_table_entry *ptr;
+    st_table_entry *ptr;
 
     hash_val = do_hash_bin(*key, table);
     ptr = table->bins[hash_val];
@@ -480,6 +501,7 @@ st_delete_safe(st_table *table, const void **key, const void **value, char *neve
 	    table->num_entries--;
 	    *key = ptr->key;
 	    if (value != 0) *value = ptr->record;
+            //free((char*)ptr->key);
 	    ptr->key = ptr->record = never;
 	    return 1;
 	}
@@ -502,16 +524,21 @@ delete_anchor_duplicates(st_table *table, void *record) {
     enum st_retval retval;
     int i;
 
+    DPRINTF ((stderr, "DEBUG %s %p\n", __FUNCTION__, record));
     for(i = 0; i < table->num_bins; i++) {
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
-            if (ptr->record == record)
-                ptr->record = NULL;
+            if (ptr->record == record) {
+                DPRINTF ((stderr, "DEBUG %s found shared record %p\n", __FUNCTION__, record));
+                //free((char*)ptr->key); // is owner
+                //ptr->key = NULL;
+                ptr->record = NULL; // is shared
+            }
             last = ptr;
             ptr = ptr->next;
         }
     }
-}    
+}
 
 void
 st_foreach(st_table *table,
@@ -526,8 +553,11 @@ st_foreach(st_table *table,
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
 	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
-            if (func == syck_st_free_nodes && ptr->record)
+            if (func == syck_st_free_nodes && ptr->record) {
+                DPRINTF ((stderr, "DEBUG %s unset ptr->key %p\n", __FUNCTION__,
+                          ptr->key));
                 delete_anchor_duplicates(table, (void*)ptr->record);
+            }
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = ptr;
@@ -545,6 +575,7 @@ st_foreach(st_table *table,
 		    last->next = ptr->next;
 		}
 		ptr = ptr->next;
+		//free((char*)tmp->key);
 		tmp = _free(tmp);
 		table->num_entries--;
 	    }

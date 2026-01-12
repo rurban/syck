@@ -9,8 +9,9 @@
 
 #include "syck.h"
 #include <assert.h>
+extern int syckdebug;
 
-SYMID 
+SYMID
 syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 {
     SYMID id;
@@ -28,15 +29,16 @@ syck_hdlr_add_node( SyckParser *p, SyckNode *n )
     return id;
 }
 
-/* a must be freshly allocated, owned by the table.
-   n is shared with the parser and the table.
+/* a must be freshly allocated, owned by the node (as n->anchor).
+   n is owned by the parser, not the table.
  */
 SyckNode *
 syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
 {
     SyckNode *ntmp = NULL;
 
-    n->anchor = (char*)a;
+    n->anchor = a;
+    DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->bad_anchors != NULL )
     {
         SyckNode *bad;
@@ -58,9 +60,10 @@ syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
     {
         if ( ntmp != (void *)1 )
         {
-            syck_free_node( &ntmp );
+            syck_free_node( &ntmp ); // frees the old node and its anchor
         }
     }
+    // this inserts not an numeric symid, but the pointer to the anchor
     st_insert( p->anchors, (st_data_t)a, (st_data_t)n );
     return n;
 }
@@ -68,8 +71,9 @@ syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
 void
 syck_hdlr_remove_anchor( SyckParser *p, const char *a )
 {
-    const char *atmp = a;
+    char *atmp = (char *)a;
     SyckNode *ntmp;
+    DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->anchors == NULL )
     {
         p->anchors = st_init_strtable();
@@ -77,6 +81,7 @@ syck_hdlr_remove_anchor( SyckParser *p, const char *a )
     assert(p->anchors != NULL);
     if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
     {
+        DPRINTF(( stderr, "DEBUG Removed anchor '%s'\n", atmp ));
         if ( ntmp != (void *)1 )
         {
             syck_free_node( &ntmp );
@@ -105,7 +110,7 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
                 {
                     p->bad_anchors = st_init_strtable();
                 }
-assert(p->bad_anchors != NULL);
+                assert(p->bad_anchors != NULL);
                 if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n )
                      && p->bad_anchor_handler)
                 {

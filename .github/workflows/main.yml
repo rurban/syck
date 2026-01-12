@@ -13,6 +13,10 @@ on:
       - COPYING
       - TODO
       - RELEASE
+      - ext/ruby/README.rdoc
+      - ext/perl/README.md
+      - ext/cocoa/README
+      - ext/io/README
   pull_request:
     branches:
       - '*'
@@ -88,9 +92,9 @@ jobs:
     - name: prep
       run: |
         brew install automake autoconf libtool bison
+        # their system bison was too old for %destructor, leaking
         echo "$(brew --prefix)/opt/bison/bin" >> $GITHUB_PATH
     - run: autoreconf -fi
-      # their system bison was too old
     - run: ./configure || (cat config.log;false)
     - run: make -j
     - run: make -j check || (cat tests/test-suite.log; false)

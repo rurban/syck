@@ -35,6 +35,22 @@
 #define YYLINE      parser->linect
 #define YYFILL(n)   syck_parser_read(parser)
 
+/* Enable debugging if requested.  */
+#ifdef YYDEBUG
+# ifndef YYFPRINTF
+#  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
+#  define YYFPRINTF fprintf
+# endif
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (syckdebug)                                \
+    YYFPRINTF Args;                             \
+} while (0)
+//extern int syckdebug;
+#else /* !YYDEBUG */
+# define YYDPRINTF(Args) ((void) 0)
+#endif
+
 /*
  * Repositions the cursor at `n' offset from the token start.
  * Only works in `Header' and `Document' sections.
@@ -324,7 +340,7 @@ sycklex_yaml_utf8( YYSTYPE *sycklval, SyckParser *parser )
         return t;
     }
 
-#line 348 "token.re"
+#line 364 "token.re"
 
 
     if ( YYLINEPTR != YYCURSOR )
@@ -337,7 +353,7 @@ Header:
     YYTOKEN = YYCURSOR;
 
 
-#line 340 "token.c"
+#line 356 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -356,21 +372,21 @@ Header:
 	}
 yy1:
 	++YYCURSOR;
-#line 393 "token.re"
+#line 409 "token.re"
 	{   SyckLevel *lvl = CURRENT_LEVEL();
                         ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
                         return 0;
                     }
-#line 365 "token.c"
+#line 381 "token.c"
 yy2:
 	++YYCURSOR;
 yy3:
-#line 407 "token.re"
+#line 423 "token.re"
 	{   YYPOS(0);
                         goto Document;
                     }
-#line 373 "token.c"
+#line 389 "token.c"
 yy4:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -381,11 +397,11 @@ yy4:
 		default: goto yy5;
 	}
 yy5:
-#line 403 "token.re"
+#line 419 "token.re"
 	{   doc_level = YYCURSOR - YYLINEPTR;
                         goto Header;
                     }
-#line 388 "token.c"
+#line 404 "token.c"
 yy6:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
@@ -398,11 +414,11 @@ yy6:
 		default: goto yy7;
 	}
 yy7:
-#line 399 "token.re"
+#line 415 "token.re"
 	{   GOBBLE_UP_YAML_INDENT( doc_level, YYTOKEN );
                         goto Header;
                     }
-#line 405 "token.c"
+#line 421 "token.c"
 yy8:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -411,11 +427,11 @@ yy8:
 	}
 yy9:
 	++YYCURSOR;
-#line 389 "token.re"
+#line 405 "token.re"
 	{   eat_comments( parser );
                         goto Header;
                     }
-#line 418 "token.c"
+#line 434 "token.c"
 yy10:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
@@ -476,7 +492,7 @@ yy17:
 yy18:
 	++YYCURSOR;
 yy19:
-#line 361 "token.re"
+#line 377 "token.re"
 	{   SyckLevel *lvl = CURRENT_LEVEL();
                         if ( lvl->status == syck_lvl_header )
                         {
@@ -490,7 +506,7 @@ yy19:
                             return 0;
                         }
                     }
-#line 493 "token.c"
+#line 509 "token.c"
 yy20:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -508,7 +524,7 @@ yy21:
 yy22:
 	++YYCURSOR;
 yy23:
-#line 375 "token.re"
+#line 391 "token.re"
 	{   SyckLevel *lvl = CURRENT_LEVEL();
                         if ( lvl->status == syck_lvl_header )
                         {
@@ -522,7 +538,7 @@ yy23:
                         }
                         return 0;
                     }
-#line 525 "token.c"
+#line 541 "token.c"
 yy24:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -538,7 +554,7 @@ yy25:
 		default: goto yy23;
 	}
 }
-#line 411 "token.re"
+#line 427 "token.re"
 
 
 Document:
@@ -552,7 +568,7 @@ Document:
         YYTOKEN = YYCURSOR;
 
 
-#line 555 "token.c"
+#line 571 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -584,20 +600,20 @@ Document:
 	}
 yy27:
 	++YYCURSOR;
-#line 528 "token.re"
+#line 546 "token.re"
 	{   ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
                         return 0;
                     }
-#line 592 "token.c"
+#line 608 "token.c"
 yy28:
 	++YYCURSOR;
 yy29:
-#line 533 "token.re"
+#line 551 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto Plain;
                     }
-#line 600 "token.c"
+#line 616 "token.c"
 yy30:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -608,9 +624,9 @@ yy30:
 		default: goto yy31;
 	}
 yy31:
-#line 526 "token.re"
+#line 544 "token.re"
 	{   goto Document; }
-#line 613 "token.c"
+#line 629 "token.c"
 yy32:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
@@ -623,7 +639,7 @@ yy32:
 		default: goto yy33;
 	}
 yy33:
-#line 425 "token.re"
+#line 441 "token.re"
 	{   /* Isolate spaces */
                         int indt_len;
                         GOBBLE_UP_YAML_INDENT( indt_len, YYTOKEN );
@@ -651,7 +667,7 @@ yy33:
                         }
                         return YAML_INDENT;
                     }
-#line 654 "token.c"
+#line 670 "token.c"
 yy34:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -660,22 +676,22 @@ yy34:
 	}
 yy35:
 	++YYCURSOR;
-#line 507 "token.re"
+#line 525 "token.re"
 	{   goto TransferMethod; }
-#line 665 "token.c"
+#line 681 "token.c"
 yy36:
 	++YYCURSOR;
-#line 512 "token.re"
+#line 530 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto DoubleQuote; }
-#line 671 "token.c"
+#line 687 "token.c"
 yy37:
 	++YYCURSOR;
-#line 522 "token.re"
+#line 540 "token.re"
 	{   eat_comments( parser );
                         goto Document;
                     }
-#line 678 "token.c"
+#line 694 "token.c"
 yy38:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -747,10 +763,10 @@ yy38:
 	}
 yy39:
 	++YYCURSOR;
-#line 509 "token.re"
+#line 527 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto SingleQuote; }
-#line 753 "token.c"
+#line 769 "token.c"
 yy40:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -861,29 +877,29 @@ yy43:
 	}
 yy44:
 	++YYCURSOR;
-#line 453 "token.re"
+#line 469 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         lvl = CURRENT_LEVEL();
                         ADD_LEVEL(lvl->spaces + 1, syck_lvl_iseq);
                         return YYTOKEN[0];
                     }
-#line 870 "token.c"
+#line 886 "token.c"
 yy45:
 	++YYCURSOR;
-#line 465 "token.re"
+#line 481 "token.re"
 	{   POP_LEVEL();
                         return YYTOKEN[0];
                     }
-#line 877 "token.c"
+#line 893 "token.c"
 yy46:
 	++YYCURSOR;
-#line 459 "token.re"
+#line 475 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         lvl = CURRENT_LEVEL();
                         ADD_LEVEL(lvl->spaces + 1, syck_lvl_imap);
                         return YYTOKEN[0];
                     }
-#line 886 "token.c"
+#line 902 "token.c"
 yy47:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -971,8 +987,9 @@ yy49:
 		default: goto yy50;
 	}
 yy50:
-#line 491 "token.re"
+#line 507 "token.re"
 	{   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
+                        YYDPRINTF ((stderr, "DEBUG Anchor '%s'\n", sycklval->name));
 
                         /*
                          * Remove previous anchors of the same name.  Since the parser will likely
@@ -982,7 +999,7 @@ yy50:
                         syck_hdlr_remove_anchor(parser, sycklval->name);
                         return YAML_ANCHOR;
                     }
-#line 985 "token.c"
+#line 1002 "token.c"
 yy51:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -1055,16 +1072,17 @@ yy51:
 		default: goto yy52;
 	}
 yy52:
-#line 502 "token.re"
+#line 519 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
+                        YYDPRINTF ((stderr, "DEBUG Alias '%s'\n", sycklval->name));
                         return YAML_ALIAS;
                     }
-#line 1063 "token.c"
+#line 1081 "token.c"
 yy53:
 	++YYCURSOR;
 yy54:
-#line 469 "token.re"
+#line 485 "token.re"
 	{   if ( *YYTOKEN == ':' && lvl->status != syck_lvl_imap && lvl->status != syck_lvl_iseq )
                         {
                             lvl->status = syck_lvl_map;
@@ -1072,7 +1090,7 @@ yy54:
                         YYPOS(1);
                         return YYTOKEN[0];
                     }
-#line 1075 "token.c"
+#line 1093 "token.c"
 yy55:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1090,7 +1108,7 @@ yy56:
 yy57:
 	++YYCURSOR;
 yy58:
-#line 477 "token.re"
+#line 493 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, YYTOKEN - YYLINEPTR, 1);
                         FORCE_NEXT_TOKEN(YAML_IOPEN);
                         if ( *YYCURSOR == '#' || is_newline( YYCURSOR ) || is_newline( YYCURSOR - 1 ) )
@@ -1104,7 +1122,7 @@ yy58:
                         }
                         return YYTOKEN[0];
                     }
-#line 1107 "token.c"
+#line 1125 "token.c"
 yy59:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1122,14 +1140,14 @@ yy60:
 yy61:
 	++YYCURSOR;
 yy62:
-#line 515 "token.re"
+#line 533 "token.re"
 	{   if ( is_newline( YYCURSOR - 1 ) )
                         {
                             YYCURSOR--;
                         }
                         goto ScalarBlock;
                     }
-#line 1132 "token.c"
+#line 1150 "token.c"
 yy63:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1167,7 +1185,7 @@ yy65:
 		default: goto yy48;
 	}
 }
-#line 537 "token.re"
+#line 555 "token.re"
 
     }
 
@@ -1176,7 +1194,7 @@ Directive:
         YYTOKTMP = YYCURSOR;
 
 
-#line 1179 "token.c"
+#line 1197 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
@@ -1194,11 +1212,11 @@ yy67:
 yy68:
 	++YYCURSOR;
 yy69:
-#line 550 "token.re"
+#line 568 "token.re"
 	{   YYCURSOR = YYTOKTMP;
                         return YAML_DOCSEP;
                     }
-#line 1201 "token.c"
+#line 1219 "token.c"
 yy70:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -1209,9 +1227,9 @@ yy70:
 		default: goto yy71;
 	}
 yy71:
-#line 548 "token.re"
+#line 566 "token.re"
 	{   goto Directive; }
-#line 1214 "token.c"
+#line 1232 "token.c"
 yy72:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
@@ -1541,11 +1559,11 @@ yy75:
 		default: goto yy76;
 	}
 yy76:
-#line 546 "token.re"
+#line 564 "token.re"
 	{   goto Directive; }
-#line 1546 "token.c"
+#line 1564 "token.c"
 }
-#line 553 "token.re"
+#line 571 "token.re"
 
 
     }
@@ -1568,7 +1586,7 @@ Plain2:
 Plain3:
 
 
-#line 1571 "token.c"
+#line 1589 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -1588,21 +1606,21 @@ Plain3:
 	}
 yy78:
 	++YYCURSOR;
-#line 649 "token.re"
+#line 667 "token.re"
 	{   RETURN_IMPLICIT(); }
-#line 1593 "token.c"
+#line 1611 "token.c"
 yy79:
 	++YYCURSOR;
 yy80:
-#line 661 "token.re"
+#line 679 "token.re"
 	{   QUOTECATS(qstr, qcapa, qidx, YYTOKEN, YYCURSOR - YYTOKEN);
                         goto Plain2;
                     }
-#line 1601 "token.c"
+#line 1619 "token.c"
 yy81:
 	++YYCURSOR;
 yy82:
-#line 651 "token.re"
+#line 669 "token.re"
 	{   if ( qidx == 0 )
                         {
                             goto Plain2;
@@ -1612,7 +1630,7 @@ yy82:
                             goto Plain3;
                         }
                     }
-#line 1615 "token.c"
+#line 1633 "token.c"
 yy83:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
@@ -1625,7 +1643,7 @@ yy83:
 		default: goto yy84;
 	}
 yy84:
-#line 576 "token.re"
+#line 594 "token.re"
 	{   int indt_len, nl_count = 0;
                         char *tok = YYTOKEN;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
@@ -1659,7 +1677,7 @@ yy84:
 
                         goto Plain2;
                     }
-#line 1662 "token.c"
+#line 1680 "token.c"
 yy85:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1692,7 +1710,7 @@ yy88:
 	}
 yy89:
 	++YYCURSOR;
-#line 634 "token.re"
+#line 652 "token.re"
 	{   if ( plvl->status != syck_lvl_iseq )
                         {
                             PLAIN_NOT_INL();
@@ -1703,10 +1721,10 @@ yy89:
                         }
                         RETURN_IMPLICIT();
                     }
-#line 1706 "token.c"
+#line 1724 "token.c"
 yy90:
 	++YYCURSOR;
-#line 623 "token.re"
+#line 641 "token.re"
 	{   if ( plvl->status != syck_lvl_imap )
                         {
                             PLAIN_NOT_INL();
@@ -1717,7 +1735,7 @@ yy90:
                         }
                         RETURN_IMPLICIT();
                     }
-#line 1720 "token.c"
+#line 1738 "token.c"
 yy91:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -1735,15 +1753,15 @@ yy92:
 	}
 yy93:
 	++YYCURSOR;
-#line 645 "token.re"
+#line 663 "token.re"
 	{   eat_comments( parser );
                         RETURN_IMPLICIT();
                     }
-#line 1742 "token.c"
+#line 1760 "token.c"
 yy94:
 	++YYCURSOR;
 yy95:
-#line 612 "token.re"
+#line 630 "token.re"
 	{   if ( plvl->status != syck_lvl_iseq && plvl->status != syck_lvl_imap )
                         {
                             PLAIN_NOT_INL();
@@ -1754,7 +1772,7 @@ yy95:
                         }
                         RETURN_IMPLICIT();
                     }
-#line 1757 "token.c"
+#line 1775 "token.c"
 yy96:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1772,9 +1790,9 @@ yy97:
 yy98:
 	++YYCURSOR;
 yy99:
-#line 610 "token.re"
+#line 628 "token.re"
 	{   RETURN_IMPLICIT(); }
-#line 1777 "token.c"
+#line 1795 "token.c"
 yy100:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1790,7 +1808,7 @@ yy101:
 		default: goto yy99;
 	}
 }
-#line 665 "token.re"
+#line 683 "token.re"
 
     }
 
@@ -1804,7 +1822,7 @@ SingleQuote2:
         YYTOKEN = YYCURSOR;
 
 
-#line 1807 "token.c"
+#line 1825 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
@@ -1819,7 +1837,7 @@ SingleQuote2:
 yy103:
 	++YYCURSOR;
 yy104:
-#line 723 "token.re"
+#line 741 "token.re"
 	{   SyckLevel *lvl;
                         SyckNode *n = syck_alloc_str();
                         lvl = CURRENT_LEVEL();
@@ -1842,15 +1860,15 @@ yy104:
                         sycklval->nodeData = n;
                         return YAML_PLAIN;
                     }
-#line 1845 "token.c"
+#line 1863 "token.c"
 yy105:
 	++YYCURSOR;
 yy106:
-#line 746 "token.re"
+#line 764 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto SingleQuote2;
                     }
-#line 1853 "token.c"
+#line 1871 "token.c"
 yy107:
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -1862,7 +1880,7 @@ yy107:
 		default: goto yy108;
 	}
 yy108:
-#line 679 "token.re"
+#line 697 "token.re"
 	{   int indt_len;
                         int nl_count = 0;
                         SyckLevel *lvl;
@@ -1902,7 +1920,7 @@ yy108:
 
                         goto SingleQuote2;
                     }
-#line 1905 "token.c"
+#line 1923 "token.c"
 yy109:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -1928,13 +1946,13 @@ yy112:
 	goto yy108;
 yy113:
 	++YYCURSOR;
-#line 719 "token.re"
+#line 737 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, '\'');
                         goto SingleQuote2;
                     }
-#line 1935 "token.c"
+#line 1953 "token.c"
 }
-#line 750 "token.re"
+#line 768 "token.re"
 
 
     }
@@ -1952,7 +1970,7 @@ DoubleQuote2:
 
 
 
-#line 1955 "token.c"
+#line 1973 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -1968,7 +1986,7 @@ DoubleQuote2:
 	}
 yy115:
 	++YYCURSOR;
-#line 831 "token.re"
+#line 849 "token.re"
 	{   SyckLevel *lvl;
                         SyckNode *n = syck_alloc_str();
                         lvl = CURRENT_LEVEL();
@@ -1991,15 +2009,15 @@ yy115:
                         sycklval->nodeData = n;
                         return YAML_PLAIN;
                     }
-#line 1994 "token.c"
+#line 2012 "token.c"
 yy116:
 	++YYCURSOR;
 yy117:
-#line 854 "token.re"
+#line 872 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto DoubleQuote2;
                     }
-#line 2002 "token.c"
+#line 2020 "token.c"
 yy118:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
@@ -2012,7 +2030,7 @@ yy118:
 		default: goto yy119;
 	}
 yy119:
-#line 768 "token.re"
+#line 786 "token.re"
 	{   int indt_len;
                         int nl_count = 0;
                         SyckLevel *lvl;
@@ -2056,7 +2074,7 @@ yy119:
                         keep_nl = 1;
                         goto DoubleQuote2;
                     }
-#line 2059 "token.c"
+#line 2077 "token.c"
 yy120:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2101,12 +2119,12 @@ yy123:
 	}
 yy124:
 	++YYCURSOR;
-#line 826 "token.re"
+#line 844 "token.re"
 	{   keep_nl = 0;
                         YYCURSOR--;
                         goto DoubleQuote2;
                     }
-#line 2109 "token.c"
+#line 2127 "token.c"
 yy125:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2125,12 +2143,12 @@ yy126:
 	}
 yy127:
 	++YYCURSOR;
-#line 812 "token.re"
+#line 830 "token.re"
 	{   char ch = *( YYCURSOR - 1 );
                         QUOTECAT(qstr, qcapa, qidx, escape_seq( ch ));
                         goto DoubleQuote2;
                     }
-#line 2133 "token.c"
+#line 2151 "token.c"
 yy128:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2187,7 +2205,7 @@ yy129:
 	}
 yy130:
 	++YYCURSOR;
-#line 817 "token.re"
+#line 835 "token.re"
 	{   long ch;
                         char *chr_text = syck_strndup( YYTOKEN, 4 );
                         chr_text[0] = '0';
@@ -2196,9 +2214,9 @@ yy130:
                         QUOTECAT(qstr, qcapa, qidx, ch);
                         goto DoubleQuote2;
                     }
-#line 2199 "token.c"
+#line 2217 "token.c"
 }
-#line 858 "token.re"
+#line 876 "token.re"
 
     }
 
@@ -2212,7 +2230,7 @@ TransferMethod2:
         YYTOKTMP = YYCURSOR;
 
 
-#line 2215 "token.c"
+#line 2233 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 4) YYFILL(4);
@@ -2228,7 +2246,7 @@ TransferMethod2:
 yy132:
 	++YYCURSOR;
 yy133:
-#line 872 "token.re"
+#line 890 "token.re"
 	{   SyckLevel *lvl;
                         YYCURSOR = YYTOKTMP;
                         if ( YYCURSOR == YYTOKEN + 1 )
@@ -2276,17 +2294,18 @@ yy133:
                             }
                         }
 
+                        YYDPRINTF ((stderr, "DEBUG Transfer name '%s'\n", sycklval->name));
                         return YAML_TRANSFER;
                     }
-#line 2281 "token.c"
+#line 2300 "token.c"
 yy134:
 	++YYCURSOR;
 yy135:
-#line 939 "token.re"
+#line 958 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto TransferMethod2;
                     }
-#line 2289 "token.c"
+#line 2308 "token.c"
 yy136:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2320,12 +2339,12 @@ yy138:
 	}
 yy139:
 	++YYCURSOR;
-#line 925 "token.re"
+#line 944 "token.re"
 	{  char ch = *( YYCURSOR - 1 );
                         QUOTECAT(qstr, qcapa, qidx, escape_seq( ch ));
                         goto TransferMethod2;
                     }
-#line 2328 "token.c"
+#line 2347 "token.c"
 yy140:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2385,7 +2404,7 @@ yy142:
 	}
 yy143:
 	++YYCURSOR;
-#line 930 "token.re"
+#line 949 "token.re"
 	{   long ch;
                         char *chr_text = syck_strndup( YYTOKTMP, 4 );
                         chr_text[0] = '0';
@@ -2394,9 +2413,9 @@ yy143:
                         QUOTECAT(qstr, qcapa, qidx, ch);
                         goto TransferMethod2;
                     }
-#line 2397 "token.c"
+#line 2416 "token.c"
 }
-#line 944 "token.re"
+#line 963 "token.re"
 
     }
 
@@ -2443,7 +2462,7 @@ ScalarBlock2:
         YYTOKEN = YYCURSOR;
 
 
-#line 2446 "token.c"
+#line 2465 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -2459,20 +2478,20 @@ ScalarBlock2:
 	}
 yy145:
 	++YYCURSOR;
-#line 1081 "token.re"
+#line 1100 "token.re"
 	{   YYCURSOR--;
                         POP_LEVEL();
                         RETURN_YAML_BLOCK();
                     }
-#line 2467 "token.c"
+#line 2486 "token.c"
 yy146:
 	++YYCURSOR;
 yy147:
-#line 1105 "token.re"
+#line 1124 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *YYTOKEN);
                         goto ScalarBlock2;
                     }
-#line 2475 "token.c"
+#line 2494 "token.c"
 yy148:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
@@ -2485,7 +2504,7 @@ yy148:
 		default: goto yy149;
 	}
 yy149:
-#line 991 "token.re"
+#line 1010 "token.re"
 	{   char *pacer;
                         char *tok = YYTOKEN;
                         int indt_len = 0, nl_count = 0, fold_nl = 0, nl_begin = 0;
@@ -2560,7 +2579,7 @@ yy149:
                         }
                         goto ScalarBlock2;
                     }
-#line 2563 "token.c"
+#line 2582 "token.c"
 yy150:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2569,7 +2588,7 @@ yy150:
 	}
 yy151:
 	++YYCURSOR;
-#line 1067 "token.re"
+#line 1086 "token.re"
 	{   lvl = CURRENT_LEVEL();
                         if ( lvl->status != syck_lvl_block )
                         {
@@ -2582,7 +2601,7 @@ yy151:
                         }
                         goto ScalarBlock2;
                     }
-#line 2585 "token.c"
+#line 2604 "token.c"
 yy152:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
@@ -2622,7 +2641,7 @@ yy156:
 yy157:
 	++YYCURSOR;
 yy158:
-#line 1086 "token.re"
+#line 1105 "token.re"
 	{   if ( YYTOKEN == YYLINEPTR )
                         {
                             if ( blockType == BLOCK_FOLD && qidx > 0 )
@@ -2641,7 +2660,7 @@ yy158:
                             goto ScalarBlock2;
                         }
                     }
-#line 2644 "token.c"
+#line 2663 "token.c"
 yy159:
 	yych = *++YYCURSOR;
 	switch (yych) {
@@ -2657,7 +2676,7 @@ yy160:
 		default: goto yy158;
 	}
 }
-#line 1110 "token.re"
+#line 1129 "token.re"
 
     }
 
@@ -2673,7 +2692,7 @@ Comment:
         YYTOKEN = YYCURSOR;
 
 
-#line 2676 "token.c"
+#line 2695 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
@@ -2687,18 +2706,18 @@ Comment:
 yy162:
 	++YYCURSOR;
 yy163:
-#line 1126 "token.re"
+#line 1145 "token.re"
 	{   YYCURSOR = YYTOKEN;
                         return;
                     }
-#line 2694 "token.c"
+#line 2713 "token.c"
 yy164:
 	++YYCURSOR;
 yy165:
-#line 1130 "token.re"
+#line 1149 "token.re"
 	{   goto Comment;
                     }
-#line 2701 "token.c"
+#line 2720 "token.c"
 yy166:
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
@@ -2726,7 +2745,7 @@ yy169:
 	YYCURSOR = YYMARKER;
 	goto yy163;
 }
-#line 1133 "token.re"
+#line 1152 "token.re"
 
 
     }

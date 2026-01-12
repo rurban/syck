@@ -220,10 +220,10 @@ syck_st_free_nodes( SHIM(const char *key), void *record,
 #endif
 {
     SyckNode *n = (SyckNode *)record;
-    UNUSED(key);
     UNUSED(arg);
     if ( n != NULL && n != (void *)1 )
         syck_free_node( &n );
+    free((char*)key);
     return ST_CONTINUE;
 }
 

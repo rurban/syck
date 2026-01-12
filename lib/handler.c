@@ -9,8 +9,9 @@
 
 #include "syck.h"
 #include <assert.h>
+extern int syckdebug;
 
-SYMID 
+SYMID
 syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 {
     SYMID id;
@@ -36,7 +37,7 @@ syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
 {
     SyckNode *ntmp = NULL;
 
-    n->anchor = (char*)a;
+    n->anchor = strdup(a);
     if ( p->bad_anchors != NULL )
     {
         SyckNode *bad;
@@ -61,14 +62,14 @@ syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
             syck_free_node( &ntmp );
         }
     }
-    st_insert( p->anchors, (st_data_t)a, (st_data_t)n );
+    st_insert( p->anchors, (st_data_t)n->anchor, (st_data_t)n );
     return n;
 }
 
 void
 syck_hdlr_remove_anchor( SyckParser *p, const char *a )
 {
-    const char *atmp = a;
+    char *atmp = (char *)a;
     SyckNode *ntmp;
     if ( p->anchors == NULL )
     {
@@ -77,6 +78,9 @@ syck_hdlr_remove_anchor( SyckParser *p, const char *a )
     assert(p->anchors != NULL);
     if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
     {
+        if (syckdebug)
+            fprintf( stderr, "DEBUG Removing anchor '%s'\n", atmp );
+        free(atmp);
         if ( ntmp != (void *)1 )
         {
             syck_free_node( &ntmp );
@@ -105,7 +109,7 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
                 {
                     p->bad_anchors = st_init_strtable();
                 }
-assert(p->bad_anchors != NULL);
+                assert(p->bad_anchors != NULL);
                 if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n )
                      && p->bad_anchor_handler)
                 {
@@ -123,7 +127,7 @@ assert(p->bad_anchors != NULL);
         else {
             n = syck_new_str( "", scalar_plain );
             n->type_id = syck_taguri( YAML_DOMAIN, "null", 4 );
-            n->anchor = a;
+            n->anchor = strdup(a);
             return n;
         }
     }
@@ -134,7 +138,7 @@ assert(p->bad_anchors != NULL);
     }
     else
     {
-        n->anchor = a;
+        n->anchor = strdup(a);
     }
 
     return n;

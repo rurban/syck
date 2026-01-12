@@ -465,7 +465,7 @@ int
 st_delete_safe(st_table *table, const void **key, const void **value, char *never)
 {
     unsigned int hash_val;
-    register st_table_entry *ptr;
+    st_table_entry *ptr;
 
     hash_val = do_hash_bin(*key, table);
     ptr = table->bins[hash_val];
@@ -480,6 +480,7 @@ st_delete_safe(st_table *table, const void **key, const void **value, char *neve
 	    table->num_entries--;
 	    *key = ptr->key;
 	    if (value != 0) *value = ptr->record;
+            free((char*)ptr->key);
 	    ptr->key = ptr->record = never;
 	    return 1;
 	}
@@ -505,13 +506,16 @@ delete_anchor_duplicates(st_table *table, void *record) {
     for(i = 0; i < table->num_bins; i++) {
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
-            if (ptr->record == record)
-                ptr->record = NULL;
+            if (ptr->record == record) {
+                free((char*)ptr->key); // is owner
+                ptr->key = NULL;
+                ptr->record = NULL; // is shared
+            }
             last = ptr;
             ptr = ptr->next;
         }
     }
-}    
+}
 
 void
 st_foreach(st_table *table,
@@ -526,8 +530,11 @@ st_foreach(st_table *table,
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
 	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
-            if (func == syck_st_free_nodes && ptr->record)
-                delete_anchor_duplicates(table, (void*)ptr->record);
+            if (func == syck_st_free_nodes) {
+                ptr->key = NULL; // this freed the key and does ST_CONTINUE
+                if (ptr->record)
+                    delete_anchor_duplicates(table, (void*)ptr->record);
+            }
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = ptr;
@@ -545,6 +552,7 @@ st_foreach(st_table *table,
 		    last->next = ptr->next;
 		}
 		ptr = ptr->next;
+		free((char*)tmp->key);
 		tmp = _free(tmp);
 		table->num_entries--;
 	    }

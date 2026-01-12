@@ -32,6 +32,22 @@
 #define YYLINE      parser->linect
 #define YYFILL(n)   syck_parser_read(parser)
 
+/* Enable debugging if requested.  */
+#ifdef YYDEBUG
+# ifndef YYFPRINTF
+#  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
+#  define YYFPRINTF fprintf
+# endif
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (syckdebug)                                \
+    YYFPRINTF Args;                             \
+} while (0)
+//extern int syckdebug;
+#else /* !YYDEBUG */
+# define YYDPRINTF(Args) ((void) 0)
+#endif
+
 /*
  * Repositions the cursor at `n' offset from the token start.
  * Only works in `Header' and `Document' sections.
@@ -489,6 +505,7 @@ CDELIMS             {   POP_LEVEL();
                     }
 
 "&" YWORDC+         {   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
+                        YYDPRINTF ((stderr, "DEBUG Anchor '%s'\n", sycklval->name));
 
                         /*
                          * Remove previous anchors of the same name.  Since the parser will likely
@@ -501,6 +518,7 @@ CDELIMS             {   POP_LEVEL();
 
 "*" YWORDC+         {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
+                        YYDPRINTF ((stderr, "DEBUG Alias '%s'\n", sycklval->name));
                         return YAML_ALIAS;
                     }
 
@@ -916,6 +934,7 @@ TransferMethod2:
                             }
                         }
 
+                        YYDPRINTF ((stderr, "DEBUG Transfer name '%s'\n", sycklval->name));
                         return YAML_TRANSFER;
                     }
 

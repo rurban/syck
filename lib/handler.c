@@ -37,7 +37,7 @@ syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
 {
     SyckNode *ntmp = NULL;
 
-    n->anchor = strdup(a);
+    n->anchor = a;
     if ( p->bad_anchors != NULL )
     {
         SyckNode *bad;
@@ -62,7 +62,7 @@ syck_hdlr_add_anchor( SyckParser *p, const char *a, SyckNode *n )
             syck_free_node( &ntmp );
         }
     }
-    st_insert( p->anchors, (st_data_t)n->anchor, (st_data_t)n );
+    st_insert( p->anchors, (st_data_t)a, (st_data_t)n );
     return n;
 }
 
@@ -79,14 +79,15 @@ syck_hdlr_remove_anchor( SyckParser *p, const char *a )
     if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
     {
         if (syckdebug)
-            fprintf( stderr, "DEBUG Removing anchor '%s'\n", atmp );
-        free(atmp);
+            fprintf( stderr, "DEBUG Removed anchor '%s' at record %p\n", atmp, ntmp );
         if ( ntmp != (void *)1 )
         {
             syck_free_node( &ntmp );
         }
     }
     st_insert( p->anchors, (st_data_t)a, (st_data_t)1 );
+    if (syckdebug)
+        fprintf( stderr, "DEBUG Inserting anchor '%s' with record 0x1\n", a );
 }
 
 SyckNode *
@@ -127,7 +128,9 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
         else {
             n = syck_new_str( "", scalar_plain );
             n->type_id = syck_taguri( YAML_DOMAIN, "null", 4 );
-            n->anchor = strdup(a);
+            if (syckdebug)
+                fprintf(stderr, "DEBUG %s Add anchor %s to node %p\n", __FUNCTION__, a, n);
+            n->anchor = a;
             return n;
         }
     }
@@ -138,7 +141,9 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
     }
     else
     {
-        n->anchor = strdup(a);
+        n->anchor = a;
+        if (syckdebug)
+            fprintf(stderr, "DEBUG %s Add anchor %s to node %p\n", __FUNCTION__, a, n);
     }
 
     return n;

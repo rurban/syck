@@ -223,7 +223,6 @@ syck_st_free_nodes( SHIM(const char *key), void *record,
     UNUSED(arg);
     if ( n != NULL && n != (void *)1 )
         syck_free_node( &n );
-    free((char*)key);
     return ST_CONTINUE;
 }
 
@@ -231,20 +230,21 @@ static void
 syck_st_free( SyckParser *p )
 {
     /*
-     * Free the anchor tables. We have mult. anchors to the same node
+     * Free the anchor tables. We have multiple anchors to the same node
      * in a anchor table->bins->record. Ensure to zero all of them.
+     * And we have stale anchors without a node, but record 0x1.
      */
     if ( p->anchors != NULL )
     {
         st_foreach( p->anchors, syck_st_free_nodes, 0UL );
-        st_free_table( p->anchors );
+        st_free_anchors_table( p->anchors );
         p->anchors = NULL;
     }
 
     if ( p->bad_anchors != NULL )
     {
         st_foreach( p->bad_anchors, syck_st_free_nodes, 0UL );
-        st_free_table( p->bad_anchors );
+        st_free_anchors_table( p->bad_anchors );
         p->bad_anchors = NULL;
     }
 }

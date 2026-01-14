@@ -989,7 +989,7 @@ yy49:
 yy50:
 #line 507 "token.re"
 	{   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
-                        YYDPRINTF ((stderr, "DEBUG Anchor '%s'\n", sycklval->name));
+                        YYDPRINTF ((stderr, "DEBUG Anchor '%s' %p\n", sycklval->name, sycklval->name));
 
                         /*
                          * Remove previous anchors of the same name.  Since the parser will likely
@@ -1075,7 +1075,7 @@ yy52:
 #line 519 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
-                        YYDPRINTF ((stderr, "DEBUG Alias '%s'\n", sycklval->name));
+                        YYDPRINTF ((stderr, "DEBUG Alias '%s' %p\n", sycklval->name, sycklval->name));
                         return YAML_ALIAS;
                     }
 #line 1081 "token.c"

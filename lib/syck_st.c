@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern int syckdebug;
+
 typedef struct st_table_entry st_table_entry;
 
 struct st_table_entry {
@@ -254,9 +256,33 @@ st_init_strtable_with_size(int size)
 }
 
 void
+st_free_anchors_table(st_table *table)
+{
+    st_table_entry *ptr, *next;
+    int i;
+
+    for(i = 0; i < table->num_bins; i++) {
+	ptr = table->bins[i];
+	while (ptr) {
+	    next = ptr->next;
+            if (syckdebug)
+                fprintf(stderr, "DEBUG %s %p with key %p\n",
+                        __FUNCTION__, ptr->record, ptr->key);
+            if (ptr->record == (void*)0x1) {
+                free((char*)ptr->key);
+            }
+	    ptr = _free(ptr);
+	    ptr = next;
+	}
+    }
+    table->bins = _free(table->bins);
+    table = _free(table);
+}
+
+void
 st_free_table(st_table *table)
 {
-    register st_table_entry *ptr, *next;
+    st_table_entry *ptr, *next;
     int i;
 
     for(i = 0; i < table->num_bins; i++) {
@@ -427,8 +453,12 @@ st_delete(st_table *table, const void **key, const void **value)
 {
     unsigned int hash_val;
     st_table_entry *tmp;
-    register st_table_entry *ptr;
+    st_table_entry *ptr;
 
+    if (!table->num_entries) {
+	if (value != 0) *value = 0;
+	return 0;
+    }
     hash_val = do_hash_bin(*key, table);
     ptr = table->bins[hash_val];
 
@@ -507,7 +537,11 @@ delete_anchor_duplicates(st_table *table, void *record) {
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
             if (ptr->record == record) {
-                free((char*)ptr->key); // is owner
+                if (syckdebug)
+                    fprintf(stderr, "DEBUG %s Found record %p with key %p\n",
+                            __FUNCTION__, record, ptr->key);
+                if (record == (void*)0x1)
+                    free((char*)ptr->key); // the only owner
                 ptr->key = NULL;
                 ptr->record = NULL; // is shared
             }
@@ -530,10 +564,16 @@ st_foreach(st_table *table,
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
 	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
+            // FIXME there are left-over anchors without nodes (i.e record 0x1)
             if (func == syck_st_free_nodes) {
-                ptr->key = NULL; // this freed the key and does ST_CONTINUE
-                if (ptr->record)
+                //ptr->key = NULL; // this freed the key and does ST_CONTINUE
+                if (ptr->record) {
+                    if (syckdebug)
+                        fprintf(stderr, "DEBUG %s delete_anchor_duplicates %p with key %p\n",
+                            __FUNCTION__, ptr->record, ptr->key);
                     delete_anchor_duplicates(table, (void*)ptr->record);
+                }
+                ptr->key = NULL; // this freed the key and does ST_CONTINUE
             }
 	    switch (retval) {
 	    case ST_CONTINUE:

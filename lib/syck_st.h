@@ -30,6 +30,7 @@ st_table *st_init_numtable_with_size(int size);
 st_table *st_init_strtable(void);
 st_table *st_init_strtable_with_size(int size);
 void st_free_table(st_table *table);
+void st_free_anchors_table(st_table *table);
 int st_lookup(st_table *table, const char *key, /*@out@*/ const void **value);
 int st_insert(st_table *table, const char *key, const void *value);
 void st_add_direct(st_table *table, const char *key, const void *value);

@@ -10,6 +10,8 @@
 #include "syck.h"
 #include <assert.h>
 
+extern int syckdebug;
+
 /*
  * Node allocation functions
  */
@@ -32,10 +34,17 @@ syck_alloc_node( enum syck_kind_tag type )
 
 void syck_safe_free_node(SyckParser *parser, SyckNode **np) {
     SyckNode *n = *np;
-    if (parser->anchors)
+    if (syckdebug)
+        fprintf(stderr, "DEBUG %s %p\n", __FUNCTION__, n);
+    if (n->anchor) {
+        syck_hdlr_remove_anchor( parser, n->anchor );
+    }
+    if (parser->anchors) {
         st_cleanup_safe(parser->anchors, (char*)n);
-    if (parser->bad_anchors)
+    }
+    if (parser->bad_anchors) {
         st_cleanup_safe(parser->bad_anchors, (char*)n);
+    }
     syck_free_node(np);
 }
 
@@ -43,6 +52,8 @@ void
 syck_free_node( SyckNode **np )
 {
     SyckNode *n = *np;
+    if (syckdebug)
+        fprintf(stderr, "DEBUG %s %p\n", __FUNCTION__, n);
     syck_free_members( n );
 #ifndef HAVE_RUBY_ST_H
     if ( n->type_id != NULL && n->type_id != (void*)1UL)
@@ -50,14 +61,24 @@ syck_free_node( SyckNode **np )
         S_FREE( n->type_id );
         n->type_id = NULL;
     }
-    if ( n->anchor != NULL )
+    if ( n->anchor )
     {
+        if (syckdebug)
+            fprintf(stderr, "DEBUG %s Free anchor '%s' %p\n", __FUNCTION__, n->anchor, n->anchor);
         S_FREE( n->anchor );
         n->anchor = NULL;
     }
     S_FREE( n );
     *np = NULL;
 #endif
+}
+
+void
+syck_free_name( char *key )
+{
+    if (syckdebug)
+        fprintf(stderr, "DEBUG %s %s %p\n", __FUNCTION__, key, key);
+    S_FREE( key );
 }
 
 __attribute__malloc__

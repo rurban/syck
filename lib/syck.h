@@ -209,7 +209,7 @@ struct _syck_node {
     /* Fully qualified tag-uri for type */
     char *type_id;
     /* Anchor name */
-    char *anchor;
+    const char *anchor;
     union {
         /* Storage for map data */
         struct SyckMap {
@@ -580,6 +580,7 @@ SyckNode *syck_alloc_str(void);
 EXPORT void syck_safe_free_node( SyckParser *p, SyckNode **np );
 EXPORT void syck_free_node( SyckNode **np );
 EXPORT void syck_free_members( SyckNode *n );
+EXPORT void syck_free_name( char *key );
 
 EXPORT __attribute__malloc__
 __attribute__warn_unused_result__

@@ -527,6 +527,7 @@ delete_never(SHIM(const char *key), void *value, void *never)
     return ST_CONTINUE;
 }
 
+__attribute__unused__
 static void
 delete_anchor_duplicates(st_table *table, void *record) {
     st_table_entry *ptr, *last, *tmp;
@@ -563,18 +564,32 @@ st_foreach(st_table *table,
     for(i = 0; i < table->num_bins; i++) {
 	last = NULL;
 	for(ptr = table->bins[i]; ptr != NULL;) {
-	    retval = (*func)(ptr->key, (void*)ptr->record, arg);
-            // FIXME there are left-over anchors without nodes (i.e record 0x1)
+            if (syckdebug)
+                fprintf(stderr, "DEBUG %s [%d] %p with key %p\n",
+                        __FUNCTION__, i, ptr->record, ptr->key);
+            retval = (*func)(ptr->key, (void*)ptr->record, arg);
+            // there are left-over anchors without nodes (i.e record 0x1)
             if (func == syck_st_free_nodes) {
-                //ptr->key = NULL; // this freed the key and does ST_CONTINUE
                 if (ptr->record) {
+                    /* FIXME:
+                       if we could detect freed ptr->record nodes we could check for this:
+                    SyckNode *n = (SyckNode *)ptr->record;
+                    if (n->anchor != ptr->key) {
+                        retval = (*func)(ptr->key, (void*)ptr->record, arg);
+                        if (syckdebug)
+                            fprintf(stderr, "DEBUG %s Free stale key %p\n",
+                                    __FUNCTION__, ptr->key);
+                        S_FREE(ptr->key);
+                        ptr->key = NULL;
+                    }
                     if (syckdebug)
                         fprintf(stderr, "DEBUG %s delete_anchor_duplicates %p with key %p\n",
                             __FUNCTION__, ptr->record, ptr->key);
                     delete_anchor_duplicates(table, (void*)ptr->record);
+                    */
                 }
-                ptr->key = NULL; // this freed the key and does ST_CONTINUE
             }
+
 	    switch (retval) {
 	    case ST_CONTINUE:
 		last = ptr;

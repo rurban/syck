@@ -229,6 +229,8 @@ syck_st_free_nodes( SHIM(const char *key), void *record,
 static void
 syck_st_free( SyckParser *p )
 {
+    if (syckdebug)
+        fprintf(stderr, "DEBUG %s\n", __FUNCTION__);
     /*
      * Free the anchor tables. We have multiple anchors to the same node
      * in a anchor table->bins->record. Ensure to zero all of them.

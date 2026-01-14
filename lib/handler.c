@@ -76,6 +76,7 @@ syck_hdlr_remove_anchor( SyckParser *p, const char *a )
         p->anchors = st_init_strtable();
     }
     assert(p->anchors != NULL);
+    fprintf( stderr, "DEBUG st_delete anchor '%s' %p\n", a, a );
     if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
     {
         if (syckdebug)

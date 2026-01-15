@@ -39,7 +39,7 @@ extern "C" {
  */
 
 #ifdef DEBUG
-__attribute__noreturn__
+//__attribute__noreturn__
 void syck_assert( const char *file_name, unsigned line_num );
 # define ASSERT(f) if ( !f ) syck_assert( __FILE__, __LINE__ )
 #else

@@ -293,9 +293,13 @@ void emit_stream(CuString *cs, struct test_node *s) {
         else if (memcmp(n->tag, "tag:yaml.org,2002:", sizeof("tag:yaml.org,2002:")-1) != 0)
           CuStringAppendFormat(cs, "<%s> ", n->tag);
       }
-      if (n->style == scalar_1quote || n->style == scalar_2quote)
+      if (n->style == scalar_1quote || n->style == scalar_2quote || n->style == scalar_2quote_1)
         CuStringAppend(cs, "'");
-      else
+      else if (n->style == scalar_fold)
+        CuStringAppend(cs, ">");
+      else if (n->style == scalar_literal)
+        CuStringAppend(cs, "|");
+      else // none, plain
         CuStringAppend(cs, ":");
       CuStringAppendEscaped(cs, n->key);
       CuStringAppendLen(cs, "\n", 1);

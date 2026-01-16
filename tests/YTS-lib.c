@@ -85,7 +85,18 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
   if (n->type_id != NULL) {
     tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
   }
-
+  if (!p->syms) {
+    struct test_node *doc = S_ALLOC_N(struct test_node, 1);
+    doc->type = T_DOC;
+    doc->style = 0;
+    doc->tag = NULL;
+    if (p->linectptr >= p->buffer &&
+        p->limit - p->linectptr >= 4 &&
+        strEQc(p->linectptr, "---\n")) {
+      doc->style = 1;
+    }
+    (void)syck_add_sym(p, (char *)doc); // symid 1
+  }
   return syck_add_sym(p, (char *)tn);
 }
 
@@ -106,6 +117,8 @@ syck_free_copies(SHIM(const char *key), void *_tn,
       S_FREE(tn->value);
       break;
 
+    case T_DOC:
+    case T_END:
     default:
       break;
     }
@@ -138,6 +151,8 @@ CuStreamCompareX(CuTest *tc, struct test_node *s1, struct test_node *s2) {
     case T_MAP:
       CuStreamCompareX(tc, s1[i].value, s2[i].value);
       break;
+    case T_DOC:
+    case T_END:
     default:
       break;
     }
@@ -211,6 +226,9 @@ build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
   }
     return syck_emitter_mark_node(emitter, (st_data_t)node, 0);
 
+  case T_STR:
+  case T_DOC:
+  case T_END:
   default:
     break;
   }
@@ -242,6 +260,10 @@ void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
     }
     syck_emit_end(emitter);
   } break;
+  case T_DOC:
+    syck_emitter_write( emitter, "--- ", 4 );
+    break;
+  case T_END:
   default:
     break;
   }
@@ -275,7 +297,7 @@ CuRoundTrip(CuTest *tc, struct test_node *stream) {
   syck_free_emitter(emitter);
 }
 
-/* TODO: print in YTS test.event format */
+/* TODO: some YTS test.event props missing */
 void emit_stream(CuString *cs, struct test_node *s) {
   int i = 0;
   while (1) {
@@ -283,6 +305,12 @@ void emit_stream(CuString *cs, struct test_node *s) {
     if (n->type == T_END)
       return;
     switch (n->type) {
+    case T_DOC:
+      if (n->style)
+        CuStringAppend(cs, "+DOC ---\n");
+      else
+        CuStringAppend(cs, "+DOC\n");
+      break;
     case T_STR:
       CuStringAppend(cs, "=VAL ");
       // TODO anchor
@@ -320,6 +348,8 @@ void emit_stream(CuString *cs, struct test_node *s) {
       emit_stream(cs, n->value);
       CuStringAppend(cs, "-MAP\n");
       break;
+    case T_END:
+      CuStringAppend(cs, "-DOC\n");
     default:
       break;
     }
@@ -397,9 +427,9 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
         i++;
       }
       //puts("\n--- # Parsed Stream");
-      CuStringAppend(ev, "+STR\n+DOC\n");
+      CuStringAppend(ev, "+STR\n");
       emit_stream(ev, ystream);
-      CuStringAppend(ev, "-DOC\n-STR\n");
+      CuStringAppend(ev, "-STR\n");
     }
 
     S_FREE(ystream);

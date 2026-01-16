@@ -1,24 +1,27 @@
 #include "syck.h"
 #include "CuTest.h"
 
-#define strEQc(a,c) (strcmp((a),(c))==0)
+#define strEQc(a,c) (strncmp((a),(c),(sizeof(c)-1))==0)
 
 /* YAML test node structures */
-#define T_STR 10
-#define T_SEQ 20
-#define T_MAP 30
-#define T_END 40
+enum test_types {
+    T_DOC,
+    T_STR,
+    T_SEQ,
+    T_MAP,
+    T_END,
+};
 #define ILEN 2
 
 struct test_node {
-  int type;
+  enum test_types type;
   const char *tag;
   const char *key;
   struct test_node *value;
   enum scalar_style style;
 };
 struct test_node_dyn {
-  int type;
+  enum test_types type;
   char *tag;
   char *key;
   struct test_node *value;

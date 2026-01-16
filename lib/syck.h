@@ -486,8 +486,7 @@ __attribute__warn_unused_result__
 char *syck_taguri( const char *domain, const char *type_id, int type_len );
 EXPORT __attribute__warn_unused_result__
 int syck_tagcmp( const char *tag1, const char *tag2 );
-EXPORT __attribute__warn_unused_result__
-int syck_add_sym( SyckParser *p, void *data );
+EXPORT int syck_add_sym( SyckParser *p, void *data );
 EXPORT int syck_lookup_sym( SyckParser *p, SYMID, char **out );
 EXPORT __attribute__warn_unused_result__
 int syck_try_implicit( SyckNode *n );

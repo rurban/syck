@@ -4,7 +4,7 @@
 #define strEQc(a,c) (strcmp((a),(c))==0)
 
 /* YAML test node structures */
-#define T_STR 10
+#define T_SCA 10
 #define T_SEQ 20
 #define T_MAP 30
 #define T_END 40

@@ -37,7 +37,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
 
   switch (n->kind) {
   case syck_scalar_kind:
-    tn->type = T_STR;
+    tn->type = T_SCA;
     tn->key = syck_strndup(n->data.str->ptr, n->data.str->len);
     tn->value = 0;
     tn->style = n->data.str->style;
@@ -97,7 +97,7 @@ syck_free_copies(SHIM(const char *key), void *_tn,
   UNUSED(arg);
   if (tn != NULL) {
     switch (tn->type) {
-    case T_STR:
+    case T_SCA:
       S_FREE(tn->key);
       break;
 
@@ -131,7 +131,7 @@ CuStreamCompareX(CuTest *tc, struct test_node *s1, struct test_node *s2) {
     if (s1[i].tag != 0 && s2[i].tag != 0)
       CuAssertStrEquals(tc, s1[i].tag, (char*)s2[i].tag);
     switch (s1[i].type) {
-    case T_STR:
+    case T_SCA:
       CuAssertStrEquals(tc, s1[i].key, (char*)s2[i].key);
       break;
     case T_SEQ:
@@ -210,7 +210,7 @@ build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
     }
   }
     return syck_emitter_mark_node(emitter, (st_data_t)node, 0);
-
+  case T_SCA:
   default:
     break;
   }
@@ -220,7 +220,7 @@ build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
 void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
   struct test_node *node = (struct test_node *)data;
   switch (node->type) {
-  case T_STR:
+  case T_SCA:
     syck_emit_scalar(emitter, node->tag, scalar_none, 0, 0, 0, node->key,
                      strlen(node->key));
     break;
@@ -283,7 +283,7 @@ void emit_stream(CuString *cs, struct test_node *s) {
     if (n->type == T_END)
       return;
     switch (n->type) {
-    case T_STR:
+    case T_SCA:
       CuStringAppend(cs, "=VAL ");
       // TODO anchor
       if (n->tag) {
@@ -383,7 +383,7 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
 
     // print it
     puts(cs->buffer);
- 
+
     if (doc_ct) {
       build_symbol_table(emitter, ystream);
 

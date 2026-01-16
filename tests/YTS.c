@@ -27,7 +27,7 @@ extern const struct test_node end_node;
  */
 static void YtsFoldedScalars_7(CuTest *tc) {
   struct test_node map[] = {
-    {T_STR, 0, "a", NULL, 0}, {T_STR, 0, "b", NULL, 0}, end_node};
+    {T_SCA, 0, "a", NULL, 0}, {T_SCA, 0, "b", NULL, 0}, end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -47,7 +47,7 @@ static void YtsFoldedScalars_7(CuTest *tc) {
 static void YtsNullsAndEmpties_0(CuTest *tc) {
   struct test_node seq[] = {end_node};
   struct test_node map[] = {
-      {T_STR, 0, "empty", NULL, 0}, {T_SEQ, 0, 0, seq, 0}, end_node};
+      {T_SCA, 0, "empty", NULL, 0}, {T_SEQ, 0, 0, seq, 0}, end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -67,7 +67,7 @@ static void YtsNullsAndEmpties_0(CuTest *tc) {
 static void YtsNullsAndEmpties_1(CuTest *tc) {
   struct test_node map2[] = {end_node};
   struct test_node map1[] = {
-    {T_STR, 0, "empty", NULL, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
+    {T_SCA, 0, "empty", NULL, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map1, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -121,7 +121,7 @@ static void YtsNullsAndEmpties_3(CuTest *tc) {
  * none in YTS
  */
 static void YtsNullsAndEmpties_4(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "~", NULL, 0}, end_node};
+  struct test_node stream[] = {{T_SCA, 0, "~", NULL, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -138,7 +138,7 @@ static void YtsNullsAndEmpties_4(CuTest *tc) {
  * none in YTS
  */
 static void YtsNullsAndEmpties_5(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "", NULL, 0}, end_node};
+  struct test_node stream[] = {{T_SCA, 0, "", NULL, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -155,9 +155,9 @@ static void YtsNullsAndEmpties_5(CuTest *tc) {
  * YTS FQ7F/in.yaml
  */
 static void YtsSpecificationExamples_0(CuTest *tc) {
-  struct test_node seq[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
-                            {T_STR, 0, "Sammy Sosa", NULL, 0},
-                            {T_STR, 0, "Ken Griffey", NULL, 0},
+  struct test_node seq[] = {{T_SCA, 0, "Mark McGwire", NULL, 0},
+                            {T_SCA, 0, "Sammy Sosa", NULL, 0},
+                            {T_SCA, 0, "Ken Griffey", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
@@ -178,12 +178,12 @@ static void YtsSpecificationExamples_0(CuTest *tc) {
  * YTS SYW4/in.yaml
  */
 static void YtsSpecificationExamples_1(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
-                            {T_STR, 0, "65", NULL, 0},
-                            {T_STR, 0, "avg", NULL, 0},
-                            {T_STR, 0, "0.278", NULL, 0},
-                            {T_STR, 0, "rbi", NULL, 0},
-                            {T_STR, 0, "147", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "hr", NULL, 0},
+                            {T_SCA, 0, "65", NULL, 0},
+                            {T_SCA, 0, "avg", NULL, 0},
+                            {T_SCA, 0, "0.278", NULL, 0},
+                            {T_SCA, 0, "rbi", NULL, 0},
+                            {T_SCA, 0, "147", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -204,17 +204,17 @@ static void YtsSpecificationExamples_1(CuTest *tc) {
  * YTS PBJ2/in.yaml
  */
 static void YtsSpecificationExamples_2(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Boston Red Sox", NULL, 0},
-                             {T_STR, 0, "Detroit Tigers", NULL, 0},
-                             {T_STR, 0, "New York Yankees", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "Boston Red Sox", NULL, 0},
+                             {T_SCA, 0, "Detroit Tigers", NULL, 0},
+                             {T_SCA, 0, "New York Yankees", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "New York Mets", NULL, 0},
-                             {T_STR, 0, "Chicago Cubs", NULL, 0},
-                             {T_STR, 0, "Atlanta Braves", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "New York Mets", NULL, 0},
+                             {T_SCA, 0, "Chicago Cubs", NULL, 0},
+                             {T_SCA, 0, "Atlanta Braves", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "american", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "american", NULL, 0},
                             {T_SEQ, 0, 0, seq1, 0},
-                            {T_STR, 0, "national", NULL, 0},
+                            {T_SCA, 0, "national", NULL, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -241,19 +241,19 @@ static void YtsSpecificationExamples_2(CuTest *tc) {
  * YTS data/229Q/in.yaml
  */
 static void YtsSpecificationExamples_3(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "name", NULL, 0},
-                             {T_STR, 0, "Mark McGwire", NULL, 0},
-                             {T_STR, 0, "hr", NULL, 0},
-                             {T_STR, 0, "65", NULL, 0},
-                             {T_STR, 0, "avg", NULL, 0},
-                             {T_STR, 0, "0.278", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "name", NULL, 0},
+                             {T_SCA, 0, "Mark McGwire", NULL, 0},
+                             {T_SCA, 0, "hr", NULL, 0},
+                             {T_SCA, 0, "65", NULL, 0},
+                             {T_SCA, 0, "avg", NULL, 0},
+                             {T_SCA, 0, "0.278", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "name", NULL, 0},
-                             {T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "hr", NULL, 0},
-                             {T_STR, 0, "63", NULL, 0},
-                             {T_STR, 0, "avg", NULL, 0},
-                             {T_STR, 0, "0.288", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "name", NULL, 0},
+                             {T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "hr", NULL, 0},
+                             {T_SCA, 0, "63", NULL, 0},
+                             {T_SCA, 0, "avg", NULL, 0},
+                             {T_SCA, 0, "0.288", NULL, 0},
                              end_node};
   struct test_node seq[] = {{T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
   struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
@@ -279,17 +279,17 @@ static void YtsSpecificationExamples_3(CuTest *tc) {
  * Example legacy_A5: Legacy A5
  */
 static void YtsSpecificationExamples_4(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
-                             {T_STR, 0, "Atlanta Braves", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "New York Yankees", NULL, 0},
+                             {T_SCA, 0, "Atlanta Braves", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "2001-07-02", NULL, 0},
-                             {T_STR, 0, "2001-08-12", NULL, 0},
-                             {T_STR, 0, "2001-08-14", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "2001-07-02", NULL, 0},
+                             {T_SCA, 0, "2001-08-12", NULL, 0},
+                             {T_SCA, 0, "2001-08-14", NULL, 0},
                              end_node};
-  struct test_node seq3[] = {{T_STR, 0, "Detroit Tigers", NULL, 0},
-                             {T_STR, 0, "Chicago Cubs", NULL, 0},
+  struct test_node seq3[] = {{T_SCA, 0, "Detroit Tigers", NULL, 0},
+                             {T_SCA, 0, "Chicago Cubs", NULL, 0},
                              end_node};
-  struct test_node seq4[] = {{T_STR, 0, "2001-07-23", NULL, 0}, end_node};
+  struct test_node seq4[] = {{T_SCA, 0, "2001-07-23", NULL, 0}, end_node};
   struct test_node map[] = {{T_SEQ, 0, 0, seq1, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             {T_SEQ, 0, 0, seq3, 0},
@@ -322,17 +322,17 @@ static void YtsSpecificationExamples_4(CuTest *tc) {
  * Example 2.5: Sequence of sequences
  */
 static void YtsSpecificationExamples_5(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "name", NULL, 0},
-                             {T_STR, 0, "hr", NULL, 0},
-                             {T_STR, 0, "avg", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "name", NULL, 0},
+                             {T_SCA, 0, "hr", NULL, 0},
+                             {T_SCA, 0, "avg", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
-                             {T_STR, 0, "65", NULL, 0},
-                             {T_STR, 0, "0.278", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "Mark McGwire", NULL, 0},
+                             {T_SCA, 0, "65", NULL, 0},
+                             {T_SCA, 0, "0.278", NULL, 0},
                              end_node};
-  struct test_node seq3[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "63", NULL, 0},
-                             {T_STR, 0, "0.288", NULL, 0},
+  struct test_node seq3[] = {{T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "63", NULL, 0},
+                             {T_SCA, 0, "0.288", NULL, 0},
                              end_node};
   struct test_node seq[] = {
     {T_SEQ, 0, 0, seq1, 0}, {T_SEQ, 0, 0, seq2, 0}, {T_SEQ, 0, 0, seq3, 0}, end_node};
@@ -354,19 +354,19 @@ static void YtsSpecificationExamples_5(CuTest *tc) {
  * Example 2.6: Mapping of mappings
  */
 static void YtsSpecificationExamples_6(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "hr", NULL, 0},
-                             {T_STR, 0, "65", NULL, 0},
-                             {T_STR, 0, "avg", NULL, 0},
-                             {T_STR, 0, "0.278", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "hr", NULL, 0},
+                             {T_SCA, 0, "65", NULL, 0},
+                             {T_SCA, 0, "avg", NULL, 0},
+                             {T_SCA, 0, "0.278", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "hr", NULL, 0},
-                             {T_STR, 0, "63", NULL, 0},
-                             {T_STR, 0, "avg", NULL, 0},
-                             {T_STR, 0, "0.288", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "hr", NULL, 0},
+                             {T_SCA, 0, "63", NULL, 0},
+                             {T_SCA, 0, "avg", NULL, 0},
+                             {T_SCA, 0, "0.288", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "Mark McGwire", NULL, 0},
                             {T_MAP, 0, 0, map1, 0},
-                            {T_STR, 0, "Sammy Sosa", NULL, 0},
+                            {T_SCA, 0, "Sammy Sosa", NULL, 0},
                             {T_MAP, 0, 0, map2, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -389,12 +389,12 @@ static void YtsSpecificationExamples_6(CuTest *tc) {
  * Example 2.7: Two documents in a stream each with a leading comment
  */
 static void YtsSpecificationExamples_7(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
-                             {T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "Ken Griffey", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "Mark McGwire", NULL, 0},
+                             {T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "Ken Griffey", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Chicago Cubs", NULL, 0},
-                             {T_STR, 0, "St Louis Cardinals", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "Chicago Cubs", NULL, 0},
+                             {T_SCA, 0, "St Louis Cardinals", NULL, 0},
                              end_node};
   struct test_node stream[] = {
       {T_SEQ, 0, 0, seq1, 0}, {T_SEQ, 0, 0, seq2, 0}, end_node};
@@ -422,19 +422,19 @@ static void YtsSpecificationExamples_7(CuTest *tc) {
  * Example 2.8: Play by play feed from a game
  */
 static void YtsSpecificationExamples_8(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "time", NULL, 0},
-                             {T_STR, 0, "20:03:20", NULL, 0},
-                             {T_STR, 0, "player", NULL, 0},
-                             {T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "action", NULL, 0},
-                             {T_STR, 0, "strike (miss)", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "time", NULL, 0},
+                             {T_SCA, 0, "20:03:20", NULL, 0},
+                             {T_SCA, 0, "player", NULL, 0},
+                             {T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "action", NULL, 0},
+                             {T_SCA, 0, "strike (miss)", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "time", NULL, 0},
-                             {T_STR, 0, "20:03:47", NULL, 0},
-                             {T_STR, 0, "player", NULL, 0},
-                             {T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "action", NULL, 0},
-                             {T_STR, 0, "grand slam", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "time", NULL, 0},
+                             {T_SCA, 0, "20:03:47", NULL, 0},
+                             {T_SCA, 0, "player", NULL, 0},
+                             {T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "action", NULL, 0},
+                             {T_SCA, 0, "grand slam", NULL, 0},
                              end_node};
   struct test_node stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
@@ -462,15 +462,15 @@ static void YtsSpecificationExamples_8(CuTest *tc) {
  * Example 2.9: Single document with two comments
  */
 static void YtsSpecificationExamples_9(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
-                             {T_STR, 0, "Sammy Sosa", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "Mark McGwire", NULL, 0},
+                             {T_SCA, 0, "Sammy Sosa", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "Ken Griffey", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "Ken Griffey", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "hr", NULL, 0},
                             {T_SEQ, 0, 0, seq1, 0},
-                            {T_STR, 0, "rbi", NULL, 0},
+                            {T_SCA, 0, "rbi", NULL, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -495,15 +495,15 @@ static void YtsSpecificationExamples_9(CuTest *tc) {
  * Example 2.1: Node for Sammy Sosa appears twice in this document
  */
 static void YtsSpecificationExamples_10(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
-                             {T_STR, 0, "Sammy Sosa", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "Mark McGwire", NULL, 0},
+                             {T_SCA, 0, "Sammy Sosa", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
-                             {T_STR, 0, "Ken Griffey", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "Sammy Sosa", NULL, 0},
+                             {T_SCA, 0, "Ken Griffey", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "hr", NULL, 0},
                             {T_SEQ, 0, 0, seq1, 0},
-                            {T_STR, 0, "rbi", NULL, 0},
+                            {T_SCA, 0, "rbi", NULL, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -529,17 +529,17 @@ static void YtsSpecificationExamples_10(CuTest *tc) {
  * Example 2.11: Mapping between sequences
  */
 static void YtsSpecificationExamples_11(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
-                             {T_STR, 0, "Atlanta Braves", NULL, 0},
+  struct test_node seq1[] = {{T_SCA, 0, "New York Yankees", NULL, 0},
+                             {T_SCA, 0, "Atlanta Braves", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "2001-07-02", NULL, 0},
-                             {T_STR, 0, "2001-08-12", NULL, 0},
-                             {T_STR, 0, "2001-08-14", NULL, 0},
+  struct test_node seq2[] = {{T_SCA, 0, "2001-07-02", NULL, 0},
+                             {T_SCA, 0, "2001-08-12", NULL, 0},
+                             {T_SCA, 0, "2001-08-14", NULL, 0},
                              end_node};
-  struct test_node seq3[] = {{T_STR, 0, "Detroit Tigers", NULL, 0},
-                             {T_STR, 0, "Chicago Cubs", NULL, 0},
+  struct test_node seq3[] = {{T_SCA, 0, "Detroit Tigers", NULL, 0},
+                             {T_SCA, 0, "Chicago Cubs", NULL, 0},
                              end_node};
-  struct test_node seq4[] = {{T_STR, 0, "2001-07-23", NULL, 0}, end_node};
+  struct test_node seq4[] = {{T_SCA, 0, "2001-07-23", NULL, 0}, end_node};
   struct test_node map[] = {{T_SEQ, 0, 0, seq3, 0},
                             {T_SEQ, 0, 0, seq4, 0},
                             {T_SEQ, 0, 0, seq1, 0},
@@ -570,20 +570,20 @@ static void YtsSpecificationExamples_11(CuTest *tc) {
  * Example 2.12: Sequence key shortcut
  */
 static void YtsSpecificationExamples_12(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "item", NULL, 0},
-                             {T_STR, 0, "Super Hoop", NULL, 0},
-                             {T_STR, 0, "quantity", NULL, 0},
-                             {T_STR, 0, "1", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "item", NULL, 0},
+                             {T_SCA, 0, "Super Hoop", NULL, 0},
+                             {T_SCA, 0, "quantity", NULL, 0},
+                             {T_SCA, 0, "1", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "item", NULL, 0},
-                             {T_STR, 0, "Basketball", NULL, 0},
-                             {T_STR, 0, "quantity", NULL, 0},
-                             {T_STR, 0, "4", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "item", NULL, 0},
+                             {T_SCA, 0, "Basketball", NULL, 0},
+                             {T_SCA, 0, "quantity", NULL, 0},
+                             {T_SCA, 0, "4", NULL, 0},
                              end_node};
-  struct test_node map3[] = {{T_STR, 0, "item", NULL, 0},
-                             {T_STR, 0, "Big Shoes", NULL, 0},
-                             {T_STR, 0, "quantity", NULL, 0},
-                             {T_STR, 0, "1", NULL, 0},
+  struct test_node map3[] = {{T_SCA, 0, "item", NULL, 0},
+                             {T_SCA, 0, "Big Shoes", NULL, 0},
+                             {T_SCA, 0, "quantity", NULL, 0},
+                             {T_SCA, 0, "1", NULL, 0},
                              end_node};
   struct test_node seq[] = {
     {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
@@ -610,7 +610,7 @@ static void YtsSpecificationExamples_12(CuTest *tc) {
  * Example 2.13: Literal perserves newlines
  */
 static void YtsSpecificationExamples_13(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "\\//||\\/||\n// ||  ||_\n", NULL, 0},
+  struct test_node stream[] = {{T_SCA, 0, "\\//||\\/||\n// ||  ||_\n", NULL, 0},
                                end_node};
 
   CuStreamCompare(tc,
@@ -631,7 +631,7 @@ static void YtsSpecificationExamples_13(CuTest *tc) {
  */
 static void YtsSpecificationExamples_14(CuTest *tc) {
   struct test_node stream[] = {
-      {T_STR, 0, "Mark McGwire's year was crippled by a knee injury.", NULL, 0},
+      {T_SCA, 0, "Mark McGwire's year was crippled by a knee injury.", NULL, 0},
       end_node};
 
   CuStreamCompare(tc,
@@ -652,7 +652,7 @@ static void YtsSpecificationExamples_14(CuTest *tc) {
  */
 static void YtsSpecificationExamples_15(CuTest *tc) {
   struct test_node stream[] = {
-      {T_STR, 0,
+      {T_SCA, 0,
        "Sammy Sosa completed another fine season with great stats.\n\n  63 "
        "Home Runs\n  0.288 Batting Average\n\nWhat a year!\n",
        NULL, 0},
@@ -680,12 +680,12 @@ static void YtsSpecificationExamples_15(CuTest *tc) {
  */
 static void YtsSpecificationExamples_16(CuTest *tc) {
   struct test_node map[] = {
-      {T_STR, 0, "name", NULL, 0},
-      {T_STR, 0, "Mark McGwire", NULL, 0},
-      {T_STR, 0, "accomplishment", NULL, 0},
-      {T_STR, 0, "Mark set a major league home run record in 1998.\n", NULL, 0},
-      {T_STR, 0, "stats", NULL, 0},
-      {T_STR, 0, "65 Home Runs\n0.278 Batting Average\n", NULL, 0},
+      {T_SCA, 0, "name", NULL, 0},
+      {T_SCA, 0, "Mark McGwire", NULL, 0},
+      {T_SCA, 0, "accomplishment", NULL, 0},
+      {T_SCA, 0, "Mark set a major league home run record in 1998.\n", NULL, 0},
+      {T_SCA, 0, "stats", NULL, 0},
+      {T_SCA, 0, "65 Home Runs\n0.278 Batting Average\n", NULL, 0},
       end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -710,10 +710,10 @@ static void YtsSpecificationExamples_16(CuTest *tc) {
  */
 static void YtsSpecificationExamples_18(CuTest *tc) {
   struct test_node map[] = {
-      {T_STR, 0, "plain", NULL, 0},
-      {T_STR, 0, "This unquoted scalar spans many lines.", NULL, 0},
-      {T_STR, 0, "quoted", NULL, 0},
-      {T_STR, 0, "So does this quoted scalar.\n", NULL, 0},
+      {T_SCA, 0, "plain", NULL, 0},
+      {T_SCA, 0, "This unquoted scalar spans many lines.", NULL, 0},
+      {T_SCA, 0, "quoted", NULL, 0},
+      {T_SCA, 0, "So does this quoted scalar.\n", NULL, 0},
       end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -736,16 +736,16 @@ static void YtsSpecificationExamples_18(CuTest *tc) {
  * Example 2.19: Integers
  */
 static void YtsSpecificationExamples_19(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "12345", NULL, 0},
-                            {T_STR, 0, "decimal", NULL, 0},
-                            {T_STR, 0, "+12,345", NULL, 0},
-                            {T_STR, 0, "sexagecimal", NULL, 0},
-                            {T_STR, 0, "3:25:45", NULL, 0},
-                            {T_STR, 0, "octal", NULL, 0},
-                            {T_STR, 0, "014", NULL, 0},
-                            {T_STR, 0, "hexadecimal", NULL, 0},
-                            {T_STR, 0, "0xC", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "canonical", NULL, 0},
+                            {T_SCA, 0, "12345", NULL, 0},
+                            {T_SCA, 0, "decimal", NULL, 0},
+                            {T_SCA, 0, "+12,345", NULL, 0},
+                            {T_SCA, 0, "sexagecimal", NULL, 0},
+                            {T_SCA, 0, "3:25:45", NULL, 0},
+                            {T_SCA, 0, "octal", NULL, 0},
+                            {T_SCA, 0, "014", NULL, 0},
+                            {T_SCA, 0, "hexadecimal", NULL, 0},
+                            {T_SCA, 0, "0xC", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -767,18 +767,18 @@ static void YtsSpecificationExamples_19(CuTest *tc) {
  * Example 2.2: Floating point
  */
 static void YtsSpecificationExamples_20(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "1.23015e+3", NULL, 0},
-                            {T_STR, 0, "exponential", NULL, 0},
-                            {T_STR, 0, "12.3015e+02", NULL, 0},
-                            {T_STR, 0, "sexagecimal", NULL, 0},
-                            {T_STR, 0, "20:30.15", NULL, 0},
-                            {T_STR, 0, "fixed", NULL, 0},
-                            {T_STR, 0, "1,230.15", NULL, 0},
-                            {T_STR, 0, "negative infinity", NULL, 0},
-                            {T_STR, 0, "-.inf", NULL, 0},
-                            {T_STR, 0, "not a number", NULL, 0},
-                            {T_STR, 0, ".NaN", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "canonical", NULL, 0},
+                            {T_SCA, 0, "1.23015e+3", NULL, 0},
+                            {T_SCA, 0, "exponential", NULL, 0},
+                            {T_SCA, 0, "12.3015e+02", NULL, 0},
+                            {T_SCA, 0, "sexagecimal", NULL, 0},
+                            {T_SCA, 0, "20:30.15", NULL, 0},
+                            {T_SCA, 0, "fixed", NULL, 0},
+                            {T_SCA, 0, "1,230.15", NULL, 0},
+                            {T_SCA, 0, "negative infinity", NULL, 0},
+                            {T_SCA, 0, "-.inf", NULL, 0},
+                            {T_SCA, 0, "not a number", NULL, 0},
+                            {T_SCA, 0, ".NaN", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -801,14 +801,14 @@ static void YtsSpecificationExamples_20(CuTest *tc) {
  * Example 2.21: Miscellaneous
  */
 static void YtsSpecificationExamples_21(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "null", NULL, 0},
-                            {T_STR, 0, "~", NULL, 0},
-                            {T_STR, 0, "true", NULL, 0},
-                            {T_STR, 0, "y", NULL, 0},
-                            {T_STR, 0, "false", NULL, 0},
-                            {T_STR, 0, "n", NULL, 0},
-                            {T_STR, 0, "string", NULL, 0},
-                            {T_STR, 0, "12345", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "null", NULL, 0},
+                            {T_SCA, 0, "~", NULL, 0},
+                            {T_SCA, 0, "true", NULL, 0},
+                            {T_SCA, 0, "y", NULL, 0},
+                            {T_SCA, 0, "false", NULL, 0},
+                            {T_SCA, 0, "n", NULL, 0},
+                            {T_SCA, 0, "string", NULL, 0},
+                            {T_SCA, 0, "12345", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -829,14 +829,14 @@ static void YtsSpecificationExamples_21(CuTest *tc) {
  * Example 2.22: Timestamps
  */
 static void YtsSpecificationExamples_22(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
-                            {T_STR, 0, "iso8601", NULL, 0},
-                            {T_STR, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
-                            {T_STR, 0, "spaced", NULL, 0},
-                            {T_STR, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
-                            {T_STR, 0, "date", NULL, 0},
-                            {T_STR, 0, "2002-12-14", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "canonical", NULL, 0},
+                            {T_SCA, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
+                            {T_SCA, 0, "iso8601", NULL, 0},
+                            {T_SCA, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
+                            {T_SCA, 0, "spaced", NULL, 0},
+                            {T_SCA, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
+                            {T_SCA, 0, "date", NULL, 0},
+                            {T_SCA, 0, "2002-12-14", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -857,14 +857,14 @@ static void YtsSpecificationExamples_22(CuTest *tc) {
  * Example legacy D4: legacy Timestamps test
  */
 static void YtsSpecificationExamples_23(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "2001-12-15T02:59:43.00Z", NULL, 0},
-                            {T_STR, 0, "iso8601", NULL, 0},
-                            {T_STR, 0, "2001-02-28t21:59:43.00-05:00", NULL, 0},
-                            {T_STR, 0, "spaced", NULL, 0},
-                            {T_STR, 0, "2001-12-14 21:59:43.00 -05:00", NULL, 0},
-                            {T_STR, 0, "date", NULL, 0},
-                            {T_STR, 0, "2002-12-14", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "canonical", NULL, 0},
+                            {T_SCA, 0, "2001-12-15T02:59:43.00Z", NULL, 0},
+                            {T_SCA, 0, "iso8601", NULL, 0},
+                            {T_SCA, 0, "2001-02-28t21:59:43.00-05:00", NULL, 0},
+                            {T_SCA, 0, "spaced", NULL, 0},
+                            {T_SCA, 0, "2001-12-14 21:59:43.00 -05:00", NULL, 0},
+                            {T_SCA, 0, "date", NULL, 0},
+                            {T_SCA, 0, "2002-12-14", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -886,16 +886,16 @@ static void YtsSpecificationExamples_23(CuTest *tc) {
  */
 static void YtsSpecificationExamples_24(CuTest *tc) {
   struct test_node map[] = {
-      {T_STR, 0, "not-date", NULL, 0},
-      {T_STR, "tag:yaml.org,2002:str", "2002-04-28", NULL, 0},
-      {T_STR, 0, "picture", NULL, 0},
-      {T_STR, "tag:yaml.org,2002:binary",
+      {T_SCA, 0, "not-date", NULL, 0},
+      {T_SCA, "tag:yaml.org,2002:str", "2002-04-28", NULL, 0},
+      {T_SCA, 0, "picture", NULL, 0},
+      {T_SCA, "tag:yaml.org,2002:binary",
        "R0lGODlhDAAMAIQAAP//9/"
        "X\n17unp5WZmZgAAAOfn515eXv\nPz7Y6OjuDg4J+"
        "fn5OTk6enp\n56enmleECcgggoBADs=\n",
        NULL, 0},
-      {T_STR, 0, "application specific tag", NULL, 0},
-      {T_STR, "x-private:something",
+      {T_SCA, 0, "application specific tag", NULL, 0},
+      {T_SCA, "x-private:something",
        "The semantics of the tag\nabove may be different for\ndifferent "
        "documents.\n",
        NULL, 0},
@@ -926,32 +926,32 @@ static void YtsSpecificationExamples_24(CuTest *tc) {
  * Example 2.24: Application specific family
  */
 static void YtsSpecificationExamples_25(CuTest *tc) {
-  struct test_node point1[] = {{T_STR, 0, "x", NULL, 0},
-                               {T_STR, 0, "73", NULL, 0},
-                               {T_STR, 0, "y", NULL, 0},
-                               {T_STR, 0, "129", NULL, 0},
+  struct test_node point1[] = {{T_SCA, 0, "x", NULL, 0},
+                               {T_SCA, 0, "73", NULL, 0},
+                               {T_SCA, 0, "y", NULL, 0},
+                               {T_SCA, 0, "129", NULL, 0},
                                end_node};
-  struct test_node point2[] = {{T_STR, 0, "x", NULL, 0},
-                               {T_STR, 0, "89", NULL, 0},
-                               {T_STR, 0, "y", NULL, 0},
-                               {T_STR, 0, "102", NULL, 0},
+  struct test_node point2[] = {{T_SCA, 0, "x", NULL, 0},
+                               {T_SCA, 0, "89", NULL, 0},
+                               {T_SCA, 0, "y", NULL, 0},
+                               {T_SCA, 0, "102", NULL, 0},
                                end_node};
-  struct test_node map1[] = {{T_STR, 0, "center", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "center", NULL, 0},
                              {T_MAP, 0, 0, point1, 0},
-                             {T_STR, 0, "radius", NULL, 0},
-                             {T_STR, 0, "7", NULL, 0},
+                             {T_SCA, 0, "radius", NULL, 0},
+                             {T_SCA, 0, "7", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "start", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "start", NULL, 0},
                              {T_MAP, 0, 0, point1, 0},
-                             {T_STR, 0, "finish", NULL, 0},
+                             {T_SCA, 0, "finish", NULL, 0},
                              {T_MAP, 0, 0, point2, 0},
                              end_node};
-  struct test_node map3[] = {{T_STR, 0, "start", NULL, 0},
+  struct test_node map3[] = {{T_SCA, 0, "start", NULL, 0},
                              {T_MAP, 0, 0, point1, 0},
-                             {T_STR, 0, "color", NULL, 0},
-                             {T_STR, 0, "0xFFEEBB", NULL, 0},
-                             {T_STR, 0, "value", NULL, 0},
-                             {T_STR, 0, "Pretty vector drawing.", NULL, 0},
+                             {T_SCA, 0, "color", NULL, 0},
+                             {T_SCA, 0, "0xFFEEBB", NULL, 0},
+                             {T_SCA, 0, "value", NULL, 0},
+                             {T_SCA, 0, "Pretty vector drawing.", NULL, 0},
                              end_node};
   struct test_node seq[] = {
       {T_MAP, "tag:clarkevans.com,2002:graph/circle", 0, map1, 0},
@@ -989,11 +989,11 @@ static void YtsSpecificationExamples_25(CuTest *tc) {
  */
 static void YtsSpecificationExamples_26(CuTest *tc) {
   struct test_node map1[] = {
-      {T_STR, 0, "Mark McGwire", NULL, 0}, {T_STR, 0, "65", NULL, 0}, end_node};
+      {T_SCA, 0, "Mark McGwire", NULL, 0}, {T_SCA, 0, "65", NULL, 0}, end_node};
   struct test_node map2[] = {
-      {T_STR, 0, "Sammy Sosa", NULL, 0}, {T_STR, 0, "63", NULL, 0}, end_node};
+      {T_SCA, 0, "Sammy Sosa", NULL, 0}, {T_SCA, 0, "63", NULL, 0}, end_node};
   struct test_node map3[] = {
-      {T_STR, 0, "Ken Griffy", NULL, 0}, {T_STR, 0, "58", NULL, 0}, end_node};
+      {T_SCA, 0, "Ken Griffy", NULL, 0}, {T_SCA, 0, "58", NULL, 0}, end_node};
   struct test_node seq[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
   struct test_node stream[] = {{T_SEQ, "tag:yaml.org,2002:omap", 0, seq, 0},
@@ -1019,60 +1019,60 @@ static void YtsSpecificationExamples_26(CuTest *tc) {
  * Example 2.27: Invoice
  */
 static void YtsSpecificationExamples_27(CuTest *tc) {
-  struct test_node prod1[] = {{T_STR, 0, "sku", NULL, 0},
-                              {T_STR, 0, "BL394D", NULL, 0},
-                              {T_STR, 0, "quantity", NULL, 0},
-                              {T_STR, 0, "4", NULL, 0},
-                              {T_STR, 0, "description", NULL, 0},
-                              {T_STR, 0, "Basketball", NULL, 0},
-                              {T_STR, 0, "price", NULL, 0},
-                              {T_STR, 0, "450.00", NULL, 0},
+  struct test_node prod1[] = {{T_SCA, 0, "sku", NULL, 0},
+                              {T_SCA, 0, "BL394D", NULL, 0},
+                              {T_SCA, 0, "quantity", NULL, 0},
+                              {T_SCA, 0, "4", NULL, 0},
+                              {T_SCA, 0, "description", NULL, 0},
+                              {T_SCA, 0, "Basketball", NULL, 0},
+                              {T_SCA, 0, "price", NULL, 0},
+                              {T_SCA, 0, "450.00", NULL, 0},
                               end_node};
-  struct test_node prod2[] = {{T_STR, 0, "sku", NULL, 0},
-                              {T_STR, 0, "BL4438H", NULL, 0},
-                              {T_STR, 0, "quantity", NULL, 0},
-                              {T_STR, 0, "1", NULL, 0},
-                              {T_STR, 0, "description", NULL, 0},
-                              {T_STR, 0, "Super Hoop", NULL, 0},
-                              {T_STR, 0, "price", NULL, 0},
-                              {T_STR, 0, "2392.00", NULL, 0},
+  struct test_node prod2[] = {{T_SCA, 0, "sku", NULL, 0},
+                              {T_SCA, 0, "BL4438H", NULL, 0},
+                              {T_SCA, 0, "quantity", NULL, 0},
+                              {T_SCA, 0, "1", NULL, 0},
+                              {T_SCA, 0, "description", NULL, 0},
+                              {T_SCA, 0, "Super Hoop", NULL, 0},
+                              {T_SCA, 0, "price", NULL, 0},
+                              {T_SCA, 0, "2392.00", NULL, 0},
                               end_node};
   struct test_node products[] = {
       {T_MAP, 0, 0, prod1, 0}, {T_MAP, 0, 0, prod2, 0}, end_node};
   struct test_node address[] = {
-      {T_STR, 0, "lines", NULL, 0},
-      {T_STR, 0, "458 Walkman Dr.\nSuite #292\n", NULL, 0},
-      {T_STR, 0, "city", NULL, 0},
-      {T_STR, 0, "Royal Oak", NULL, 0},
-      {T_STR, 0, "state", NULL, 0},
-      {T_STR, 0, "MI", NULL, 0},
-      {T_STR, 0, "postal", NULL, 0},
-      {T_STR, 0, "48046", NULL, 0},
+      {T_SCA, 0, "lines", NULL, 0},
+      {T_SCA, 0, "458 Walkman Dr.\nSuite #292\n", NULL, 0},
+      {T_SCA, 0, "city", NULL, 0},
+      {T_SCA, 0, "Royal Oak", NULL, 0},
+      {T_SCA, 0, "state", NULL, 0},
+      {T_SCA, 0, "MI", NULL, 0},
+      {T_SCA, 0, "postal", NULL, 0},
+      {T_SCA, 0, "48046", NULL, 0},
       end_node};
-  struct test_node id001[] = {{T_STR, 0, "given", NULL, 0},
-                              {T_STR, 0, "Chris", NULL, 0},
-                              {T_STR, 0, "family", NULL, 0},
-                              {T_STR, 0, "Dumars", NULL, 0},
-                              {T_STR, 0, "address", NULL, 0},
+  struct test_node id001[] = {{T_SCA, 0, "given", NULL, 0},
+                              {T_SCA, 0, "Chris", NULL, 0},
+                              {T_SCA, 0, "family", NULL, 0},
+                              {T_SCA, 0, "Dumars", NULL, 0},
+                              {T_SCA, 0, "address", NULL, 0},
                               {T_MAP, 0, 0, address, 0},
                               end_node};
   struct test_node map[] = {
-      {T_STR, 0, "invoice", NULL, 0},
-      {T_STR, 0, "34843", NULL, 0},
-      {T_STR, 0, "date", NULL, 0},
-      {T_STR, 0, "2001-01-23", NULL, 0},
-      {T_STR, 0, "bill-to", NULL, 0},
+      {T_SCA, 0, "invoice", NULL, 0},
+      {T_SCA, 0, "34843", NULL, 0},
+      {T_SCA, 0, "date", NULL, 0},
+      {T_SCA, 0, "2001-01-23", NULL, 0},
+      {T_SCA, 0, "bill-to", NULL, 0},
       {T_MAP, 0, 0, id001, 0},
-      {T_STR, 0, "ship-to", NULL, 0},
+      {T_SCA, 0, "ship-to", NULL, 0},
       {T_MAP, 0, 0, id001, 0},
-      {T_STR, 0, "product", NULL, 0},
+      {T_SCA, 0, "product", NULL, 0},
       {T_SEQ, 0, 0, products, 0},
-      {T_STR, 0, "tax", NULL, 0},
-      {T_STR, 0, "251.42", NULL, 0},
-      {T_STR, 0, "total", NULL, 0},
-      {T_STR, 0, "4443.52", NULL, 0},
-      {T_STR, 0, "comments", NULL, 0},
-      {T_STR, 0,
+      {T_SCA, 0, "tax", NULL, 0},
+      {T_SCA, 0, "251.42", NULL, 0},
+      {T_SCA, 0, "total", NULL, 0},
+      {T_SCA, 0, "4443.52", NULL, 0},
+      {T_SCA, 0, "comments", NULL, 0},
+      {T_SCA, 0,
        "Late afternoon is best. Backup contact is Nancy Billsmer @ 338-4338.\n",
        NULL, 0},
       end_node};
@@ -1122,44 +1122,44 @@ static void YtsSpecificationExamples_27(CuTest *tc) {
  */
 static void YtsSpecificationExamples_28(CuTest *tc) {
   struct test_node map1[] = {
-      {T_STR, 0, "Time", NULL, 0},
-      {T_STR, 0, "2001-11-23 15:01:42 -05:00", NULL, 0},
-      {T_STR, 0, "User", NULL, 0},
-      {T_STR, 0, "ed", NULL, 0},
-      {T_STR, 0, "Warning", NULL, 0},
-      {T_STR, 0, "This is an error message for the log file\n", NULL, 0},
+      {T_SCA, 0, "Time", NULL, 0},
+      {T_SCA, 0, "2001-11-23 15:01:42 -05:00", NULL, 0},
+      {T_SCA, 0, "User", NULL, 0},
+      {T_SCA, 0, "ed", NULL, 0},
+      {T_SCA, 0, "Warning", NULL, 0},
+      {T_SCA, 0, "This is an error message for the log file\n", NULL, 0},
       end_node};
   struct test_node map2[] = {
-      {T_STR, 0, "Time", NULL, 0},
-      {T_STR, 0, "2001-11-23 15:02:31 -05:00", NULL, 0},
-      {T_STR, 0, "User", NULL, 0},
-      {T_STR, 0, "ed", NULL, 0},
-      {T_STR, 0, "Warning", NULL, 0},
-      {T_STR, 0, "A slightly different error message.\n", NULL, 0},
+      {T_SCA, 0, "Time", NULL, 0},
+      {T_SCA, 0, "2001-11-23 15:02:31 -05:00", NULL, 0},
+      {T_SCA, 0, "User", NULL, 0},
+      {T_SCA, 0, "ed", NULL, 0},
+      {T_SCA, 0, "Warning", NULL, 0},
+      {T_SCA, 0, "A slightly different error message.\n", NULL, 0},
       end_node};
-  struct test_node file1[] = {{T_STR, 0, "file", NULL, 0},
-                              {T_STR, 0, "TopClass.py", NULL, 0},
-                              {T_STR, 0, "line", NULL, 0},
-                              {T_STR, 0, "23", NULL, 0},
-                              {T_STR, 0, "code", NULL, 0},
-                              {T_STR, 0, "x = MoreObject(\"345\\n\")\n", NULL, 0},
+  struct test_node file1[] = {{T_SCA, 0, "file", NULL, 0},
+                              {T_SCA, 0, "TopClass.py", NULL, 0},
+                              {T_SCA, 0, "line", NULL, 0},
+                              {T_SCA, 0, "23", NULL, 0},
+                              {T_SCA, 0, "code", NULL, 0},
+                              {T_SCA, 0, "x = MoreObject(\"345\\n\")\n", NULL, 0},
                               end_node};
-  struct test_node file2[] = {{T_STR, 0, "file", NULL, 0},
-                              {T_STR, 0, "MoreClass.py", NULL, 0},
-                              {T_STR, 0, "line", NULL, 0},
-                              {T_STR, 0, "58", NULL, 0},
-                              {T_STR, 0, "code", NULL, 0},
-                              {T_STR, 0, "foo = bar", NULL, 0},
+  struct test_node file2[] = {{T_SCA, 0, "file", NULL, 0},
+                              {T_SCA, 0, "MoreClass.py", NULL, 0},
+                              {T_SCA, 0, "line", NULL, 0},
+                              {T_SCA, 0, "58", NULL, 0},
+                              {T_SCA, 0, "code", NULL, 0},
+                              {T_SCA, 0, "foo = bar", NULL, 0},
                               end_node};
   struct test_node stack[] = {
       {T_MAP, 0, 0, file1, 0}, {T_MAP, 0, 0, file2, 0}, end_node};
-  struct test_node map3[] = {{T_STR, 0, "Date", NULL, 0},
-                             {T_STR, 0, "2001-11-23 15:03:17 -05:00", NULL, 0},
-                             {T_STR, 0, "User", NULL, 0},
-                             {T_STR, 0, "ed", NULL, 0},
-                             {T_STR, 0, "Fatal", NULL, 0},
-                             {T_STR, 0, "Unknown variable \"bar\"\n", NULL, 0},
-                             {T_STR, 0, "Stack", NULL, 0},
+  struct test_node map3[] = {{T_SCA, 0, "Date", NULL, 0},
+                             {T_SCA, 0, "2001-11-23 15:03:17 -05:00", NULL, 0},
+                             {T_SCA, 0, "User", NULL, 0},
+                             {T_SCA, 0, "ed", NULL, 0},
+                             {T_SCA, 0, "Fatal", NULL, 0},
+                             {T_SCA, 0, "Unknown variable \"bar\"\n", NULL, 0},
+                             {T_SCA, 0, "Stack", NULL, 0},
                              {T_SEQ, 0, 0, stack, 0},
                              end_node};
   struct test_node stream[] = {
@@ -1205,8 +1205,8 @@ static void YtsSpecificationExamples_28(CuTest *tc) {
  */
 static void YtsSpecificationExamples_29(CuTest *tc) {
   struct test_node map[] = {
-      {T_STR, 0, "this", NULL, 0},
-      {T_STR, 0,
+      {T_SCA, 0, "this", NULL, 0},
+      {T_SCA, 0,
        "contains three lines of text.\nThe third one starts with a\n# "
        "character. This isn't a comment.\n",
        NULL, 0},
@@ -1237,7 +1237,7 @@ static void YtsSpecificationExamples_29(CuTest *tc) {
  */
 static void YtsSpecificationExamples_30(CuTest *tc) {
   struct test_node stream[] = {
-      {T_STR, 0,
+      {T_SCA, 0,
        "This YAML stream contains a single text value. The next stream is a "
        "log file - a sequence of log entries. Adding an entry to the log is a "
        "simple matter of appending it at the end.\n",
@@ -1262,23 +1262,23 @@ static void YtsSpecificationExamples_30(CuTest *tc) {
  * Example : Document stream
  */
 static void YtsSpecificationExamples_31(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "at", NULL, 0},
-                             {T_STR, 0, "2001-08-12 09:25:00.00 Z", NULL, 0},
-                             {T_STR, 0, "type", NULL, 0},
-                             {T_STR, 0, "GET", NULL, 0},
-                             {T_STR, 0, "HTTP", NULL, 0},
-                             {T_STR, 0, "1.0", NULL, 0},
-                             {T_STR, 0, "url", NULL, 0},
-                             {T_STR, 0, "/index.html", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "at", NULL, 0},
+                             {T_SCA, 0, "2001-08-12 09:25:00.00 Z", NULL, 0},
+                             {T_SCA, 0, "type", NULL, 0},
+                             {T_SCA, 0, "GET", NULL, 0},
+                             {T_SCA, 0, "HTTP", NULL, 0},
+                             {T_SCA, 0, "1.0", NULL, 0},
+                             {T_SCA, 0, "url", NULL, 0},
+                             {T_SCA, 0, "/index.html", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "at", NULL, 0},
-                             {T_STR, 0, "2001-08-12 09:25:10.00 Z", NULL, 0},
-                             {T_STR, 0, "type", NULL, 0},
-                             {T_STR, 0, "GET", NULL, 0},
-                             {T_STR, 0, "HTTP", NULL, 0},
-                             {T_STR, 0, "1.0", NULL, 0},
-                             {T_STR, 0, "url", NULL, 0},
-                             {T_STR, 0, "/toc.html", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "at", NULL, 0},
+                             {T_SCA, 0, "2001-08-12 09:25:10.00 Z", NULL, 0},
+                             {T_SCA, 0, "type", NULL, 0},
+                             {T_SCA, 0, "GET", NULL, 0},
+                             {T_SCA, 0, "HTTP", NULL, 0},
+                             {T_SCA, 0, "1.0", NULL, 0},
+                             {T_SCA, 0, "url", NULL, 0},
+                             {T_SCA, 0, "/toc.html", NULL, 0},
                              end_node};
   struct test_node stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
@@ -1306,12 +1306,12 @@ static void YtsSpecificationExamples_31(CuTest *tc) {
  * Example : Top level mapping
  */
 static void YtsSpecificationExamples_32(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "invoice", NULL, 0},
-                            {T_STR, 0, "34843", NULL, 0},
-                            {T_STR, 0, "date", NULL, 0},
-                            {T_STR, 0, "2001-01-23", NULL, 0},
-                            {T_STR, 0, "total", NULL, 0},
-                            {T_STR, 0, "4443.52", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "invoice", NULL, 0},
+                            {T_SCA, 0, "34843", NULL, 0},
+                            {T_SCA, 0, "date", NULL, 0},
+                            {T_SCA, 0, "2001-01-23", NULL, 0},
+                            {T_SCA, 0, "total", NULL, 0},
+                            {T_SCA, 0, "4443.52", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -1335,7 +1335,7 @@ static void YtsSpecificationExamples_33(CuTest *tc) {
   struct test_node map[] = {end_node};
   struct test_node seq[] = {end_node};
   struct test_node stream[] = {
-      {T_MAP, 0, 0, map, 0}, {T_SEQ, 0, 0, seq, 0}, {T_STR, 0, "", NULL, 0}, end_node};
+      {T_MAP, 0, 0, map, 0}, {T_SEQ, 0, 0, seq, 0}, {T_SCA, 0, "", NULL, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1356,15 +1356,15 @@ static void YtsSpecificationExamples_33(CuTest *tc) {
  * Example : Document with pause
  */
 static void YtsSpecificationExamples_34(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "sent at", NULL, 0},
-                             {T_STR, 0, "2002-06-06 11:46:25.10 Z", NULL, 0},
-                             {T_STR, 0, "payload", NULL, 0},
-                             {T_STR, 0, "Whatever", NULL, 0},
+  struct test_node map1[] = {{T_SCA, 0, "sent at", NULL, 0},
+                             {T_SCA, 0, "2002-06-06 11:46:25.10 Z", NULL, 0},
+                             {T_SCA, 0, "payload", NULL, 0},
+                             {T_SCA, 0, "Whatever", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "sent at", NULL, 0},
-                             {T_STR, 0, "2002-06-06 12:05:53.47 Z", NULL, 0},
-                             {T_STR, 0, "payload", NULL, 0},
-                             {T_STR, 0, "Whatever", NULL, 0},
+  struct test_node map2[] = {{T_SCA, 0, "sent at", NULL, 0},
+                             {T_SCA, 0, "2002-06-06 12:05:53.47 Z", NULL, 0},
+                             {T_SCA, 0, "payload", NULL, 0},
+                             {T_SCA, 0, "Whatever", NULL, 0},
                              end_node};
   struct test_node stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
@@ -1394,12 +1394,12 @@ static void YtsSpecificationExamples_34(CuTest *tc) {
  * Example : Explicit typing
  */
 static void YtsSpecificationExamples_35(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "integer", NULL, 0},
-                            {T_STR, "tag:yaml.org,2002:int", "12", NULL, 0},
-                            {T_STR, 0, "also int", NULL, 0},
-                            {T_STR, "tag:yaml.org,2002:int", "12", NULL, 0},
-                            {T_STR, 0, "string", NULL, 0},
-                            {T_STR, "tag:yaml.org,2002:str", "12", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "integer", NULL, 0},
+                            {T_SCA, "tag:yaml.org,2002:int", "12", NULL, 0},
+                            {T_SCA, 0, "also int", NULL, 0},
+                            {T_SCA, "tag:yaml.org,2002:int", "12", NULL, 0},
+                            {T_SCA, 0, "string", NULL, 0},
+                            {T_SCA, "tag:yaml.org,2002:str", "12", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -1419,16 +1419,16 @@ static void YtsSpecificationExamples_35(CuTest *tc) {
  * Example : Private types
  */
 static void YtsSpecificationExamples_36(CuTest *tc) {
-  struct test_node pool[] = {{T_STR, 0, "number", NULL, 0},
-                             {T_STR, 0, "8", NULL, 0},
-                             {T_STR, 0, "color", NULL, 0},
-                             {T_STR, 0, "black", NULL, 0},
+  struct test_node pool[] = {{T_SCA, 0, "number", NULL, 0},
+                             {T_SCA, 0, "8", NULL, 0},
+                             {T_SCA, 0, "color", NULL, 0},
+                             {T_SCA, 0, "black", NULL, 0},
                              end_node};
   struct test_node map1[] = {
-      {T_STR, 0, "pool", NULL, 0}, {T_MAP, "x-private:ball", 0, pool, 0}, end_node};
+      {T_SCA, 0, "pool", NULL, 0}, {T_MAP, "x-private:ball", 0, pool, 0}, end_node};
   struct test_node bearing[] = {
-      {T_STR, 0, "material", NULL, 0}, {T_STR, 0, "steel", NULL, 0}, end_node};
-  struct test_node map2[] = {{T_STR, 0, "bearing", NULL, 0},
+      {T_SCA, 0, "material", NULL, 0}, {T_SCA, 0, "steel", NULL, 0}, end_node};
+  struct test_node map2[] = {{T_SCA, 0, "bearing", NULL, 0},
                              {T_MAP, "x-private:ball", 0, bearing, 0},
                              end_node};
   struct test_node stream[] = {
@@ -1457,7 +1457,7 @@ static void YtsSpecificationExamples_36(CuTest *tc) {
  */
 static void YtsSpecificationExamples_37(CuTest *tc) {
   struct test_node seq[] = {
-      {T_STR, "tag:yaml.org,2002:str", "a Unicode string", NULL, 0}, end_node};
+      {T_SCA, "tag:yaml.org,2002:str", "a Unicode string", NULL, 0}, end_node};
   struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1516,16 +1516,16 @@ static void YtsSpecificationExamples_39(CuTest *tc) {
  */
 static void YtsSpecificationExamples_40(CuTest *tc) {
   struct test_node same[] = {
-      {T_STR, "tag:domain.tld,2002:type0", "value", NULL, 0},
-      {T_STR, "tag:domain.tld,2002:type0", "value", NULL, 0},
+      {T_SCA, "tag:domain.tld,2002:type0", "value", NULL, 0},
+      {T_SCA, "tag:domain.tld,2002:type0", "value", NULL, 0},
       end_node};
   struct test_node diff[] = {
-      {T_STR, "tag:domain.tld,2002:type%30", "value", NULL, 0},
-      {T_STR, "tag:domain.tld,2002:type0", "value", NULL, 0},
+      {T_SCA, "tag:domain.tld,2002:type%30", "value", NULL, 0},
+      {T_SCA, "tag:domain.tld,2002:type0", "value", NULL, 0},
       end_node};
-  struct test_node map[] = {{T_STR, 0, "same", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "same", NULL, 0},
                             {T_SEQ, 0, 0, same, 0},
-                            {T_STR, 0, "different", NULL, 0},
+                            {T_SCA, 0, "different", NULL, 0},
                             {T_SEQ, 0, 0, diff, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -1550,13 +1550,13 @@ static void YtsSpecificationExamples_40(CuTest *tc) {
  */
 static void YtsSpecificationExamples_42(CuTest *tc) {
   struct test_node map[] = {
-      {T_STR, 0, "anchor", NULL, 0},
-      {T_STR, 0, "This scalar has an anchor.", NULL, 0},
-      {T_STR, 0, "override", NULL, 0},
-      {T_STR, 0, "The alias node below is a repeated use of this value.\n",
+      {T_SCA, 0, "anchor", NULL, 0},
+      {T_SCA, 0, "This scalar has an anchor.", NULL, 0},
+      {T_SCA, 0, "override", NULL, 0},
+      {T_SCA, 0, "The alias node below is a repeated use of this value.\n",
        NULL, 0},
-      {T_STR, 0, "alias", NULL, 0},
-      {T_STR, 0, "The alias node below is a repeated use of this value.\n",
+      {T_SCA, 0, "alias", NULL, 0},
+      {T_SCA, 0, "The alias node below is a repeated use of this value.\n",
        NULL, 0},
       end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -1581,21 +1581,21 @@ static void YtsSpecificationExamples_42(CuTest *tc) {
 static void YtsSpecificationExamples_43(CuTest *tc) {
   struct test_node empty[] = {end_node};
   struct test_node flow[] = {
-      {T_STR, 0, "one", NULL, 0},   {T_STR, 0, "two", NULL, 0},
-      {T_STR, 0, "three", NULL, 0}, {T_STR, 0, "four", NULL, 0},
-      {T_STR, 0, "five", NULL, 0},  end_node};
-  struct test_node inblock[] = {{T_STR, 0, "Subordinate sequence entry", NULL, 0},
+      {T_SCA, 0, "one", NULL, 0},   {T_SCA, 0, "two", NULL, 0},
+      {T_SCA, 0, "three", NULL, 0}, {T_SCA, 0, "four", NULL, 0},
+      {T_SCA, 0, "five", NULL, 0},  end_node};
+  struct test_node inblock[] = {{T_SCA, 0, "Subordinate sequence entry", NULL, 0},
                                 end_node};
-  struct test_node block[] = {{T_STR, 0, "First item in top sequence", NULL, 0},
+  struct test_node block[] = {{T_SCA, 0, "First item in top sequence", NULL, 0},
                               {T_SEQ, 0, 0, inblock, 0},
-                              {T_STR, 0, "A folded sequence entry\n", NULL, 0},
-                              {T_STR, 0, "Sixth item in top sequence", NULL, 0},
+                              {T_SCA, 0, "A folded sequence entry\n", NULL, 0},
+                              {T_SCA, 0, "Sixth item in top sequence", NULL, 0},
                               end_node};
-  struct test_node map[] = {{T_STR, 0, "empty", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "empty", NULL, 0},
                             {T_SEQ, 0, 0, empty, 0},
-                            {T_STR, 0, "flow", NULL, 0},
+                            {T_SCA, 0, "flow", NULL, 0},
                             {T_SEQ, 0, 0, flow, 0},
-                            {T_STR, 0, "block", NULL, 0},
+                            {T_SCA, 0, "block", NULL, 0},
                             {T_SEQ, 0, 0, block, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
@@ -1625,30 +1625,30 @@ static void YtsSpecificationExamples_43(CuTest *tc) {
  */
 static void YtsSpecificationExamples_47(CuTest *tc) {
   struct test_node map[] = {
-      {T_STR, 0, "empty", NULL, 0},
-      {T_STR, 0, "", NULL, 0},
-      {T_STR, 0, "literal", NULL, 0},
-      {T_STR, 0,
+      {T_SCA, 0, "empty", NULL, 0},
+      {T_SCA, 0, "", NULL, 0},
+      {T_SCA, 0, "literal", NULL, 0},
+      {T_SCA, 0,
        "The \\ ' \" characters may be\nfreely used. Leading white\n   space "
        "is significant.\n\nLine breaks are significant.\nThus this value "
        "contains one\n"
        "empty line and ends with a\nsingle line break, but does\nnot start "
        "with one.\n",
        NULL, 0},
-      {T_STR, 0, "is equal to", NULL, 0},
-      {T_STR, 0,
+      {T_SCA, 0, "is equal to", NULL, 0},
+      {T_SCA, 0,
        "The \\ ' \" characters may be\nfreely used. Leading white\n   space "
        "is significant.\n\nLine breaks are significant.\nThus this value "
        "contains one\n"
        "empty line and ends with a\nsingle line break, but does\nnot start "
        "with one.\n",
        NULL, 0},
-      {T_STR, 0, "indented and chomped", NULL, 0},
-      {T_STR, 0, "  This has no newline.", NULL, 0},
-      {T_STR, 0, "also written as", NULL, 0},
-      {T_STR, 0, "  This has no newline.", NULL, 0},
-      {T_STR, 0, "both are equal to", NULL, 0},
-      {T_STR, 0, "  This has no newline.", NULL, 0},
+      {T_SCA, 0, "indented and chomped", NULL, 0},
+      {T_SCA, 0, "  This has no newline.", NULL, 0},
+      {T_SCA, 0, "also written as", NULL, 0},
+      {T_SCA, 0, "  This has no newline.", NULL, 0},
+      {T_SCA, 0, "both are equal to", NULL, 0},
+      {T_SCA, 0, "  This has no newline.", NULL, 0},
       end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -1697,14 +1697,14 @@ static void YtsSpecificationExamples_47(CuTest *tc) {
  * Example : Timestamp
  */
 static void YtsSpecificationExamples_62(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
-                            {T_STR, 0, "valid iso8601", NULL, 0},
-                            {T_STR, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
-                            {T_STR, 0, "space separated", NULL, 0},
-                            {T_STR, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
-                            {T_STR, 0, "date (noon UTC)", NULL, 0},
-                            {T_STR, 0, "2002-12-14", NULL, 0},
+  struct test_node map[] = {{T_SCA, 0, "canonical", NULL, 0},
+                            {T_SCA, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
+                            {T_SCA, 0, "valid iso8601", NULL, 0},
+                            {T_SCA, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
+                            {T_SCA, 0, "space separated", NULL, 0},
+                            {T_SCA, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
+                            {T_SCA, 0, "date (noon UTC)", NULL, 0},
+                            {T_SCA, 0, "2002-12-14", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 

@@ -402,16 +402,16 @@ syck_emit( SyckEmitter *e, st_data_t n )
     lvl = syck_emitter_current_level( e );
 
     /* Look for anchor */
-    if ( e->anchors != NULL &&
+    if ( e->anchors &&
         st_lookup( e->markers, n, (void *)&oid ) &&
         st_lookup( e->anchors, (st_data_t)oid, (void *)&anchor_name ) )
     {
-        if ( e->anchored == NULL )
+        if ( !e->anchored )
         {
             e->anchored = st_init_numtable();
         }
-assert(e->anchored != NULL);
-assert(anchor_name != NULL);
+        assert(e->anchored);
+        assert(anchor_name);
 
         if ( ! st_lookup( e->anchored, (st_data_t)anchor_name, (void *)&x ) )
         {

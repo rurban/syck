@@ -31,12 +31,20 @@ syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 
 /* a must be freshly allocated, owned by the node (as n->anchor).
    n is owned by the parser, not the table.
+   free any previous anchor.
  */
 SyckNode *
 syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
 {
     SyckNode *ntmp = NULL;
 
+    if (n->anchor) {
+        DPRINTF((stderr, "DEBUG %s Free stale anchor '%s' in %p\n", __FUNCTION__, a, n));
+        if (p->anchors) {
+            st_delete(p->anchors, (void*)&(n->anchor), (void*)&n);
+        }
+        S_FREE(n->anchor);
+    }
     n->anchor = a;
     DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->bad_anchors != NULL )

@@ -489,7 +489,7 @@ CDELIMS             {   POP_LEVEL();
                     }
 
 "&" YWORDC+         {   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
-                        DPRINTF ((stderr, "DEBUG Anchor '%s'\n", sycklval->name));
+                        DPRINTF ((stderr, "DEBUG Anchor '%s' %p\n", sycklval->name, sycklval->name));
 
                         /*
                          * Remove previous anchors of the same name.  Since the parser will likely

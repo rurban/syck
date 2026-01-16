@@ -64,7 +64,7 @@ syck_free_node( SyckNode **np )
     }
     if ( n->anchor != NULL )
     {
-        DPRINTF((stderr, "DEBUG %s Free n->anchor '%s'\n", __FUNCTION__, n->anchor));
+        DPRINTF((stderr, "DEBUG %s Free n->anchor '%s' %p\n", __FUNCTION__, n->anchor, n->anchor));
         S_FREE( n->anchor );
         n->anchor = NULL;
     }

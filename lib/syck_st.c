@@ -364,6 +364,12 @@ do {\
     table->num_entries++;\
 } while (0)
 
+#ifdef DEBUG
+static int st_is_sym(st_table *table, const char *key) {
+    return (uintptr_t)key <= (uintptr_t)table->num_bins;
+}
+#endif
+
 int
 st_insert(st_table *table, const char *key, const void *value)
 {
@@ -371,7 +377,7 @@ st_insert(st_table *table, const char *key, const void *value)
     st_table_entry *ptr;
 
 #ifdef DEBUG
-    if ((uintptr_t)key > (uintptr_t)table->num_bins)
+    if (!st_is_sym(table, key))
         DPRINTF ((stderr, "DEBUG %s table:%p key:'%s' value:%p\n", __FUNCTION__,
                   table, key, value));
     else
@@ -386,6 +392,14 @@ st_insert(st_table *table, const char *key, const void *value)
 	return 0;
     }
     else {
+#if 0
+        /* if its an old anchor, and not a sym, free the old anchor. GH #9 */
+        if (ptr->record > (void*)1 && !st_is_sym(table, key)) {
+            DPRINTF ((stderr, "DEBUG %s Free stale key '%s' %p\n", __FUNCTION__,
+                      (char*)ptr->key, ptr->key));
+            free((char*)((SyckNode*)ptr->record)->anchor);
+        }
+#endif
 	ptr->record = value;
         DPRINTF ((stderr, "DEBUG %s change table entry value to %p\n", __FUNCTION__,
                   value));

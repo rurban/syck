@@ -261,6 +261,7 @@ syck_map_add( SyckNode *map, SYMID key, SYMID value )
     }
     m->keys[idx] = key;
     m->values[idx] = value;
+    DPRINTF((stderr, "DEBUG %s %p [%ld] %lx: %lx\n", __FUNCTION__, map, idx, key, value));
 }
 
 void
@@ -292,6 +293,8 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
     {
         m1->keys[m1->idx] = m2->keys[new_idx];
         m1->values[m1->idx] = m2->values[new_idx];
+        DPRINTF((stderr, "DEBUG %s %p <= %p: [%ld] %lx: %lx\n", __FUNCTION__, map1,
+                 map2, m1->idx, m2->keys[new_idx], m2->values[new_idx]));
     }
 }
 
@@ -377,7 +380,7 @@ syck_seq_add( SyckNode *arr, SYMID value )
 
     assert( arr != NULL );
     assert( arr->data.list != NULL );
-    
+
     s = arr->data.list;
     idx = s->idx;
     s->idx += 1;

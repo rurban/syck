@@ -30,6 +30,7 @@ syck_alloc_node( enum syck_kind_tag type )
     s->type_id = NULL;
     s->anchor = NULL;
     s->shortcut = NULL;
+    DPRINTF((stderr, "DEBUG %s %p\n", __FUNCTION__, s));
 
     return s;
 }
@@ -96,6 +97,7 @@ syck_alloc_map(void)
 
     n = syck_alloc_node( syck_map_kind );
     n->data.pairs = m;
+    DPRINTF((stderr, "DEBUG %s pairs %p\n", __FUNCTION__, m));
 
     return n;
 }
@@ -114,6 +116,7 @@ syck_alloc_seq(void)
 
     n = syck_alloc_node( syck_seq_kind );
     n->data.list = s;
+    DPRINTF((stderr, "DEBUG %s list %p\n", __FUNCTION__, s));
 
     return n;
 }
@@ -156,6 +159,7 @@ syck_new_str2( char *str, long len, enum scalar_style style )
     n->data.str->style = style;
     memcpy( n->data.str->ptr, str, len );
     n->data.str->ptr[len] = '\0';
+    DPRINTF((stderr, "DEBUG %s '%s' %p\n", __FUNCTION__, str, n));
 
     return n;
 }
@@ -181,6 +185,7 @@ syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
     n->data.str->style = style;
     memcpy( n->data.str->ptr, str, len );
     n->data.str->ptr[len] = '\0';
+    DPRINTF((stderr, "DEBUG %s '%s' %p\n", __FUNCTION__, str, n));
 }
 
 void
@@ -309,10 +314,12 @@ syck_map_assign( SyckNode *map, enum map_part p, long idx, SYMID id )
     if ( p == map_key )
     {
         m->keys[idx] = id;
+        DPRINTF((stderr, "DEBUG %s %p[%lu] key=%lx\n", __FUNCTION__, map, idx, id));
     }
     else
     {
         m->values[idx] = id;
+        DPRINTF((stderr, "DEBUG %s %p[%lu] value=%lx\n", __FUNCTION__, map, idx, id));
     }
 }
 
@@ -340,8 +347,9 @@ syck_new_seq( SYMID value )
     SyckNode *n;
 
     n = syck_alloc_seq();
-assert(n != NULL);
+    assert(n != NULL);
     syck_seq_add( n, value );
+    //DPRINTF((stderr, "DEBUG %s %p %lx\n", __FUNCTION__, n, value));
 
     return n;
 }
@@ -353,6 +361,7 @@ syck_seq_empty( SyckNode *n )
     assert( n != NULL );
     assert( n->data.list != NULL );
 
+    DPRINTF((stderr, "DEBUG %s %p\n", __FUNCTION__, n));
     S_FREE( n->data.list->items );
     s = n->data.list;
     s->idx = 0;
@@ -378,6 +387,7 @@ syck_seq_add( SyckNode *arr, SYMID value )
         S_REALLOC_N( s->items, SYMID, s->capa );
     }
     s->items[idx] = value;
+    DPRINTF((stderr, "DEBUG %s %p %lx\n", __FUNCTION__, arr, value));
 }
 
 long
@@ -397,6 +407,7 @@ syck_seq_assign( SyckNode *seq, long idx, SYMID id )
     s = seq->data.list;
     assert(s);
     s->items[idx] = id;
+    DPRINTF((stderr, "DEBUG %s %p[%lu] = %lx\n", __FUNCTION__, seq, idx, id));
 }
 
 SYMID

@@ -270,7 +270,8 @@ st_free_table(st_table *table)
 	ptr = table->bins[i];
 	while (ptr != 0) {
 	    next = ptr->next;
-            DPRINTF ((stderr, "DEBUG %s free table[%d] entry %p\n", __FUNCTION__, i, ptr));
+            DPRINTF ((stderr, "DEBUG %s free table[%d] entry %p (%p,%p)\n",
+                      __FUNCTION__, i, ptr, ptr->key, ptr->record));
 	    ptr = _free(ptr);
 	    ptr = next;
 	}
@@ -352,7 +353,7 @@ do {\
     }\
     \
     entry = alloc(st_table_entry);\
-    if ((uintptr_t)key > (uintptr_t)table->num_bins) {\
+    if ((uintptr_t)key > (uintptr_t)table->num_bins + 100) {\
         DPRINTF ((stderr, "DEBUG %s new table entry %p: '%s' %p\n", __FUNCTION__, \
                   entry, key, value));\
     }\
@@ -365,8 +366,8 @@ do {\
 } while (0)
 
 #ifdef DEBUG
-static int st_is_sym(st_table *table, const char *key) {
-    return (uintptr_t)key <= (uintptr_t)table->num_bins;
+static int st_is_sym(st_table *table, const void *key) {
+    return (uintptr_t)key <= (uintptr_t)table->num_bins + 100;
 }
 #endif
 

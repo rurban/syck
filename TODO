@@ -16,23 +16,32 @@
 
 ## Syck 0.70
 
-[ ] check the !! shorthand
-[ ] check if the %YAML 1.0 directive is allowed (space not :
+[ ] Check the !! shorthand. !binary becomes !!binary
+[ ] Check if the %YAML 1.0 directive is allowed (space not :
     for forward compat)
-[ ] check if a ^ prefixed tag is allowed (but ignored)
-[x] memory leaks are GONE
-[ ] Security extemsions from perl: max recursion depth.
+[ ] Check if a ^ prefixed tag is allowed (but ignored)
+[x] All memory leaks are GONE
+[ ] Security extensions from perl: max recursion depth.
 [ ] Policies from perl: allow/disallow duplicate keys
-[ ] perl symbol quoting rules
+[ ] Specialize perl symbol quoting rules
+[ ] UTF-8 strict mode
+[ ] Fix typed seq-in-map shortcut.
 
 ## Syck 0.80
 
-[-] YPath integrated into Syck's core
-[-] Implicits can be collections with YPath matching
-[-] UTF-16 and -32 support.
+[ ] Support old character indicators? (1.0 only), ie % for imap, @ for iseq, ...
+    1.1 ? map keys
+[ ] Support unnamed tagged seq's and map's
+[ ] Allow implicit entries in flow sequences without the - indicator
+[ ] Update boolean recognition (YAML 1.2 only recognizes true/false, not yes/no/on/off)
+[ ] Add a version config (see above)
+[ ] Fix octal number parsing (YAML 1.2 uses 0o prefix, not leading 0)
+[ ] Update the implicit tag resolution rules
+[ ] UTF-16 support for 1.0 (via BOM)
 
 ## Syck 0.90
 
-[-] Python extension with complete hooks.
-[-] YAML 1.1 support.
+[ ] Python extension with complete hooks.
+[ ] Full YAML 1.1 and 1.2 support.
+[ ] UTF-16 and UTF-32 support for 1.2 (via BOM)
 

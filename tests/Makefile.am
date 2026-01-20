@@ -23,4 +23,4 @@ yts_stream_SOURCES = YTS-stream.c YTS-lib.c $(CUSRC)
 
 test-yts-full$(EXTEXT): yaml-test-suite
 yaml-test-suite:
-	git submodule update --init
+	-git submodule update --init

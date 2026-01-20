@@ -186,7 +186,7 @@ static CuSuite *SyckGetSuite(int argc, char *argv[]) {
     fprintf(stderr, "%s: %s\n", dir, strerror(errno));
     return NULL;
   }
-  
+
   for (int i=0; i<n; i++) {
     char a = flist[i]->d_name[0];
     if (a == '.')
@@ -206,8 +206,10 @@ int main(int argc, char *argv[]) {
   CuSuite *suite = SyckGetSuite(argc, argv);
   int count;
 
-  if (!suite)
-    return 1;
+  if (!suite) {
+    fprintf(stderr, "Skipping test-yts-full without the yaml-test-suite\n");
+    return 0;
+  }
   CuSuiteRunNoJmp(suite);
   CuSuiteSummary(suite, output);
   CuSuiteDetails(suite, output);

@@ -103,6 +103,7 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
 {
     SyckNode *n = NULL;
 
+    DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->anchors != NULL )
     {
         if ( st_lookup( p->anchors, (st_data_t)a, (void *)&n ) )
@@ -137,6 +138,8 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
             n = syck_new_str( "", scalar_plain );
             n->type_id = syck_taguri( YAML_DOMAIN, "null", 4 );
             n->anchor = a;
+            DPRINTF(( stderr, "DEBUG Added empty node %p for anchor '%s'\n", n, a));
+            st_insert( p->bad_anchors, (st_data_t)a, (st_data_t)n );
             return n;
         }
     }

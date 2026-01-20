@@ -46,10 +46,8 @@ void syck_safe_free_node(SyckParser *parser, SyckNode **np) {
         st_cleanup_safe(parser->anchors, (char*)n);
     if (parser->bad_anchors)
         st_cleanup_safe(parser->bad_anchors, (char*)n);
-#if 0 // idea
-    if (n->anchor)
-        syck_hdlr_remove_anchor( parser, n->anchor );
-#endif
+    if (n->shortcut)
+        syck_safe_free_node(parser, (SyckNode**)&n->shortcut);
     syck_free_node(np);
 }
 

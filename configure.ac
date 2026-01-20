@@ -11,7 +11,8 @@ LT_INIT
 # Bump CURRENT and reset AGE and REVISION if there's ABI changes.
 AC_SUBST([SYCK_SO_VERSION], [1:0:0])
 
-AM_INIT_AUTOMAKE([1.14 gnu])
+AM_INIT_AUTOMAKE([1.14 silent-rules gnu])
+AM_SILENT_RULES([yes])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

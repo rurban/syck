@@ -68,6 +68,7 @@ HEX = [0-9a-fA-F,] ;
 OCT = [0-7,] ;
 INTHEX = SIGN? "0x" HEX+ ;
 INTOCT = SIGN? "0" OCT+ ;
+INTOCT12 = SIGN? "0o" OCT+ ;
 INTSIXTY = SIGN? DIGIT DIGITSC* ( ":" [0-5]? DIGIT )+ ;
 INTCANON = SIGN? ( "0" | [1-9] DIGITSC* ) ;
 FLOATFIX = SIGN? DIGIT DIGITSC* "." DIGITSC* ;
@@ -78,7 +79,9 @@ FLOATINF = [+]? "." INF ;
 FLOATNEGINF = [-] "." INF ;
 FLOATNAN = "." ( "nan" | "NaN" | "NAN" ) ;
 NULLTYPE = ( "~" | "null" | "Null" | "NULL" )? ;
+BOOLYES12 = ( "true" | "True" | "TRUE" ) ;
 BOOLYES = ( "yes" | "Yes" | "YES" | "true" | "True" | "TRUE" | "on" | "On" | "ON" ) ;
+BOOLNO12 = ( "false" | "False" | "FALSE" ) ;
 BOOLNO = ( "no" | "No" | "NO" | "false" | "False" | "FALSE" | "off" | "Off" | "OFF" ) ;
 TIMEZ = ( "Z" | [-+] DIGIT DIGIT ( ":" DIGIT DIGIT )? ) ;
 TIMEYMD = YEAR "-" MON "-" MON ;
@@ -91,8 +94,11 @@ DEFAULTKEY = "=" ;
 NULLTYPE NULL       {   return "null"; }
 BOOLYES NULL        {   return "bool#yes"; }
 BOOLNO NULL         {   return "bool#no"; }
+BOOLYES12 NULL      {   return "bool#yes"; }
+BOOLNO12 NULL       {   return "bool#no"; }
 INTHEX NULL         {   return "int#hex"; }
 INTOCT NULL         {   return "int#oct"; }
+INTOCT12 NULL       {   return "int#oct"; }
 INTSIXTY NULL       {   return "int#base60"; }
 INTCANON NULL       {   return "int"; }
 FLOATFIX NULL       {   return "float#fix"; }

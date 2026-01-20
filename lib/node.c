@@ -38,8 +38,10 @@ syck_alloc_node( enum syck_kind_tag type )
 void syck_safe_free_node(SyckParser *parser, SyckNode **np) {
     SyckNode *n = *np;
     DPRINTF((stderr, "DEBUG %s %p (%s)\n", __FUNCTION__, n, syck_node_kind(n)));
-    if (!n->id)
+    /*if (!n->id) {
+        syck_free_node(np);
         return;
+    }*/
     if (parser->anchors)
         st_cleanup_safe(parser->anchors, (char*)n);
     if (parser->bad_anchors)

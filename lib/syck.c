@@ -262,6 +262,7 @@ syck_free_parser( SyckParser *p )
      */
     if ( p->syms != NULL )
     {
+        DPRINTF ((stderr, "DEBUG Free syms table\n"));
         st_free_table( p->syms );
         p->syms = NULL;
     }

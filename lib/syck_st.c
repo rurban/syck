@@ -603,6 +603,7 @@ st_cleanup_safe(st_table *table, char *never)
 {
     int num_entries = table->num_entries;
 
+    DPRINTF ((stderr, "DEBUG %s %p\n", __FUNCTION__, table));
     st_foreach(table, delete_never, never);
     table->num_entries = num_entries;
 }

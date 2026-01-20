@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([syck],[0.70],[rurban@cpan.org],[],
+AC_INIT([syck],[0.70],[rurban@cpan.org],[syck],
         [https://github.com/rurban/syck/])
 AC_CONFIG_AUX_DIR(config)
 AC_PREREQ([2.50])
@@ -20,9 +20,6 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_AWK
-AM_PROG_LEX([noyywrap])
-#LT_INIT
 
 AC_CHECK_PROGS(YACC, 'bison')
 if test "$YACC" != "bison"; then
@@ -57,8 +54,6 @@ fi
 
 # Checks for header files.
 AC_CHECK_INCLUDES_DEFAULT
-AC_PROG_EGREP
-
 AC_CHECK_HEADERS(alloca.h stdlib.h string.h sal.h ruby/st.h)
 
 # Checks for typedefs, structures, and compiler characteristics.

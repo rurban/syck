@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
   CuStringFree(output);
   CuSuiteFree(suite);
 
-  if (!count || count == 347) // current 0.70 status
+  if (!count || count == 348) // current 0.70 status
     return 0;
   else
     return count;

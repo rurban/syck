@@ -143,7 +143,7 @@ CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
   int i = 0;
   while (1) {
     CuAssertIntEquals(tc, s1[i].type, s2[i].type);
-    if (s1[i].type == T_END)
+    if (s1[i].type == T_END || s2[i].type == T_END)
       return;
     if (s2[i].type == T_END)
       CuFail(tc, "parsed stream ended prematurely");

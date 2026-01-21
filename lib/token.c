@@ -24,7 +24,7 @@
 /*
  * They do my bidding...
  */
-#define YYCTYPE     char
+#define YYCTYPE     unsigned char
 #define YYCURSOR    parser->cursor
 #define YYMARKER    parser->marker
 #define YYLIMIT     parser->limit
@@ -291,10 +291,14 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
             return sycklex_yaml_utf8( sycklval, parser );
 
         case syck_yaml_utf16:
+        case syck_yaml_utf16be:
+            /* TODO convert it in memory */
             syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
             break;
 
         case syck_yaml_utf32:
+        case syck_yaml_utf32be:
+            /* TODO convert it in memory */
             syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
             break;
 
@@ -326,7 +330,7 @@ sycklex_yaml_utf8( YYSTYPE *sycklval, SyckParser *parser )
         return t;
     }
 
-#line 351 "token.re"
+#line 360 "token.re"
 
 
     if ( YYLINEPTR != YYCURSOR )
@@ -339,7 +343,7 @@ Header:
     YYTOKEN = YYCURSOR;
 
 
-#line 342 "token.c"
+#line 346 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -347,164 +351,489 @@ Header:
 	yych = *YYCURSOR;
 	switch (yych) {
 		case 0x00: goto yy1;
+		case 0x01:
+		case 0x02:
+		case 0x03:
+		case 0x04:
+		case 0x05:
+		case 0x06:
+		case 0x07:
+		case 0x08:
+		case '\v':
+		case '\f':
+		case 0x0E:
+		case 0x0F:
+		case 0x10:
+		case 0x11:
+		case 0x12:
+		case 0x13:
+		case 0x14:
+		case 0x15:
+		case 0x16:
+		case 0x17:
+		case 0x18:
+		case 0x19:
+		case 0x1A:
+		case 0x1B:
+		case 0x1C:
+		case 0x1D:
+		case 0x1E:
+		case 0x1F:
+		case '!':
+		case '"':
+		case '$':
+		case '&':
+		case '\'':
+		case '(':
+		case ')':
+		case '*':
+		case '+':
+		case ',':
+		case '/':
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case ':':
+		case ';':
+		case '<':
+		case '=':
+		case '>':
+		case '?':
+		case '@':
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+		case 'G':
+		case 'H':
+		case 'I':
+		case 'J':
+		case 'K':
+		case 'L':
+		case 'M':
+		case 'N':
+		case 'O':
+		case 'P':
+		case 'Q':
+		case 'R':
+		case 'S':
+		case 'T':
+		case 'U':
+		case 'V':
+		case 'W':
+		case 'X':
+		case 'Y':
+		case 'Z':
+		case '[':
+		case '\\':
+		case ']':
+		case '^':
+		case '_':
+		case '`':
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+		case 'g':
+		case 'h':
+		case 'i':
+		case 'j':
+		case 'k':
+		case 'l':
+		case 'm':
+		case 'n':
+		case 'o':
+		case 'p':
+		case 'q':
+		case 'r':
+		case 's':
+		case 't':
+		case 'u':
+		case 'v':
+		case 'w':
+		case 'x':
+		case 'y':
+		case 'z':
+		case '{':
+		case '|':
+		case '}':
+		case '~':
+		case 0x7F:
+		case 0x80:
+		case 0x81:
+		case 0x82:
+		case 0x83:
+		case 0x84:
+		case 0x85:
+		case 0x86:
+		case 0x87:
+		case 0x88:
+		case 0x89:
+		case 0x8A:
+		case 0x8B:
+		case 0x8C:
+		case 0x8D:
+		case 0x8E:
+		case 0x8F:
+		case 0x90:
+		case 0x91:
+		case 0x92:
+		case 0x93:
+		case 0x94:
+		case 0x95:
+		case 0x96:
+		case 0x97:
+		case 0x98:
+		case 0x99:
+		case 0x9A:
+		case 0x9B:
+		case 0x9C:
+		case 0x9D:
+		case 0x9E:
+		case 0x9F:
+		case 0xA0:
+		case 0xA1:
+		case 0xA2:
+		case 0xA3:
+		case 0xA4:
+		case 0xA5:
+		case 0xA6:
+		case 0xA7:
+		case 0xA8:
+		case 0xA9:
+		case 0xAA:
+		case 0xAB:
+		case 0xAC:
+		case 0xAD:
+		case 0xAE:
+		case 0xAF:
+		case 0xB0:
+		case 0xB1:
+		case 0xB2:
+		case 0xB3:
+		case 0xB4:
+		case 0xB5:
+		case 0xB6:
+		case 0xB7:
+		case 0xB8:
+		case 0xB9:
+		case 0xBA:
+		case 0xBB:
+		case 0xBC:
+		case 0xBD:
+		case 0xBE:
+		case 0xBF:
+		case 0xC0:
+		case 0xC1:
+		case 0xC2:
+		case 0xC3:
+		case 0xC4:
+		case 0xC5:
+		case 0xC6:
+		case 0xC7:
+		case 0xC8:
+		case 0xC9:
+		case 0xCA:
+		case 0xCB:
+		case 0xCC:
+		case 0xCD:
+		case 0xCE:
+		case 0xCF:
+		case 0xD0:
+		case 0xD1:
+		case 0xD2:
+		case 0xD3:
+		case 0xD4:
+		case 0xD5:
+		case 0xD6:
+		case 0xD7:
+		case 0xD8:
+		case 0xD9:
+		case 0xDA:
+		case 0xDB:
+		case 0xDC:
+		case 0xDD:
+		case 0xDE:
+		case 0xDF:
+		case 0xE0:
+		case 0xE1:
+		case 0xE2:
+		case 0xE3:
+		case 0xE4:
+		case 0xE5:
+		case 0xE6:
+		case 0xE7:
+		case 0xE8:
+		case 0xE9:
+		case 0xEA:
+		case 0xEB:
+		case 0xEC:
+		case 0xED:
+		case 0xEE:
+		case 0xF0:
+		case 0xF1:
+		case 0xF2:
+		case 0xF3:
+		case 0xF4:
+		case 0xF5:
+		case 0xF6:
+		case 0xF7:
+		case 0xF8:
+		case 0xF9:
+		case 0xFA:
+		case 0xFB:
+		case 0xFC:
+		case 0xFD: goto yy3;
 		case '\t':
-		case ' ': goto yy4;
-		case '\n': goto yy6;
-		case '\r': goto yy8;
-		case '#': goto yy9;
-		case '%': goto yy10;
-		case '-': goto yy11;
-		case '.': goto yy12;
-		default: goto yy2;
+		case ' ': goto yy5;
+		case '\n': goto yy7;
+		case '\r': goto yy9;
+		case '#': goto yy10;
+		case '%': goto yy11;
+		case '-': goto yy12;
+		case '.': goto yy13;
+		case 0xEF: goto yy14;
+		case 0xFE: goto yy15;
+		default: goto yy16;
 	}
 yy1:
-	++YYCURSOR;
-#line 397 "token.re"
+	yyaccept = 0;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych <= 0x00) goto yy17;
+yy2:
+#line 406 "token.re"
 	{   SyckLevel *lvl = CURRENT_LEVEL();
                         ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
                         return 0;
                     }
-#line 368 "token.c"
-yy2:
-	++YYCURSOR;
+#line 621 "token.c"
 yy3:
-#line 416 "token.re"
+	++YYCURSOR;
+yy4:
+#line 450 "token.re"
 	{   YYPOS(0);
                         goto Document;
                     }
-#line 376 "token.c"
-yy4:
+#line 629 "token.c"
+yy5:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\t':
-		case ' ': goto yy4;
-		default: goto yy5;
+		case ' ': goto yy5;
+		default: goto yy6;
 	}
-yy5:
-#line 412 "token.re"
+yy6:
+#line 421 "token.re"
 	{   doc_level = YYCURSOR - YYLINEPTR;
                         goto Header;
                     }
-#line 391 "token.c"
-yy6:
-	yyaccept = 0;
+#line 644 "token.c"
+yy7:
+	yyaccept = 1;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\n':
-		case ' ': goto yy6;
-		case '\r': goto yy13;
-		default: goto yy7;
+		case ' ': goto yy7;
+		case '\r': goto yy19;
+		default: goto yy8;
 	}
-yy7:
-#line 408 "token.re"
+yy8:
+#line 417 "token.re"
 	{   GOBBLE_UP_YAML_INDENT( doc_level, YYTOKEN );
                         goto Header;
                     }
-#line 408 "token.c"
-yy8:
+#line 661 "token.c"
+yy9:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy6;
-		default: goto yy3;
+		case '\n': goto yy7;
+		default: goto yy4;
 	}
-yy9:
+yy10:
 	++YYCURSOR;
-#line 393 "token.re"
+#line 402 "token.re"
 	{   eat_comments( parser );
                         goto Header;
                     }
-#line 421 "token.c"
-yy10:
-	yyaccept = 1;
-	yych = *(YYMARKER = ++YYCURSOR);
-	switch (yych) {
-		case 'Y': goto yy15;
-		default: goto yy3;
-	}
+#line 674 "token.c"
 yy11:
-	yyaccept = 1;
+	yyaccept = 2;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '-': goto yy16;
-		default: goto yy3;
+		case 'Y': goto yy20;
+		default: goto yy4;
 	}
 yy12:
-	yyaccept = 1;
+	yyaccept = 2;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '.': goto yy17;
-		default: goto yy3;
+		case '-': goto yy21;
+		default: goto yy4;
 	}
 yy13:
-	++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
+	yyaccept = 2;
+	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy6;
-		default: goto yy14;
+		case '.': goto yy22;
+		default: goto yy4;
 	}
 yy14:
-	YYCURSOR = YYMARKER;
-	if (yyaccept == 0) {
-		goto yy7;
-	} else {
-		goto yy3;
+	yyaccept = 2;
+	yych = *(YYMARKER = ++YYCURSOR);
+	switch (yych) {
+		case 0xBB: goto yy23;
+		default: goto yy4;
 	}
 yy15:
 	yych = *++YYCURSOR;
-	switch (yych) {
-		case 'A': goto yy18;
-		default: goto yy14;
-	}
+	if (yych <= 0xFE) goto yy4;
+	goto yy24;
 yy16:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '-': goto yy19;
-		default: goto yy14;
+		case 0xFE: goto yy25;
+		default: goto yy4;
 	}
 yy17:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '.': goto yy20;
-		default: goto yy14;
+		case 0xFE: goto yy27;
+		default: goto yy18;
 	}
 yy18:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case 'M': goto yy21;
-		default: goto yy14;
+	YYCURSOR = YYMARKER;
+	switch (yyaccept) {
+		case 0: goto yy2;
+		case 1: goto yy8;
+		case 2: goto yy4;
+		default: goto yy26;
 	}
 yy19:
-	yych = *++YYCURSOR;
+	++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy22;
-		case '\r': goto yy24;
-		case ' ': goto yy25;
-		default: goto yy14;
+		case '\n': goto yy7;
+		default: goto yy18;
 	}
 yy20:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy26;
-		case '\r': goto yy28;
-		case ' ': goto yy29;
-		default: goto yy14;
+		case 'A': goto yy28;
+		default: goto yy18;
 	}
 yy21:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case 'L': goto yy30;
-		default: goto yy14;
+		case '-': goto yy29;
+		default: goto yy18;
 	}
 yy22:
-	++YYCURSOR;
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '.': goto yy30;
+		default: goto yy18;
+	}
 yy23:
-#line 364 "token.re"
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case 0xBF: goto yy31;
+		default: goto yy18;
+	}
+yy24:
+	++YYCURSOR;
+#line 434 "token.re"
+	{   parser->input_type = syck_yaml_utf16be;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-16BE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+#line 767 "token.c"
+yy25:
+	yyaccept = 3;
+	yych = *(YYMARKER = ++YYCURSOR);
+	if (yych <= 0x00) goto yy32;
+yy26:
+#line 429 "token.re"
+	{   parser->input_type = syck_yaml_utf16;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-16LE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+#line 779 "token.c"
+yy27:
+	yych = *++YYCURSOR;
+	if (yych <= 0xFE) goto yy18;
+	goto yy33;
+yy28:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case 'M': goto yy34;
+		default: goto yy18;
+	}
+yy29:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '\n': goto yy35;
+		case '\r': goto yy37;
+		case ' ': goto yy38;
+		default: goto yy18;
+	}
+yy30:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '\n': goto yy39;
+		case '\r': goto yy41;
+		case ' ': goto yy42;
+		default: goto yy18;
+	}
+yy31:
+	++YYCURSOR;
+#line 425 "token.re"
+	{   parser->input_type = syck_yaml_utf8;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-8\n"));
+                        goto Header;
+                    }
+#line 813 "token.c"
+yy32:
+	yych = *++YYCURSOR;
+	if (yych <= 0x00) goto yy43;
+	goto yy18;
+yy33:
+	++YYCURSOR;
+#line 444 "token.re"
+	{   parser->input_type = syck_yaml_utf32be;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-32BE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+#line 826 "token.c"
+yy34:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case 'L': goto yy44;
+		default: goto yy18;
+	}
+yy35:
+	++YYCURSOR;
+yy36:
+#line 373 "token.re"
 	{   SyckLevel *lvl = CURRENT_LEVEL();
                         if ( lvl->status == syck_lvl_header )
                         {
@@ -518,25 +847,25 @@ yy23:
                             return 0;
                         }
                     }
-#line 521 "token.c"
-yy24:
+#line 850 "token.c"
+yy37:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy22;
-		default: goto yy14;
+		case '\n': goto yy35;
+		default: goto yy18;
 	}
-yy25:
+yy38:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy25;
-		default: goto yy23;
+		case ' ': goto yy38;
+		default: goto yy36;
 	}
-yy26:
+yy39:
 	++YYCURSOR;
-yy27:
-#line 378 "token.re"
+yy40:
+#line 387 "token.re"
 	{   SyckLevel *lvl = CURRENT_LEVEL();
                         parser->doctype += syck_doctype_end;
                         if ( lvl->status == syck_lvl_header )
@@ -551,41 +880,50 @@ yy27:
                         }
                         return 0;
                     }
-#line 554 "token.c"
-yy28:
+#line 883 "token.c"
+yy41:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy26;
-		default: goto yy14;
+		case '\n': goto yy39;
+		default: goto yy18;
 	}
-yy29:
+yy42:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy29;
-		default: goto yy27;
+		case ' ': goto yy42;
+		default: goto yy40;
 	}
-yy30:
+yy43:
+	++YYCURSOR;
+#line 439 "token.re"
+	{   parser->input_type = syck_yaml_utf32;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-32LE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+#line 906 "token.c"
+yy44:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy31;
-		default: goto yy14;
+		case ' ': goto yy45;
+		default: goto yy18;
 	}
-yy31:
+yy45:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
-		case '1': goto yy32;
-		default: goto yy14;
+		case '1': goto yy46;
+		default: goto yy18;
 	}
-yy32:
+yy46:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '.': goto yy33;
-		default: goto yy14;
+		case '.': goto yy47;
+		default: goto yy18;
 	}
-yy33:
+yy47:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
@@ -597,42 +935,42 @@ yy33:
 		case '6':
 		case '7':
 		case '8':
-		case '9': goto yy34;
-		default: goto yy14;
+		case '9': goto yy48;
+		default: goto yy18;
 	}
-yy34:
+yy48:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy35;
-		case '\r': goto yy37;
-		case ' ': goto yy38;
-		default: goto yy14;
+		case '\n': goto yy49;
+		case '\r': goto yy51;
+		case ' ': goto yy52;
+		default: goto yy18;
 	}
-yy35:
+yy49:
 	++YYCURSOR;
-yy36:
-#line 403 "token.re"
+yy50:
+#line 412 "token.re"
 	{   sycklval->name = syck_strndup( YYTOKEN + 6, YYCURSOR - YYTOKEN - 7);
                         DPRINTF ((stderr, "DEBUG '%%YAML %s'\n", sycklval->name));
                         return YAML_VERSION_DIR;
                     }
-#line 619 "token.c"
-yy37:
+#line 957 "token.c"
+yy51:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy35;
-		default: goto yy14;
+		case '\n': goto yy49;
+		default: goto yy18;
 	}
-yy38:
+yy52:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy38;
-		default: goto yy36;
+		case ' ': goto yy52;
+		default: goto yy50;
 	}
 }
-#line 420 "token.re"
+#line 454 "token.re"
 
 
 Document:
@@ -646,78 +984,78 @@ Document:
         YYTOKEN = YYCURSOR;
 
 
-#line 649 "token.c"
+#line 987 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case 0x00: goto yy40;
+		case 0x00: goto yy54;
 		case '\t':
-		case ' ': goto yy43;
-		case '\n': goto yy45;
-		case '\r': goto yy47;
-		case '!': goto yy48;
-		case '"': goto yy49;
-		case '#': goto yy50;
-		case '&': goto yy51;
-		case '\'': goto yy52;
-		case '*': goto yy53;
+		case ' ': goto yy57;
+		case '\n': goto yy59;
+		case '\r': goto yy61;
+		case '!': goto yy62;
+		case '"': goto yy63;
+		case '#': goto yy64;
+		case '&': goto yy65;
+		case '\'': goto yy66;
+		case '*': goto yy67;
 		case ',':
-		case ':': goto yy54;
+		case ':': goto yy68;
 		case '-':
-		case '?': goto yy55;
+		case '?': goto yy69;
 		case '>':
-		case '|': goto yy56;
-		case '[': goto yy57;
+		case '|': goto yy70;
+		case '[': goto yy71;
 		case ']':
-		case '}': goto yy58;
-		case '{': goto yy59;
-		default: goto yy41;
+		case '}': goto yy72;
+		case '{': goto yy73;
+		default: goto yy55;
 	}
-yy40:
+yy54:
 	++YYCURSOR;
-#line 539 "token.re"
+#line 573 "token.re"
 	{   ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
                         return 0;
                     }
-#line 686 "token.c"
-yy41:
+#line 1024 "token.c"
+yy55:
 	++YYCURSOR;
-yy42:
-#line 544 "token.re"
+yy56:
+#line 578 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto Plain;
                     }
-#line 694 "token.c"
-yy43:
+#line 1032 "token.c"
+yy57:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\t':
-		case ' ': goto yy43;
-		default: goto yy44;
+		case ' ': goto yy57;
+		default: goto yy58;
 	}
-yy44:
-#line 537 "token.re"
+yy58:
+#line 571 "token.re"
 	{   goto Document; }
-#line 707 "token.c"
-yy45:
+#line 1045 "token.c"
+yy59:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\n':
-		case ' ': goto yy45;
-		case '\r': goto yy60;
-		default: goto yy46;
+		case ' ': goto yy59;
+		case '\r': goto yy74;
+		default: goto yy60;
 	}
-yy46:
-#line 434 "token.re"
+yy60:
+#line 468 "token.re"
 	{   /* Isolate spaces */
                         int indt_len;
                         GOBBLE_UP_YAML_INDENT( indt_len, YYTOKEN );
@@ -745,32 +1083,32 @@ yy46:
                         }
                         return YAML_INDENT;
                     }
-#line 748 "token.c"
-yy47:
+#line 1086 "token.c"
+yy61:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy45;
-		default: goto yy42;
+		case '\n': goto yy59;
+		default: goto yy56;
 	}
-yy48:
+yy62:
 	++YYCURSOR;
-#line 518 "token.re"
+#line 552 "token.re"
 	{   goto TransferMethod; }
-#line 759 "token.c"
-yy49:
+#line 1097 "token.c"
+yy63:
 	++YYCURSOR;
-#line 523 "token.re"
+#line 557 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto DoubleQuote; }
-#line 765 "token.c"
-yy50:
+#line 1103 "token.c"
+yy64:
 	++YYCURSOR;
-#line 533 "token.re"
+#line 567 "token.re"
 	{   eat_comments( parser );
                         goto Document;
                     }
-#line 772 "token.c"
-yy51:
+#line 1110 "token.c"
+yy65:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '-':
@@ -836,16 +1174,16 @@ yy51:
 		case 'w':
 		case 'x':
 		case 'y':
-		case 'z': goto yy62;
-		default: goto yy42;
+		case 'z': goto yy76;
+		default: goto yy56;
 	}
-yy52:
+yy66:
 	++YYCURSOR;
-#line 520 "token.re"
+#line 554 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         goto SingleQuote; }
-#line 847 "token.c"
-yy53:
+#line 1185 "token.c"
+yy67:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '-':
@@ -911,34 +1249,34 @@ yy53:
 		case 'w':
 		case 'x':
 		case 'y':
-		case 'z': goto yy64;
-		default: goto yy42;
+		case 'z': goto yy78;
+		default: goto yy56;
 	}
-yy54:
+yy68:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy66;
-		case '\r': goto yy68;
-		case ' ': goto yy69;
-		default: goto yy42;
+		case '\n': goto yy80;
+		case '\r': goto yy82;
+		case ' ': goto yy83;
+		default: goto yy56;
 	}
-yy55:
+yy69:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy70;
-		case '\r': goto yy72;
-		case ' ': goto yy73;
-		default: goto yy42;
+		case '\n': goto yy84;
+		case '\r': goto yy86;
+		case ' ': goto yy87;
+		default: goto yy56;
 	}
-yy56:
+yy70:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy74;
-		case '\r': goto yy76;
-		case ' ': goto yy77;
+		case '\n': goto yy88;
+		case '\r': goto yy90;
+		case ' ': goto yy91;
 		case '+':
 		case '-':
 		case '0':
@@ -950,50 +1288,50 @@ yy56:
 		case '6':
 		case '7':
 		case '8':
-		case '9': goto yy78;
-		default: goto yy42;
+		case '9': goto yy92;
+		default: goto yy56;
 	}
-yy57:
+yy71:
 	++YYCURSOR;
-#line 462 "token.re"
+#line 496 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         lvl = CURRENT_LEVEL();
                         ADD_LEVEL(lvl->spaces + 1, syck_lvl_iseq);
                         return YYTOKEN[0];
                     }
-#line 964 "token.c"
-yy58:
+#line 1302 "token.c"
+yy72:
 	++YYCURSOR;
-#line 474 "token.re"
+#line 508 "token.re"
 	{   POP_LEVEL();
                         return YYTOKEN[0];
                     }
-#line 971 "token.c"
-yy59:
+#line 1309 "token.c"
+yy73:
 	++YYCURSOR;
-#line 468 "token.re"
+#line 502 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         lvl = CURRENT_LEVEL();
                         ADD_LEVEL(lvl->spaces + 1, syck_lvl_imap);
                         return YYTOKEN[0];
                     }
-#line 980 "token.c"
-yy60:
+#line 1318 "token.c"
+yy74:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy45;
-		default: goto yy61;
+		case '\n': goto yy59;
+		default: goto yy75;
 	}
-yy61:
+yy75:
 	YYCURSOR = YYMARKER;
 	if (yyaccept == 0) {
-		goto yy46;
+		goto yy60;
 	} else {
-		goto yy42;
+		goto yy56;
 	}
-yy62:
+yy76:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
@@ -1061,11 +1399,11 @@ yy62:
 		case 'w':
 		case 'x':
 		case 'y':
-		case 'z': goto yy62;
-		default: goto yy63;
+		case 'z': goto yy76;
+		default: goto yy77;
 	}
-yy63:
-#line 500 "token.re"
+yy77:
+#line 534 "token.re"
 	{   sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
                         DPRINTF ((stderr, "DEBUG Anchor '%s' %p\n", sycklval->name, sycklval->name));
 
@@ -1077,8 +1415,8 @@ yy63:
                         syck_hdlr_remove_anchor(parser, sycklval->name);
                         return YAML_ANCHOR;
                     }
-#line 1080 "token.c"
-yy64:
+#line 1418 "token.c"
+yy78:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
@@ -1146,21 +1484,21 @@ yy64:
 		case 'w':
 		case 'x':
 		case 'y':
-		case 'z': goto yy64;
-		default: goto yy65;
+		case 'z': goto yy78;
+		default: goto yy79;
 	}
-yy65:
-#line 512 "token.re"
+yy79:
+#line 546 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, doc_level, 1);
                         sycklval->name = syck_strndup( YYTOKEN + 1, YYCURSOR - YYTOKEN - 1 );
                         DPRINTF ((stderr, "DEBUG Alias '%s'\n", sycklval->name));
                         return YAML_ALIAS;
                     }
-#line 1159 "token.c"
-yy66:
+#line 1497 "token.c"
+yy80:
 	++YYCURSOR;
-yy67:
-#line 478 "token.re"
+yy81:
+#line 512 "token.re"
 	{   if ( *YYTOKEN == ':' && lvl->status != syck_lvl_imap && lvl->status != syck_lvl_iseq )
                         {
                             lvl->status = syck_lvl_map;
@@ -1168,25 +1506,25 @@ yy67:
                         YYPOS(1);
                         return YYTOKEN[0];
                     }
-#line 1171 "token.c"
-yy68:
+#line 1509 "token.c"
+yy82:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy66;
-		default: goto yy61;
+		case '\n': goto yy80;
+		default: goto yy75;
 	}
-yy69:
+yy83:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy69;
-		default: goto yy67;
+		case ' ': goto yy83;
+		default: goto yy81;
 	}
-yy70:
+yy84:
 	++YYCURSOR;
-yy71:
-#line 486 "token.re"
+yy85:
+#line 520 "token.re"
 	{   ENSURE_YAML_IOPEN(lvl, YYTOKEN - YYLINEPTR, 1);
                         FORCE_NEXT_TOKEN(YAML_IOPEN);
                         if ( *YYCURSOR == '#' || is_newline( YYCURSOR ) || is_newline( YYCURSOR - 1 ) )
@@ -1200,54 +1538,54 @@ yy71:
                         }
                         return YYTOKEN[0];
                     }
-#line 1203 "token.c"
-yy72:
+#line 1541 "token.c"
+yy86:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy70;
-		default: goto yy61;
+		case '\n': goto yy84;
+		default: goto yy75;
 	}
-yy73:
+yy87:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy73;
-		default: goto yy71;
+		case ' ': goto yy87;
+		default: goto yy85;
 	}
-yy74:
+yy88:
 	++YYCURSOR;
-yy75:
-#line 526 "token.re"
+yy89:
+#line 560 "token.re"
 	{   if ( is_newline( YYCURSOR - 1 ) )
                         {
                             YYCURSOR--;
                         }
                         goto ScalarBlock;
                     }
-#line 1228 "token.c"
-yy76:
+#line 1566 "token.c"
+yy90:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy74;
-		default: goto yy61;
+		case '\n': goto yy88;
+		default: goto yy75;
 	}
-yy77:
+yy91:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy77;
-		default: goto yy75;
+		case ' ': goto yy91;
+		default: goto yy89;
 	}
-yy78:
+yy92:
 	++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy74;
-		case '\r': goto yy76;
-		case ' ': goto yy77;
+		case '\n': goto yy88;
+		case '\r': goto yy90;
+		case ' ': goto yy91;
 		case '+':
 		case '-':
 		case '0':
@@ -1259,11 +1597,11 @@ yy78:
 		case '6':
 		case '7':
 		case '8':
-		case '9': goto yy78;
-		default: goto yy61;
+		case '9': goto yy92;
+		default: goto yy75;
 	}
 }
-#line 548 "token.re"
+#line 582 "token.re"
 
     }
 
@@ -1272,43 +1610,43 @@ Directive:
         YYTOKTMP = YYCURSOR;
 
 
-#line 1275 "token.c"
+#line 1613 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 11) YYFILL(11);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case 0x00: goto yy80;
+		case 0x00: goto yy94;
 		case '\t':
-		case ' ': goto yy83;
-		case '%': goto yy85;
-		default: goto yy81;
+		case ' ': goto yy97;
+		case '%': goto yy99;
+		default: goto yy95;
 	}
-yy80:
+yy94:
 	YYCURSOR = YYMARKER;
-	goto yy82;
-yy81:
+	goto yy96;
+yy95:
 	++YYCURSOR;
-yy82:
-#line 563 "token.re"
+yy96:
+#line 597 "token.re"
 	{   YYCURSOR = YYTOKTMP;
                         return YAML_DOCSEP;
                     }
-#line 1297 "token.c"
-yy83:
+#line 1635 "token.c"
+yy97:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\t':
-		case ' ': goto yy83;
-		default: goto yy84;
+		case ' ': goto yy97;
+		default: goto yy98;
 	}
-yy84:
-#line 559 "token.re"
+yy98:
+#line 593 "token.re"
 	{   goto Directive; }
-#line 1310 "token.c"
-yy85:
+#line 1648 "token.c"
+yy99:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
 		case '.':
@@ -1385,344 +1723,344 @@ yy85:
 		case 'w':
 		case 'x':
 		case 'y':
-		case 'z': goto yy86;
-		case 'Y': goto yy88;
-		default: goto yy82;
+		case 'z': goto yy100;
+		case 'Y': goto yy102;
+		default: goto yy96;
 	}
-yy86:
+yy100:
 	++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
-yy87:
-	switch (yych) {
-		case '.':
-		case '/':
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-		case ';':
-		case '<':
-		case '=':
-		case '>':
-		case '?':
-		case '@':
-		case 'A':
-		case 'B':
-		case 'C':
-		case 'D':
-		case 'E':
-		case 'F':
-		case 'G':
-		case 'H':
-		case 'I':
-		case 'J':
-		case 'K':
-		case 'L':
-		case 'M':
-		case 'N':
-		case 'O':
-		case 'P':
-		case 'Q':
-		case 'R':
-		case 'S':
-		case 'T':
-		case 'U':
-		case 'V':
-		case 'W':
-		case 'X':
-		case 'Y':
-		case 'Z':
-		case '[':
-		case '\\':
-		case ']':
-		case '^':
-		case '_':
-		case 'a':
-		case 'b':
-		case 'c':
-		case 'd':
-		case 'e':
-		case 'f':
-		case 'g':
-		case 'h':
-		case 'i':
-		case 'j':
-		case 'k':
-		case 'l':
-		case 'm':
-		case 'n':
-		case 'o':
-		case 'p':
-		case 'q':
-		case 'r':
-		case 's':
-		case 't':
-		case 'u':
-		case 'v':
-		case 'w':
-		case 'x':
-		case 'y':
-		case 'z': goto yy86;
-		case ':': goto yy89;
-		default: goto yy80;
-	}
-yy88:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case 'A': goto yy90;
-		default: goto yy87;
-	}
-yy89:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case '.':
-		case '/':
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-		case ':':
-		case ';':
-		case '<':
-		case '=':
-		case '>':
-		case '?':
-		case '@':
-		case 'A':
-		case 'B':
-		case 'C':
-		case 'D':
-		case 'E':
-		case 'F':
-		case 'G':
-		case 'H':
-		case 'I':
-		case 'J':
-		case 'K':
-		case 'L':
-		case 'M':
-		case 'N':
-		case 'O':
-		case 'P':
-		case 'Q':
-		case 'R':
-		case 'S':
-		case 'T':
-		case 'U':
-		case 'V':
-		case 'W':
-		case 'X':
-		case 'Y':
-		case 'Z':
-		case '[':
-		case '\\':
-		case ']':
-		case '^':
-		case '_':
-		case 'a':
-		case 'b':
-		case 'c':
-		case 'd':
-		case 'e':
-		case 'f':
-		case 'g':
-		case 'h':
-		case 'i':
-		case 'j':
-		case 'k':
-		case 'l':
-		case 'm':
-		case 'n':
-		case 'o':
-		case 'p':
-		case 'q':
-		case 'r':
-		case 's':
-		case 't':
-		case 'u':
-		case 'v':
-		case 'w':
-		case 'x':
-		case 'y':
-		case 'z': goto yy91;
-		default: goto yy80;
-	}
-yy90:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case 'M': goto yy93;
-		default: goto yy87;
-	}
-yy91:
-	++YYCURSOR;
-	if (YYLIMIT <= YYCURSOR) YYFILL(1);
-	yych = *YYCURSOR;
-	switch (yych) {
-		case '.':
-		case '/':
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-		case ':':
-		case ';':
-		case '<':
-		case '=':
-		case '>':
-		case '?':
-		case '@':
-		case 'A':
-		case 'B':
-		case 'C':
-		case 'D':
-		case 'E':
-		case 'F':
-		case 'G':
-		case 'H':
-		case 'I':
-		case 'J':
-		case 'K':
-		case 'L':
-		case 'M':
-		case 'N':
-		case 'O':
-		case 'P':
-		case 'Q':
-		case 'R':
-		case 'S':
-		case 'T':
-		case 'U':
-		case 'V':
-		case 'W':
-		case 'X':
-		case 'Y':
-		case 'Z':
-		case '[':
-		case '\\':
-		case ']':
-		case '^':
-		case '_':
-		case 'a':
-		case 'b':
-		case 'c':
-		case 'd':
-		case 'e':
-		case 'f':
-		case 'g':
-		case 'h':
-		case 'i':
-		case 'j':
-		case 'k':
-		case 'l':
-		case 'm':
-		case 'n':
-		case 'o':
-		case 'p':
-		case 'q':
-		case 'r':
-		case 's':
-		case 't':
-		case 'u':
-		case 'v':
-		case 'w':
-		case 'x':
-		case 'y':
-		case 'z': goto yy91;
-		default: goto yy92;
-	}
-yy92:
-#line 557 "token.re"
-	{   goto Directive; }
-#line 1655 "token.c"
-yy93:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case 'L': goto yy94;
-		default: goto yy87;
-	}
-yy94:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case ' ': goto yy95;
-		default: goto yy87;
-	}
-yy95:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case '0':
-		case '1': goto yy96;
-		default: goto yy80;
-	}
-yy96:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case '.': goto yy97;
-		default: goto yy80;
-	}
-yy97:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9': goto yy98;
-		default: goto yy80;
-	}
-yy98:
-	yych = *++YYCURSOR;
-	switch (yych) {
-		case '\n': goto yy99;
-		case '\r': goto yy101;
-		case ' ': goto yy102;
-		default: goto yy80;
-	}
-yy99:
-	++YYCURSOR;
-yy100:
-#line 561 "token.re"
-	{   goto Directive; }
-#line 1709 "token.c"
 yy101:
-	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy99;
-		default: goto yy80;
+		case '.':
+		case '/':
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case ';':
+		case '<':
+		case '=':
+		case '>':
+		case '?':
+		case '@':
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+		case 'G':
+		case 'H':
+		case 'I':
+		case 'J':
+		case 'K':
+		case 'L':
+		case 'M':
+		case 'N':
+		case 'O':
+		case 'P':
+		case 'Q':
+		case 'R':
+		case 'S':
+		case 'T':
+		case 'U':
+		case 'V':
+		case 'W':
+		case 'X':
+		case 'Y':
+		case 'Z':
+		case '[':
+		case '\\':
+		case ']':
+		case '^':
+		case '_':
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+		case 'g':
+		case 'h':
+		case 'i':
+		case 'j':
+		case 'k':
+		case 'l':
+		case 'm':
+		case 'n':
+		case 'o':
+		case 'p':
+		case 'q':
+		case 'r':
+		case 's':
+		case 't':
+		case 'u':
+		case 'v':
+		case 'w':
+		case 'x':
+		case 'y':
+		case 'z': goto yy100;
+		case ':': goto yy103;
+		default: goto yy94;
 	}
 yy102:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case 'A': goto yy104;
+		default: goto yy101;
+	}
+yy103:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '.':
+		case '/':
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case ':':
+		case ';':
+		case '<':
+		case '=':
+		case '>':
+		case '?':
+		case '@':
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+		case 'G':
+		case 'H':
+		case 'I':
+		case 'J':
+		case 'K':
+		case 'L':
+		case 'M':
+		case 'N':
+		case 'O':
+		case 'P':
+		case 'Q':
+		case 'R':
+		case 'S':
+		case 'T':
+		case 'U':
+		case 'V':
+		case 'W':
+		case 'X':
+		case 'Y':
+		case 'Z':
+		case '[':
+		case '\\':
+		case ']':
+		case '^':
+		case '_':
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+		case 'g':
+		case 'h':
+		case 'i':
+		case 'j':
+		case 'k':
+		case 'l':
+		case 'm':
+		case 'n':
+		case 'o':
+		case 'p':
+		case 'q':
+		case 'r':
+		case 's':
+		case 't':
+		case 'u':
+		case 'v':
+		case 'w':
+		case 'x':
+		case 'y':
+		case 'z': goto yy105;
+		default: goto yy94;
+	}
+yy104:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case 'M': goto yy107;
+		default: goto yy101;
+	}
+yy105:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy102;
-		default: goto yy100;
+		case '.':
+		case '/':
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case ':':
+		case ';':
+		case '<':
+		case '=':
+		case '>':
+		case '?':
+		case '@':
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+		case 'G':
+		case 'H':
+		case 'I':
+		case 'J':
+		case 'K':
+		case 'L':
+		case 'M':
+		case 'N':
+		case 'O':
+		case 'P':
+		case 'Q':
+		case 'R':
+		case 'S':
+		case 'T':
+		case 'U':
+		case 'V':
+		case 'W':
+		case 'X':
+		case 'Y':
+		case 'Z':
+		case '[':
+		case '\\':
+		case ']':
+		case '^':
+		case '_':
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+		case 'g':
+		case 'h':
+		case 'i':
+		case 'j':
+		case 'k':
+		case 'l':
+		case 'm':
+		case 'n':
+		case 'o':
+		case 'p':
+		case 'q':
+		case 'r':
+		case 's':
+		case 't':
+		case 'u':
+		case 'v':
+		case 'w':
+		case 'x':
+		case 'y':
+		case 'z': goto yy105;
+		default: goto yy106;
+	}
+yy106:
+#line 591 "token.re"
+	{   goto Directive; }
+#line 1993 "token.c"
+yy107:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case 'L': goto yy108;
+		default: goto yy101;
+	}
+yy108:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case ' ': goto yy109;
+		default: goto yy101;
+	}
+yy109:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '0':
+		case '1': goto yy110;
+		default: goto yy94;
+	}
+yy110:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '.': goto yy111;
+		default: goto yy94;
+	}
+yy111:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9': goto yy112;
+		default: goto yy94;
+	}
+yy112:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '\n': goto yy113;
+		case '\r': goto yy115;
+		case ' ': goto yy116;
+		default: goto yy94;
+	}
+yy113:
+	++YYCURSOR;
+yy114:
+#line 595 "token.re"
+	{   goto Directive; }
+#line 2047 "token.c"
+yy115:
+	yych = *++YYCURSOR;
+	switch (yych) {
+		case '\n': goto yy113;
+		default: goto yy94;
+	}
+yy116:
+	++YYCURSOR;
+	if (YYLIMIT <= YYCURSOR) YYFILL(1);
+	yych = *YYCURSOR;
+	switch (yych) {
+		case ' ': goto yy116;
+		default: goto yy114;
 	}
 }
-#line 566 "token.re"
+#line 600 "token.re"
 
 
     }
@@ -1745,41 +2083,41 @@ Plain2:
 Plain3:
 
 
-#line 1748 "token.c"
+#line 2086 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
 	if ((YYLIMIT - YYCURSOR) < 3) YYFILL(3);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case 0x00: goto yy104;
-		case '\t': goto yy107;
-		case '\n': goto yy109;
-		case '\r': goto yy111;
-		case ' ': goto yy112;
-		case ',': goto yy113;
-		case ':': goto yy114;
-		case ']': goto yy115;
-		case '}': goto yy116;
-		default: goto yy105;
+		case 0x00: goto yy118;
+		case '\t': goto yy121;
+		case '\n': goto yy123;
+		case '\r': goto yy125;
+		case ' ': goto yy126;
+		case ',': goto yy127;
+		case ':': goto yy128;
+		case ']': goto yy129;
+		case '}': goto yy130;
+		default: goto yy119;
 	}
-yy104:
+yy118:
 	++YYCURSOR;
-#line 662 "token.re"
+#line 696 "token.re"
 	{   RETURN_IMPLICIT(); }
-#line 1770 "token.c"
-yy105:
+#line 2108 "token.c"
+yy119:
 	++YYCURSOR;
-yy106:
-#line 674 "token.re"
+yy120:
+#line 708 "token.re"
 	{   QUOTECATS(qstr, qcapa, qidx, YYTOKEN, YYCURSOR - YYTOKEN);
                         goto Plain2;
                     }
-#line 1778 "token.c"
-yy107:
+#line 2116 "token.c"
+yy121:
 	++YYCURSOR;
-yy108:
-#line 664 "token.re"
+yy122:
+#line 698 "token.re"
 	{   if ( qidx == 0 )
                         {
                             goto Plain2;
@@ -1789,20 +2127,20 @@ yy108:
                             goto Plain3;
                         }
                     }
-#line 1792 "token.c"
-yy109:
+#line 2130 "token.c"
+yy123:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\n':
-		case ' ': goto yy109;
-		case '\r': goto yy117;
-		default: goto yy110;
+		case ' ': goto yy123;
+		case '\r': goto yy131;
+		default: goto yy124;
 	}
-yy110:
-#line 589 "token.re"
+yy124:
+#line 623 "token.re"
 	{   int indt_len, nl_count = 0;
                         char *tok = YYTOKEN;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
@@ -1836,40 +2174,40 @@ yy110:
 
                         goto Plain2;
                     }
-#line 1839 "token.c"
-yy111:
+#line 2177 "token.c"
+yy125:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy109;
-		default: goto yy106;
+		case '\n': goto yy123;
+		default: goto yy120;
 	}
-yy112:
+yy126:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '#': goto yy119;
-		default: goto yy108;
+		case '#': goto yy133;
+		default: goto yy122;
 	}
-yy113:
+yy127:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy120;
-		case '\r': goto yy122;
-		case ' ': goto yy123;
-		default: goto yy106;
+		case '\n': goto yy134;
+		case '\r': goto yy136;
+		case ' ': goto yy137;
+		default: goto yy120;
 	}
-yy114:
+yy128:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy124;
-		case '\r': goto yy126;
-		case ' ': goto yy127;
-		default: goto yy106;
+		case '\n': goto yy138;
+		case '\r': goto yy140;
+		case ' ': goto yy141;
+		default: goto yy120;
 	}
-yy115:
+yy129:
 	++YYCURSOR;
-#line 647 "token.re"
+#line 681 "token.re"
 	{   if ( plvl->status != syck_lvl_iseq )
                         {
                             PLAIN_NOT_INL();
@@ -1880,10 +2218,10 @@ yy115:
                         }
                         RETURN_IMPLICIT();
                     }
-#line 1883 "token.c"
-yy116:
+#line 2221 "token.c"
+yy130:
 	++YYCURSOR;
-#line 636 "token.re"
+#line 670 "token.re"
 	{   if ( plvl->status != syck_lvl_imap )
                         {
                             PLAIN_NOT_INL();
@@ -1894,33 +2232,33 @@ yy116:
                         }
                         RETURN_IMPLICIT();
                     }
-#line 1897 "token.c"
-yy117:
+#line 2235 "token.c"
+yy131:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy109;
-		default: goto yy118;
+		case '\n': goto yy123;
+		default: goto yy132;
 	}
-yy118:
+yy132:
 	YYCURSOR = YYMARKER;
 	if (yyaccept == 0) {
-		goto yy110;
+		goto yy124;
 	} else {
-		goto yy106;
+		goto yy120;
 	}
-yy119:
+yy133:
 	++YYCURSOR;
-#line 658 "token.re"
+#line 692 "token.re"
 	{   eat_comments( parser );
                         RETURN_IMPLICIT();
                     }
-#line 1919 "token.c"
-yy120:
+#line 2257 "token.c"
+yy134:
 	++YYCURSOR;
-yy121:
-#line 625 "token.re"
+yy135:
+#line 659 "token.re"
 	{   if ( plvl->status != syck_lvl_iseq && plvl->status != syck_lvl_imap )
                         {
                             PLAIN_NOT_INL();
@@ -1931,43 +2269,43 @@ yy121:
                         }
                         RETURN_IMPLICIT();
                     }
-#line 1934 "token.c"
-yy122:
+#line 2272 "token.c"
+yy136:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy120;
-		default: goto yy118;
+		case '\n': goto yy134;
+		default: goto yy132;
 	}
-yy123:
+yy137:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy123;
-		default: goto yy121;
+		case ' ': goto yy137;
+		default: goto yy135;
 	}
-yy124:
+yy138:
 	++YYCURSOR;
-yy125:
-#line 623 "token.re"
+yy139:
+#line 657 "token.re"
 	{   RETURN_IMPLICIT(); }
-#line 1954 "token.c"
-yy126:
+#line 2292 "token.c"
+yy140:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy124;
-		default: goto yy118;
+		case '\n': goto yy138;
+		default: goto yy132;
 	}
-yy127:
+yy141:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy127;
-		default: goto yy125;
+		case ' ': goto yy141;
+		default: goto yy139;
 	}
 }
-#line 678 "token.re"
+#line 712 "token.re"
 
     }
 
@@ -1981,22 +2319,22 @@ SingleQuote2:
         YYTOKEN = YYCURSOR;
 
 
-#line 1984 "token.c"
+#line 2322 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case 0x00: goto yy129;
-		case '\n': goto yy133;
-		case '\r': goto yy135;
-		case '\'': goto yy136;
-		default: goto yy131;
+		case 0x00: goto yy143;
+		case '\n': goto yy147;
+		case '\r': goto yy149;
+		case '\'': goto yy150;
+		default: goto yy145;
 	}
-yy129:
+yy143:
 	++YYCURSOR;
-yy130:
-#line 736 "token.re"
+yy144:
+#line 770 "token.re"
 	{   SyckLevel *lvl;
                         SyckNode *n = syck_alloc_str();
                         lvl = CURRENT_LEVEL();
@@ -2019,27 +2357,27 @@ yy130:
                         sycklval->nodeData = n;
                         return YAML_PLAIN;
                     }
-#line 2022 "token.c"
-yy131:
+#line 2360 "token.c"
+yy145:
 	++YYCURSOR;
-yy132:
-#line 759 "token.re"
+yy146:
+#line 793 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto SingleQuote2;
                     }
-#line 2030 "token.c"
-yy133:
+#line 2368 "token.c"
+yy147:
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\n':
-		case ' ': goto yy133;
-		case '\r': goto yy137;
-		default: goto yy134;
+		case ' ': goto yy147;
+		case '\r': goto yy151;
+		default: goto yy148;
 	}
-yy134:
-#line 692 "token.re"
+yy148:
+#line 726 "token.re"
 	{   int indt_len;
                         int nl_count = 0;
                         SyckLevel *lvl;
@@ -2079,39 +2417,39 @@ yy134:
 
                         goto SingleQuote2;
                     }
-#line 2082 "token.c"
-yy135:
+#line 2420 "token.c"
+yy149:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy133;
-		default: goto yy132;
+		case '\n': goto yy147;
+		default: goto yy146;
 	}
-yy136:
+yy150:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\'': goto yy139;
-		default: goto yy130;
+		case '\'': goto yy153;
+		default: goto yy144;
 	}
-yy137:
+yy151:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy133;
-		default: goto yy138;
+		case '\n': goto yy147;
+		default: goto yy152;
 	}
-yy138:
+yy152:
 	YYCURSOR = YYMARKER;
-	goto yy134;
-yy139:
+	goto yy148;
+yy153:
 	++YYCURSOR;
-#line 732 "token.re"
+#line 766 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, '\'');
                         goto SingleQuote2;
                     }
-#line 2112 "token.c"
+#line 2450 "token.c"
 }
-#line 763 "token.re"
+#line 797 "token.re"
 
 
     }
@@ -2129,7 +2467,7 @@ DoubleQuote2:
 
 
 
-#line 2132 "token.c"
+#line 2470 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
@@ -2137,15 +2475,15 @@ DoubleQuote2:
 	yych = *YYCURSOR;
 	switch (yych) {
 		case 0x00:
-		case '"': goto yy141;
-		case '\n': goto yy144;
-		case '\r': goto yy146;
-		case '\\': goto yy147;
-		default: goto yy142;
+		case '"': goto yy155;
+		case '\n': goto yy158;
+		case '\r': goto yy160;
+		case '\\': goto yy161;
+		default: goto yy156;
 	}
-yy141:
+yy155:
 	++YYCURSOR;
-#line 844 "token.re"
+#line 878 "token.re"
 	{   SyckLevel *lvl;
                         SyckNode *n = syck_alloc_str();
                         lvl = CURRENT_LEVEL();
@@ -2168,28 +2506,28 @@ yy141:
                         sycklval->nodeData = n;
                         return YAML_PLAIN;
                     }
-#line 2171 "token.c"
-yy142:
+#line 2509 "token.c"
+yy156:
 	++YYCURSOR;
-yy143:
-#line 867 "token.re"
+yy157:
+#line 901 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto DoubleQuote2;
                     }
-#line 2179 "token.c"
-yy144:
+#line 2517 "token.c"
+yy158:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\n':
-		case ' ': goto yy144;
-		case '\r': goto yy148;
-		default: goto yy145;
+		case ' ': goto yy158;
+		case '\r': goto yy162;
+		default: goto yy159;
 	}
-yy145:
-#line 781 "token.re"
+yy159:
+#line 815 "token.re"
 	{   int indt_len;
                         int nl_count = 0;
                         SyckLevel *lvl;
@@ -2233,20 +2571,20 @@ yy145:
                         keep_nl = 1;
                         goto DoubleQuote2;
                     }
-#line 2236 "token.c"
-yy146:
+#line 2574 "token.c"
+yy160:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy144;
-		default: goto yy143;
+		case '\n': goto yy158;
+		default: goto yy157;
 	}
-yy147:
+yy161:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '\n': goto yy150;
-		case '\r': goto yy151;
-		case ' ': goto yy152;
+		case '\n': goto yy164;
+		case '\r': goto yy165;
+		case ' ': goto yy166;
 		case '"':
 		case '0':
 		case '\\':
@@ -2257,58 +2595,58 @@ yy147:
 		case 'n':
 		case 'r':
 		case 't':
-		case 'v': goto yy153;
-		case 'x': goto yy154;
-		default: goto yy143;
+		case 'v': goto yy167;
+		case 'x': goto yy168;
+		default: goto yy157;
 	}
-yy148:
+yy162:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy144;
-		default: goto yy149;
+		case '\n': goto yy158;
+		default: goto yy163;
 	}
-yy149:
+yy163:
 	YYCURSOR = YYMARKER;
 	if (yyaccept == 0) {
-		goto yy145;
+		goto yy159;
 	} else {
-		goto yy143;
+		goto yy157;
 	}
-yy150:
+yy164:
 	++YYCURSOR;
-#line 839 "token.re"
+#line 873 "token.re"
 	{   keep_nl = 0;
                         YYCURSOR--;
                         goto DoubleQuote2;
                     }
-#line 2286 "token.c"
-yy151:
+#line 2624 "token.c"
+yy165:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy150;
-		default: goto yy149;
+		case '\n': goto yy164;
+		default: goto yy163;
 	}
-yy152:
+yy166:
 	++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy150;
-		case '\r': goto yy151;
-		case ' ': goto yy152;
-		default: goto yy149;
+		case '\n': goto yy164;
+		case '\r': goto yy165;
+		case ' ': goto yy166;
+		default: goto yy163;
 	}
-yy153:
+yy167:
 	++YYCURSOR;
-#line 825 "token.re"
+#line 859 "token.re"
 	{   char ch = *( YYCURSOR - 1 );
                         QUOTECAT(qstr, qcapa, qidx, escape_seq( ch ));
                         goto DoubleQuote2;
                     }
-#line 2310 "token.c"
-yy154:
+#line 2648 "token.c"
+yy168:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
@@ -2332,10 +2670,10 @@ yy154:
 		case 'c':
 		case 'd':
 		case 'e':
-		case 'f': goto yy155;
-		default: goto yy149;
+		case 'f': goto yy169;
+		default: goto yy163;
 	}
-yy155:
+yy169:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
@@ -2359,12 +2697,12 @@ yy155:
 		case 'c':
 		case 'd':
 		case 'e':
-		case 'f': goto yy156;
-		default: goto yy149;
+		case 'f': goto yy170;
+		default: goto yy163;
 	}
-yy156:
+yy170:
 	++YYCURSOR;
-#line 830 "token.re"
+#line 864 "token.re"
 	{   long ch;
                         char *chr_text = syck_strndup( YYTOKEN, 4 );
                         chr_text[0] = '0';
@@ -2373,9 +2711,9 @@ yy156:
                         QUOTECAT(qstr, qcapa, qidx, ch);
                         goto DoubleQuote2;
                     }
-#line 2376 "token.c"
+#line 2714 "token.c"
 }
-#line 871 "token.re"
+#line 905 "token.re"
 
     }
 
@@ -2389,23 +2727,23 @@ TransferMethod2:
         YYTOKTMP = YYCURSOR;
 
 
-#line 2392 "token.c"
+#line 2730 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 4) YYFILL(4);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case 0x00:
-		case '\n': goto yy158;
-		case '\r': goto yy162;
-		case ' ': goto yy163;
-		case '\\': goto yy164;
-		default: goto yy160;
+		case '\n': goto yy172;
+		case '\r': goto yy176;
+		case ' ': goto yy177;
+		case '\\': goto yy178;
+		default: goto yy174;
 	}
-yy158:
+yy172:
 	++YYCURSOR;
-yy159:
-#line 884 "token.re"
+yy173:
+#line 918 "token.re"
 	{   SyckLevel *lvl;
                         YYCURSOR = YYTOKTMP;
                         if ( YYCURSOR == YYTOKEN + 1 )
@@ -2456,30 +2794,30 @@ yy159:
                         DPRINTF ((stderr, "DEBUG Transfer name '%s'\n", sycklval->name));
                         return YAML_TRANSFER;
                     }
-#line 2459 "token.c"
-yy160:
+#line 2797 "token.c"
+yy174:
 	++YYCURSOR;
-yy161:
-#line 952 "token.re"
+yy175:
+#line 986 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *(YYCURSOR - 1));
                         goto TransferMethod2;
                     }
-#line 2467 "token.c"
-yy162:
+#line 2805 "token.c"
+yy176:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy158;
-		default: goto yy161;
+		case '\n': goto yy172;
+		default: goto yy175;
 	}
-yy163:
+yy177:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy163;
-		default: goto yy159;
+		case ' ': goto yy177;
+		default: goto yy173;
 	}
-yy164:
+yy178:
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
 		case '"':
@@ -2492,19 +2830,19 @@ yy164:
 		case 'n':
 		case 'r':
 		case 't':
-		case 'v': goto yy165;
-		case 'x': goto yy166;
-		default: goto yy161;
+		case 'v': goto yy179;
+		case 'x': goto yy180;
+		default: goto yy175;
 	}
-yy165:
+yy179:
 	++YYCURSOR;
-#line 938 "token.re"
+#line 972 "token.re"
 	{  char ch = *( YYCURSOR - 1 );
                         QUOTECAT(qstr, qcapa, qidx, escape_seq( ch ));
                         goto TransferMethod2;
                     }
-#line 2506 "token.c"
-yy166:
+#line 2844 "token.c"
+yy180:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
@@ -2528,13 +2866,13 @@ yy166:
 		case 'c':
 		case 'd':
 		case 'e':
-		case 'f': goto yy168;
-		default: goto yy167;
+		case 'f': goto yy182;
+		default: goto yy181;
 	}
-yy167:
+yy181:
 	YYCURSOR = YYMARKER;
-	goto yy161;
-yy168:
+	goto yy175;
+yy182:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
@@ -2558,12 +2896,12 @@ yy168:
 		case 'c':
 		case 'd':
 		case 'e':
-		case 'f': goto yy169;
-		default: goto yy167;
+		case 'f': goto yy183;
+		default: goto yy181;
 	}
-yy169:
+yy183:
 	++YYCURSOR;
-#line 943 "token.re"
+#line 977 "token.re"
 	{   long ch;
                         char *chr_text = syck_strndup( YYTOKTMP, 4 );
                         chr_text[0] = '0';
@@ -2572,9 +2910,9 @@ yy169:
                         QUOTECAT(qstr, qcapa, qidx, ch);
                         goto TransferMethod2;
                     }
-#line 2575 "token.c"
+#line 2913 "token.c"
 }
-#line 955 "token.re"
+#line 989 "token.re"
 
     }
 
@@ -2621,50 +2959,50 @@ ScalarBlock2:
         YYTOKEN = YYCURSOR;
 
 
-#line 2624 "token.c"
+#line 2962 "token.c"
 {
 	YYCTYPE yych;
 	unsigned int yyaccept = 0;
 	if ((YYLIMIT - YYCURSOR) < 13) YYFILL(13);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case 0x00: goto yy171;
-		case '\n': goto yy174;
-		case '\r': goto yy176;
-		case '#': goto yy177;
-		case '%': goto yy178;
-		case '-': goto yy179;
-		default: goto yy172;
+		case 0x00: goto yy185;
+		case '\n': goto yy188;
+		case '\r': goto yy190;
+		case '#': goto yy191;
+		case '%': goto yy192;
+		case '-': goto yy193;
+		default: goto yy186;
 	}
-yy171:
+yy185:
 	++YYCURSOR;
-#line 1092 "token.re"
+#line 1126 "token.re"
 	{   YYCURSOR--;
                         POP_LEVEL();
                         RETURN_YAML_BLOCK();
                     }
-#line 2646 "token.c"
-yy172:
+#line 2984 "token.c"
+yy186:
 	++YYCURSOR;
-yy173:
-#line 1121 "token.re"
+yy187:
+#line 1155 "token.re"
 	{   QUOTECAT(qstr, qcapa, qidx, *YYTOKEN);
                         goto ScalarBlock2;
                     }
-#line 2654 "token.c"
-yy174:
+#line 2992 "token.c"
+yy188:
 	yyaccept = 0;
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
 		case '\n':
-		case ' ': goto yy174;
-		case '\r': goto yy180;
-		default: goto yy175;
+		case ' ': goto yy188;
+		case '\r': goto yy194;
+		default: goto yy189;
 	}
-yy175:
-#line 1002 "token.re"
+yy189:
+#line 1036 "token.re"
 	{   char *pacer;
                         char *tok = YYTOKEN;
                         int indt_len = 0, nl_count = 0, fold_nl = 0, nl_begin = 0;
@@ -2739,16 +3077,16 @@ yy175:
                         }
                         goto ScalarBlock2;
                     }
-#line 2742 "token.c"
-yy176:
+#line 3080 "token.c"
+yy190:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy174;
-		default: goto yy173;
+		case '\n': goto yy188;
+		default: goto yy187;
 	}
-yy177:
+yy191:
 	++YYCURSOR;
-#line 1078 "token.re"
+#line 1112 "token.re"
 	{   lvl = CURRENT_LEVEL();
                         if ( lvl->status != syck_lvl_block )
                         {
@@ -2761,72 +3099,72 @@ yy177:
                         }
                         goto ScalarBlock2;
                     }
-#line 2764 "token.c"
-yy178:
+#line 3102 "token.c"
+yy192:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case 'Y': goto yy182;
-		default: goto yy173;
+		case 'Y': goto yy196;
+		default: goto yy187;
 	}
-yy179:
+yy193:
 	yyaccept = 1;
 	yych = *(YYMARKER = ++YYCURSOR);
 	switch (yych) {
-		case '-': goto yy183;
-		default: goto yy173;
+		case '-': goto yy197;
+		default: goto yy187;
 	}
-yy180:
+yy194:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy174;
-		default: goto yy181;
+		case '\n': goto yy188;
+		default: goto yy195;
 	}
-yy181:
+yy195:
 	YYCURSOR = YYMARKER;
 	switch (yyaccept) {
-		case 0: goto yy175;
-		case 1: goto yy173;
-		default: goto yy200;
+		case 0: goto yy189;
+		case 1: goto yy187;
+		default: goto yy214;
 	}
-yy182:
+yy196:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case 'A': goto yy184;
-		default: goto yy181;
+		case 'A': goto yy198;
+		default: goto yy195;
 	}
-yy183:
+yy197:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '-': goto yy185;
-		default: goto yy181;
+		case '-': goto yy199;
+		default: goto yy195;
 	}
-yy184:
+yy198:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case 'M': goto yy186;
-		default: goto yy181;
+		case 'M': goto yy200;
+		default: goto yy195;
 	}
-yy185:
+yy199:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy187;
-		case '\r': goto yy189;
-		case ' ': goto yy190;
-		default: goto yy181;
+		case '\n': goto yy201;
+		case '\r': goto yy203;
+		case ' ': goto yy204;
+		default: goto yy195;
 	}
-yy186:
+yy200:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case 'L': goto yy191;
-		default: goto yy181;
+		case 'L': goto yy205;
+		default: goto yy195;
 	}
-yy187:
+yy201:
 	++YYCURSOR;
-yy188:
-#line 1097 "token.re"
+yy202:
+#line 1131 "token.re"
 	{   if ( YYTOKEN == YYLINEPTR )
                         {
                             if ( blockType == BLOCK_FOLD && qidx > 0 )
@@ -2846,41 +3184,41 @@ yy188:
                             goto ScalarBlock2;
                         }
                     }
-#line 2849 "token.c"
-yy189:
+#line 3187 "token.c"
+yy203:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy187;
-		default: goto yy181;
+		case '\n': goto yy201;
+		default: goto yy195;
 	}
-yy190:
+yy204:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy190;
-		default: goto yy188;
+		case ' ': goto yy204;
+		default: goto yy202;
 	}
-yy191:
+yy205:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy192;
-		default: goto yy181;
+		case ' ': goto yy206;
+		default: goto yy195;
 	}
-yy192:
+yy206:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
-		case '1': goto yy193;
-		default: goto yy181;
+		case '1': goto yy207;
+		default: goto yy195;
 	}
-yy193:
+yy207:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '.': goto yy194;
-		default: goto yy181;
+		case '.': goto yy208;
+		default: goto yy195;
 	}
-yy194:
+yy208:
 	yych = *++YYCURSOR;
 	switch (yych) {
 		case '0':
@@ -2892,74 +3230,74 @@ yy194:
 		case '6':
 		case '7':
 		case '8':
-		case '9': goto yy195;
-		default: goto yy181;
+		case '9': goto yy209;
+		default: goto yy195;
 	}
-yy195:
+yy209:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy196;
-		case '\r': goto yy197;
-		case ' ': goto yy198;
-		default: goto yy181;
+		case '\n': goto yy210;
+		case '\r': goto yy211;
+		case ' ': goto yy212;
+		default: goto yy195;
 	}
-yy196:
+yy210:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy199;
-		case '\r': goto yy201;
-		case ' ': goto yy202;
-		default: goto yy181;
+		case '\n': goto yy213;
+		case '\r': goto yy215;
+		case ' ': goto yy216;
+		default: goto yy195;
 	}
-yy197:
+yy211:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy196;
-		default: goto yy181;
+		case '\n': goto yy210;
+		default: goto yy195;
 	}
-yy198:
+yy212:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy199;
-		case '\r': goto yy201;
-		case ' ': goto yy203;
-		default: goto yy181;
+		case '\n': goto yy213;
+		case '\r': goto yy215;
+		case ' ': goto yy217;
+		default: goto yy195;
 	}
-yy199:
+yy213:
 	++YYCURSOR;
-yy200:
-#line 1117 "token.re"
+yy214:
+#line 1151 "token.re"
 	{   YYCURSOR = YYTOKEN;
                         return YAML_VERSION_DIR;
                     }
-#line 2935 "token.c"
-yy201:
+#line 3273 "token.c"
+yy215:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy199;
-		default: goto yy181;
+		case '\n': goto yy213;
+		default: goto yy195;
 	}
-yy202:
+yy216:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case ' ': goto yy202;
-		default: goto yy200;
+		case ' ': goto yy216;
+		default: goto yy214;
 	}
-yy203:
+yy217:
 	yyaccept = 2;
 	YYMARKER = ++YYCURSOR;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy199;
-		case '\r': goto yy201;
-		case ' ': goto yy203;
-		default: goto yy200;
+		case '\n': goto yy213;
+		case '\r': goto yy215;
+		case ' ': goto yy217;
+		default: goto yy214;
 	}
 }
-#line 1126 "token.re"
+#line 1160 "token.re"
 
     }
 
@@ -2975,60 +3313,60 @@ Comment:
         YYTOKEN = YYCURSOR;
 
 
-#line 2978 "token.c"
+#line 3316 "token.c"
 {
 	YYCTYPE yych;
 	if ((YYLIMIT - YYCURSOR) < 2) YYFILL(2);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case 0x00: goto yy205;
-		case '\n': goto yy209;
-		case '\r': goto yy210;
-		default: goto yy207;
+		case 0x00: goto yy219;
+		case '\n': goto yy223;
+		case '\r': goto yy224;
+		default: goto yy221;
 	}
-yy205:
+yy219:
 	++YYCURSOR;
-yy206:
-#line 1142 "token.re"
+yy220:
+#line 1176 "token.re"
 	{   YYCURSOR = YYTOKEN;
                         return;
                     }
-#line 2996 "token.c"
-yy207:
+#line 3334 "token.c"
+yy221:
 	++YYCURSOR;
-yy208:
-#line 1146 "token.re"
+yy222:
+#line 1180 "token.re"
 	{   goto Comment;
                     }
-#line 3003 "token.c"
-yy209:
+#line 3341 "token.c"
+yy223:
 	YYMARKER = ++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy209;
-		case '\r': goto yy211;
-		default: goto yy206;
+		case '\n': goto yy223;
+		case '\r': goto yy225;
+		default: goto yy220;
 	}
-yy210:
+yy224:
 	yych = *++YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy209;
-		default: goto yy208;
+		case '\n': goto yy223;
+		default: goto yy222;
 	}
-yy211:
+yy225:
 	++YYCURSOR;
 	if (YYLIMIT <= YYCURSOR) YYFILL(1);
 	yych = *YYCURSOR;
 	switch (yych) {
-		case '\n': goto yy209;
-		default: goto yy212;
+		case '\n': goto yy223;
+		default: goto yy226;
 	}
-yy212:
+yy226:
 	YYCURSOR = YYMARKER;
-	goto yy206;
+	goto yy220;
 }
-#line 1149 "token.re"
+#line 1183 "token.re"
 
 
     }

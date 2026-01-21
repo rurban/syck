@@ -1289,15 +1289,15 @@ static void YtsSpecificationExamples_5_1_todo(CuTest *tc) {
     {T_STR, 0, "", NULL, 0},
     end_node};
   CuStreamCompare(tc, /* UTF-8 YAML document */
-                  "﻿\xef\xbb\xbf# Comment only.\n", stream);
+                  "﻿\xef\xbb\xbf''\n", stream);
   CuStreamCompare(tc, /* UTF-16LE YAML document */
-                  "﻿\xff\xfe#\x00", stream);
+                  "﻿\xff\xfe'\x00'\x00\n\x00", stream);
   CuStreamCompare(tc, /* UTF-16BE YAML document */
-                  "﻿\xfe\xff\x00#", stream);
-  CuStreamCompare(tc, /* UTF-32BE YAML document */
-                  "﻿\x00\x00\xfe\xff\x00\x00\x00#", stream);
+                  "﻿\xfe\xff\x00'\x00'\x00\n", stream);
   CuStreamCompare(tc, /* UTF-32LE YAML document */
-                  "﻿\xff\xfe\x00\x00#\x00\x00\x00", stream);
+                  "﻿\xff\xfe\x00\x00'\x00\x00\x00'\x00\x00\x00", stream);
+  CuStreamCompare(tc, /* UTF-32BE YAML document */
+                  "﻿\x00\x00\xfe\xff\x00\x00\x00'\x00\x00\x00'", stream);
   CuRoundTrip(tc, stream);
 #endif
 }

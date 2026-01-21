@@ -21,7 +21,7 @@
 /*
  * They do my bidding...
  */
-#define YYCTYPE     char
+#define YYCTYPE     unsigned char
 #define YYCURSOR    parser->cursor
 #define YYMARKER    parser->marker
 #define YYLIMIT     parser->limit
@@ -286,10 +286,14 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
             return sycklex_yaml_utf8( sycklval, parser );
 
         case syck_yaml_utf16:
+        case syck_yaml_utf16be:
+            /* TODO convert it in memory */
             syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
             break;
 
         case syck_yaml_utf32:
+        case syck_yaml_utf32be:
+            /* TODO convert it in memory */
             syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
             break;
 
@@ -344,6 +348,11 @@ DIR = "%" YWORDP+ ":" YWORDP+ ;
 YBLOCK = [>|] [-+0-9]* ENDSPC ;
 HEX = [0-9A-Fa-f] ;
 ESCSEQ = ["\\abefnrtv0] ;
+BOM8 = "\357\273\277" ;
+BOM16LE = "\377\376" ;
+BOM16BE = "\376\377" ;
+BOM32LE = "\377\376\000\000" ;
+BOM32BE = "\000\000\376\377" ;
 
 */
 
@@ -401,6 +410,31 @@ YINDENT             {   GOBBLE_UP_YAML_INDENT( doc_level, YYTOKEN );
                     }
 
 SPCTAB+             {   doc_level = YYCURSOR - YYLINEPTR;
+                        goto Header;
+                    }
+
+BOM8                {   parser->input_type = syck_yaml_utf8;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-8\n"));
+                        goto Header;
+                    }
+BOM16LE             {   parser->input_type = syck_yaml_utf16;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-16LE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+BOM16BE             {   parser->input_type = syck_yaml_utf16be;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-16BE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+BOM32LE             {   parser->input_type = syck_yaml_utf32;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-32LE\n"));
+                        // TODO encode rest
+                        goto Header;
+                    }
+BOM32BE             {   parser->input_type = syck_yaml_utf32be;
+                        DPRINTF ((stderr, "DEBUG BOM UTF-32BE\n"));
+                        // TODO encode rest
                         goto Header;
                     }
 

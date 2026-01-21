@@ -41,7 +41,7 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n );
 %token              YAML_DOCSEP YAML_IOPEN YAML_INDENT YAML_IEND
 
 %type <nodeId>      doc basic_seq
-%type <nodeData>    atom word_rep ind_rep struct_rep atom_or_empty empty
+%type <nodeData>    atoms word_rep ind_rep struct_rep atom_or_empty empty
 %type <nodeData>    implicit_seq inline_seq implicit_map inline_map inline_seq_atom inline_map_atom
 %type <nodeData>    top_imp_seq in_implicit_seq in_inline_seq basic_mapping complex_key complex_value
 %type <nodeData>    top_imp_map in_implicit_map in_inline_map complex_mapping
@@ -55,7 +55,7 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n );
 
 %%
 
-doc     : atom
+doc     : atoms
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $1 );
         }
@@ -69,7 +69,7 @@ doc     : atom
         }
         ;
 
-atom	: word_rep
+atoms	: word_rep
         | ind_rep
         ;
 
@@ -99,7 +99,7 @@ ind_rep : struct_rep
         }
         ;
 
-atom_or_empty   : atom
+atom_or_empty   : atoms
                 | empty
                 ;
 
@@ -314,7 +314,7 @@ in_inline_seq   : inline_seq_atom
 		}
                 ;
 
-inline_seq_atom : atom
+inline_seq_atom : atoms
                 | basic_mapping
                 ;
 
@@ -364,7 +364,7 @@ top_imp_map     : YAML_TRANSFER indent_sep in_implicit_map
                 ;
 
 complex_key     : word_rep
-                | '?' atom indent_sep
+                | '?' atoms indent_sep
                 {
                     $$ = $2;
                 }
@@ -374,7 +374,7 @@ complex_value   : atom_or_empty
                 ;
 
 /* Default needs to be added to SyckSeq i think...
-		| '=' ':' atom
+		| '=' ':' atoms
 		{
 			result = [ :DEFAULT, val[2] ]
 		}
@@ -387,7 +387,7 @@ complex_mapping : complex_key ':' complex_value
                         syck_hdlr_add_node( (SyckParser *)parser, $3 ) );
                 }
 /*
-		| '?' atom
+		| '?' atoms
                 {
                     NULL_NODE( parser, n );
                     $$ = syck_new_map(
@@ -427,7 +427,7 @@ in_implicit_map : complex_mapping
 /*
  * Inline maps
  */
-basic_mapping	: atom ':' atom_or_empty
+basic_mapping	: atoms ':' atom_or_empty
                 {
                     $$ = syck_new_map(
                         syck_hdlr_add_node( (SyckParser *)parser, $1 ),
@@ -455,7 +455,7 @@ in_inline_map	: inline_map_atom
 		}
                 ;
 
-inline_map_atom : atom
+inline_map_atom : atoms
                 {
                     NULL_NODE( parser, n );
                     $$ = syck_new_map(

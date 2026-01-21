@@ -143,7 +143,7 @@ enum yysymbol_kind_t
   YYSYMBOL_22_ = 22,                       /* '?'  */
   YYSYMBOL_YYACCEPT = 23,                  /* $accept  */
   YYSYMBOL_doc = 24,                       /* doc  */
-  YYSYMBOL_atom = 25,                      /* atom  */
+  YYSYMBOL_atoms = 25,                     /* atoms  */
   YYSYMBOL_ind_rep = 26,                   /* ind_rep  */
   YYSYMBOL_atom_or_empty = 27,             /* atom_or_empty  */
   YYSYMBOL_empty = 28,                     /* empty  */
@@ -583,7 +583,7 @@ static const char *const yytname[] =
   "YAML_ALIAS", "YAML_TRANSFER", "YAML_TAGURI", "YAML_ITRANSFER",
   "YAML_WORD", "YAML_PLAIN", "YAML_BLOCK", "YAML_DOCSEP", "YAML_IOPEN",
   "YAML_INDENT", "YAML_IEND", "'-'", "':'", "'['", "']'", "'{'", "'}'",
-  "','", "'?'", "$accept", "doc", "atom", "ind_rep", "atom_or_empty",
+  "','", "'?'", "$accept", "doc", "atoms", "ind_rep", "atom_or_empty",
   "empty", "indent_open", "indent_end", "indent_sep", "indent_flex_end",
   "word_rep", "struct_rep", "implicit_seq", "basic_seq", "top_imp_seq",
   "in_implicit_seq", "inline_seq", "in_inline_seq", "inline_seq_atom",
@@ -1050,7 +1050,7 @@ yydestruct (const char *yymsg,
 #line 1051 "gram.c"
         break;
 
-    case YYSYMBOL_atom: /* atom  */
+    case YYSYMBOL_atoms: /* atoms  */
 #line 52 "gram.y"
             { syck_safe_free_node((SyckParser *)parser, &((*yyvaluep).nodeData)); }
 #line 1057 "gram.c"
@@ -1458,7 +1458,7 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* doc: atom  */
+  case 2: /* doc: atoms  */
 #line 59 "gram.y"
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, (yyvsp[0].nodeData) );
@@ -1862,7 +1862,7 @@ yyreduce:
 #line 1863 "gram.c"
     break;
 
-  case 66: /* complex_key: '?' atom indent_sep  */
+  case 66: /* complex_key: '?' atoms indent_sep  */
 #line 368 "gram.y"
                 {
                     (yyval.nodeData) = (yyvsp[-1].nodeData);
@@ -1916,7 +1916,7 @@ yyreduce:
 #line 1917 "gram.c"
     break;
 
-  case 73: /* basic_mapping: atom ':' atom_or_empty  */
+  case 73: /* basic_mapping: atoms ':' atom_or_empty  */
 #line 431 "gram.y"
                 {
                     (yyval.nodeData) = syck_new_map(
@@ -1953,7 +1953,7 @@ yyreduce:
 #line 1954 "gram.c"
     break;
 
-  case 78: /* inline_map_atom: atom  */
+  case 78: /* inline_map_atom: atoms  */
 #line 459 "gram.y"
                 {
                     NULL_NODE( parser, n );

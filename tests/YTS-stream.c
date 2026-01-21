@@ -144,9 +144,9 @@ int main(int argc, char **argv) {
        exit(1);
    }
 
-   puts("--- # YAML \n");
+   puts("<\n--- # YAML");
    puts(yaml);
-   puts("\n...\n");
+   puts("...\n");
 
    cs = CuStringNew();
    ev = CuStringNew();
@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
            printf("OK out.yaml matches\n");
        else {
            if (should_fail)
-               printf("FAIL out.yaml but shold fail\n");
+               printf("FAIL out.yaml but should fail\n");
            else
                printf("FAIL out.yaml does not match\n");
            retval++;
@@ -167,11 +167,15 @@ int main(int argc, char **argv) {
    } else if (should_fail && cs->length == 0) {
        printf("OK parse should fail\n");
    } else {
-       if (should_fail)
+       if (should_fail) {
            printf("FAIL should not parse\n");
-       else
-           printf("FAIL out.yaml missing\n");
-       retval++;
+           retval++;
+       }
+       else { // have no out.yaml to compare against
+           puts(">\n--- # YAML");
+           puts(cs->buffer);
+           puts("...\n");
+       }
    }
 
    if (testfh) {

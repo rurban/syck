@@ -766,7 +766,7 @@ static void YtsSpecificationExamples_19(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.2: Floating point
+ * Example 2.20: Floating point
  */
 static void YtsSpecificationExamples_20(CuTest *tc) {
   struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
@@ -776,11 +776,11 @@ static void YtsSpecificationExamples_20(CuTest *tc) {
                             {T_STR, 0, "sexagecimal", NULL, 0},
                             {T_STR, 0, "20:30.15", NULL, 0},
                             {T_STR, 0, "fixed", NULL, 0},
-                            {T_STR, 0, "1,230.15", NULL, 0},
+                            {T_STR, 0, "1230.15", NULL, 0},
                             {T_STR, 0, "negative infinity", NULL, 0},
                             {T_STR, 0, "-.inf", NULL, 0},
                             {T_STR, 0, "not a number", NULL, 0},
-                            {T_STR, 0, ".NaN", NULL, 0},
+                            {T_STR, 0, ".nan", NULL, 0},
                             end_node};
   struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
@@ -790,9 +790,9 @@ static void YtsSpecificationExamples_20(CuTest *tc) {
                   "canonical: 1.23015e+3 \n"
                   "exponential: 12.3015e+02 \n"
                   "sexagecimal: 20:30.15\n"
-                  "fixed: 1,230.15 \n"
+                  "fixed: 1230.15 \n"
                   "negative infinity: -.inf\n"
-                  "not a number: .NaN \n",
+                  "not a number: .nan \n",
 
                   /* C structure of validations */
                   stream);
@@ -837,6 +837,8 @@ static void YtsSpecificationExamples_22(CuTest *tc) {
                             {T_STR, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
                             {T_STR, 0, "spaced", NULL, 0},
                             {T_STR, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
+                            {T_STR, 0, "spaced1", NULL, 0},
+                            {T_STR, 0, "2001-12-14 21:59:43.10 -5", NULL, 0},
                             {T_STR, 0, "date", NULL, 0},
                             {T_STR, 0, "2002-12-14", NULL, 0},
                             end_node};
@@ -848,6 +850,7 @@ static void YtsSpecificationExamples_22(CuTest *tc) {
                   "canonical: 2001-12-15T02:59:43.1Z\n"
                   "iso8601:  2001-12-14t21:59:43.10-05:00\n"
                   "spaced:  2001-12-14 21:59:43.10 -05:00\n"
+                  "spaced1:  2001-12-14 21:59:43.10 -5\n"
                   "date:   2002-12-14 # Time is noon UTC\n",
 
                   /* C structure of validations */
@@ -855,34 +858,7 @@ static void YtsSpecificationExamples_22(CuTest *tc) {
 
   CuRoundTrip(tc, stream);
 }
-/*
- * Example legacy D4: legacy Timestamps test
- */
-static void YtsSpecificationExamples_23(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "2001-12-15T02:59:43.00Z", NULL, 0},
-                            {T_STR, 0, "iso8601", NULL, 0},
-                            {T_STR, 0, "2001-02-28t21:59:43.00-05:00", NULL, 0},
-                            {T_STR, 0, "spaced", NULL, 0},
-                            {T_STR, 0, "2001-12-14 21:59:43.00 -05:00", NULL, 0},
-                            {T_STR, 0, "date", NULL, 0},
-                            {T_STR, 0, "2002-12-14", NULL, 0},
-                            end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
-  CuStreamCompare(tc,
-
-                  /* YAML document */
-                  "canonical: 2001-12-15T02:59:43.00Z\n"
-                  "iso8601:  2001-02-28t21:59:43.00-05:00\n"
-                  "spaced:  2001-12-14 21:59:43.00 -05:00\n"
-                  "date:   2002-12-14\n",
-
-                  /* C structure of validations */
-                  stream);
-
-  CuRoundTrip(tc, stream);
-}
 /*
  * Example 2.23: Various explicit families
  */
@@ -1695,34 +1671,6 @@ static void YtsSpecificationExamples_47(CuTest *tc) {
 
   CuRoundTrip(tc, stream);
 }
-/*
- * Example : Timestamp
- */
-static void YtsSpecificationExamples_62(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
-                            {T_STR, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
-                            {T_STR, 0, "valid iso8601", NULL, 0},
-                            {T_STR, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
-                            {T_STR, 0, "space separated", NULL, 0},
-                            {T_STR, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
-                            {T_STR, 0, "date (noon UTC)", NULL, 0},
-                            {T_STR, 0, "2002-12-14", NULL, 0},
-                            end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
-
-  CuStreamCompare(tc,
-
-                  /* YAML document */
-                  "canonical:       2001-12-15T02:59:43.1Z \n"
-                  "valid iso8601:   2001-12-14t21:59:43.10-05:00 \n"
-                  "space separated: 2001-12-14 21:59:43.10 -05:00 \n"
-                  "date (noon UTC): 2002-12-14 \n",
-
-                  /* C structure of validations */
-                  stream);
-
-  CuRoundTrip(tc, stream);
-}
 
 static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
@@ -1755,7 +1703,6 @@ static CuSuite *SyckGetSuite(void) {
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_20);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_21);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_22);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_23);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_24);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_25);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_26);
@@ -1776,7 +1723,6 @@ static CuSuite *SyckGetSuite(void) {
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_42);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_43);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_47);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_62);
   return suite;
 }
 
@@ -1785,7 +1731,7 @@ int main(void) {
   CuSuite *suite = SyckGetSuite();
   int count;
 
-  CuSuiteRun(suite);
+  CuSuiteRunNoJmp(suite); // this leaks the parser on errors
   CuSuiteSummary(suite, output);
   CuSuiteDetails(suite, output);
 

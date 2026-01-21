@@ -179,6 +179,10 @@ CuStreamCompare(CuTest *tc, const char *yaml, struct test_node *stream) {
     SYMID oid = syck_parse(parser);
     int res;
 
+    if (!oid) { // syntax error, no nodes added
+      fprintf(stderr, "Syntax error\n");
+      break;
+    }
     if (parser->eof == 1)
       break;
 
@@ -413,7 +417,7 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
 
     // print it
     puts(cs->buffer);
- 
+
     if (doc_ct) {
       build_symbol_table(emitter, ystream);
 

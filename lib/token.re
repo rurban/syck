@@ -5,6 +5,7 @@
  * $Date: 2005-09-21 02:42:51 +0300 (Wed, 21 Sep 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
+ * Copyright (C) 2026 Reini Urban
  */
 #include "syck.h"
 #include "gram.h"
@@ -12,6 +13,26 @@
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
+
+#define LEXER_FUNC sycklex_yaml_utf8
+#ifdef YYCTYPE
+# include <stdint.h>
+# undef LEXER_FUNC
+
+#if YYCSZ == 16
+#  define LEXER_FUNC sycklex_yaml_utf16
+int sycklex_yaml_utf8(YYSTYPE *sycklval, SyckParser *parser);
+int sycklex_yaml_utf32(YYSTYPE *sycklval, SyckParser *parser);
+#elif YYCSZ == 32
+#  define LEXER_FUNC sycklex_yaml_utf32
+int sycklex_yaml_utf8(YYSTYPE *sycklval, SyckParser *parser);
+int sycklex_yaml_utf16(YYSTYPE *sycklval, SyckParser *parser);
+#endif
+
+#else /* no YYCTYPE */
+int sycklex_yaml_utf16(YYSTYPE *sycklval, SyckParser *parser);
+int sycklex_yaml_utf32(YYSTYPE *sycklval, SyckParser *parser);
+#endif
 
 /*
  * Allocate quoted strings in chunks
@@ -21,7 +42,9 @@
 /*
  * They do my bidding...
  */
+#ifndef YYCTYPE
 #define YYCTYPE     unsigned char
+#endif
 #define YYCURSOR    parser->cursor
 #define YYMARKER    parser->marker
 #define YYLIMIT     parser->limit
@@ -289,15 +312,11 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
 
         case syck_yaml_utf16:
         case syck_yaml_utf16be:
-            /* TODO convert it in memory */
-            syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
-            break;
+            return sycklex_yaml_utf16( sycklval, parser );
 
         case syck_yaml_utf32:
         case syck_yaml_utf32be:
-            /* TODO convert it in memory */
-            syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
-            break;
+            return sycklex_yaml_utf32( sycklval, parser );
 
         case syck_bytecode_utf8:
             return sycklex_bytecode_utf8( sycklval, parser );
@@ -312,7 +331,7 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
  * Parser for standard YAML [UTF-8]
  */
 int
-sycklex_yaml_utf8( YYSTYPE *sycklval, SyckParser *parser )
+LEXER_FUNC( YYSTYPE *sycklval, SyckParser *parser )
 {
     int doc_level = 0;
     if ( YYCURSOR == NULL )

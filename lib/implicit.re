@@ -5,12 +5,18 @@
  * $Date: 2005/11/13 23:43:56 $
  *
  * Copyright (C) 2003 why the lucky stiff
+ * Copyright (C) 2026 Reini Urban
  */
 
 #include "syck.h"
 #include <string.h>
+#ifdef YYCTYPE
+#include <stdint.h>
+#endif
 
-#define YYCTYPE     char
+#ifndef YYCTYPE
+#define YYCTYPE     unsigned char
+#endif
 #define YYCURSOR    cursor
 #define YYMARKER    marker
 #define YYLIMIT     limit

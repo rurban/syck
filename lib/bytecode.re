@@ -16,7 +16,7 @@
 /*
  * They do my bidding...
  */
-#define YYCTYPE     char
+#define YYCTYPE     unsigned char
 #define YYCURSOR    parser->cursor
 #define YYMARKER    parser->marker
 #define YYLIMIT     parser->limit

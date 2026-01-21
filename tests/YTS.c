@@ -2,6 +2,8 @@
 // YTS.c
 //
 // Copyright (C) 2004 why the lucky stiff
+// Copyright (C) 2026 Reini Urban
+// See ../COPYING (MIT and D&R)
 //
 // Well, this is the Yaml Testing Suite in the form of a plain C
 // API.  Basically, this is as good as C integration gets for Syck.

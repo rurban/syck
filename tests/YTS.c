@@ -19,13 +19,8 @@
 extern const struct test_node end_node;
 
 /*
- * ACTUAL TESTS FOR THE YAML TESTING SUITE BEGIN HERE
- *   (EVERYTHING PREVIOUS WAS SET UP FOR THE TESTS)
- */
-
-/*
  * Example : Trailing tab in plains
- * YTS DC7X/in.yaml Various trailing tabs
+ * YTS: DC7X Various trailing tabs
  */
 static void YtsFoldedScalars_7(CuTest *tc) {
   struct test_node map[] = {
@@ -44,7 +39,7 @@ static void YtsFoldedScalars_7(CuTest *tc) {
 }
 /*
  * Example : Empty Sequence
- * part of 7ZZ5/in.yaml Empty flow collections
+ * YTS: 7ZZ5 (partially) Empty flow collections
  */
 static void YtsNullsAndEmpties_0(CuTest *tc) {
   struct test_node seq[] = {end_node};
@@ -64,7 +59,7 @@ static void YtsNullsAndEmpties_0(CuTest *tc) {
 }
 /*
  * Example : Empty Mapping
- * part of 7ZZ5/in.yaml Empty flow collections
+ * YTS: 7ZZ5 (partially) Empty flow collections
  */
 static void YtsNullsAndEmpties_1(CuTest *tc) {
   struct test_node map2[] = {end_node};
@@ -153,10 +148,10 @@ static void YtsNullsAndEmpties_5(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.1: Sequence of scalars
- * YTS FQ7F/in.yaml
+ * Example 2.1: Sequence of scalars (ball players)
+ * YTS: FQ7F
  */
-static void YtsSpecificationExamples_0(CuTest *tc) {
+static void YtsSpecificationExamples_2_1(CuTest *tc) {
   struct test_node seq[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                             {T_STR, 0, "Sammy Sosa", NULL, 0},
                             {T_STR, 0, "Ken Griffey", NULL, 0},
@@ -176,10 +171,10 @@ static void YtsSpecificationExamples_0(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.2: Mapping of scalars to scalars
- * YTS SYW4/in.yaml
+ * Example 2.2: Mapping of scalars to scalars (player statstics)
+ * YTS: SYW4
  */
-static void YtsSpecificationExamples_1(CuTest *tc) {
+static void YtsSpecificationExamples_2_2(CuTest *tc) {
   struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
                             {T_STR, 0, "65", NULL, 0},
                             {T_STR, 0, "avg", NULL, 0},
@@ -192,9 +187,9 @@ static void YtsSpecificationExamples_1(CuTest *tc) {
   CuStreamCompare(tc,
 
                   /* YAML document */
-                  "hr:  65 \n"
-                  "avg: 0.278 \n"
-                  "rbi: 147 \n",
+                  "hr:  65    # Home runs\n"
+                  "avg: 0.278 # Batting average\n"
+                  "rbi: 147   # Runs Batted In\n",
 
                   /* C structure of validations */
                   stream);
@@ -202,10 +197,10 @@ static void YtsSpecificationExamples_1(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.3: Mapping of scalars to sequences
- * YTS PBJ2/in.yaml
+ * Example 2.3: Mapping Scalars to Sequences (ball clubs in each league)
+ * YTS: PBJ2
  */
-static void YtsSpecificationExamples_2(CuTest *tc) {
+static void YtsSpecificationExamples_2_3(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "Boston Red Sox", NULL, 0},
                              {T_STR, 0, "Detroit Tigers", NULL, 0},
                              {T_STR, 0, "New York Yankees", NULL, 0},
@@ -239,10 +234,10 @@ static void YtsSpecificationExamples_2(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.4: Sequence of mappings
- * YTS data/229Q/in.yaml
+ * Example 2.4: Sequence of Mappings (players’ statistics)
+ * YTS: 229Q
  */
-static void YtsSpecificationExamples_3(CuTest *tc) {
+static void YtsSpecificationExamples_2_4(CuTest *tc) {
   struct test_node map1[] = {{T_STR, 0, "name", NULL, 0},
                              {T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "hr", NULL, 0},
@@ -278,9 +273,10 @@ static void YtsSpecificationExamples_3(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example legacy_A5: Legacy A5
+ * Example legacy_A5: Legacy A5 (see 2.11 Mapping between Sequences)
+ * YTS: similar to M5DY
  */
-static void YtsSpecificationExamples_4(CuTest *tc) {
+static void YtsSpecificationLegacy_A5(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
                              {T_STR, 0, "Atlanta Braves", NULL, 0},
                              end_node};
@@ -322,8 +318,9 @@ static void YtsSpecificationExamples_4(CuTest *tc) {
 }
 /*
  * Example 2.5: Sequence of sequences
+ * YTS: YD5X
  */
-static void YtsSpecificationExamples_5(CuTest *tc) {
+static void YtsSpecificationExamples_2_5(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "name", NULL, 0},
                              {T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
@@ -354,8 +351,9 @@ static void YtsSpecificationExamples_5(CuTest *tc) {
 }
 /*
  * Example 2.6: Mapping of mappings
+ * YTS: ZF4X
  */
-static void YtsSpecificationExamples_6(CuTest *tc) {
+static void YtsSpecificationExamples_2_6(CuTest *tc) {
   struct test_node map1[] = {{T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "65", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
@@ -389,8 +387,9 @@ static void YtsSpecificationExamples_6(CuTest *tc) {
 }
 /*
  * Example 2.7: Two documents in a stream each with a leading comment
+ * YTS: JHB9
  */
-static void YtsSpecificationExamples_7(CuTest *tc) {
+static void YtsSpecificationExamples_2_7(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "Ken Griffey", NULL, 0},
@@ -422,8 +421,9 @@ static void YtsSpecificationExamples_7(CuTest *tc) {
 }
 /*
  * Example 2.8: Play by play feed from a game
+ * YTS: 
  */
-static void YtsSpecificationExamples_8(CuTest *tc) {
+static void YtsSpecificationExamples_2_8(CuTest *tc) {
   struct test_node map1[] = {{T_STR, 0, "time", NULL, 0},
                              {T_STR, 0, "20:03:20", NULL, 0},
                              {T_STR, 0, "player", NULL, 0},
@@ -463,7 +463,7 @@ static void YtsSpecificationExamples_8(CuTest *tc) {
 /*
  * Example 2.9: Single document with two comments
  */
-static void YtsSpecificationExamples_9(CuTest *tc) {
+static void YtsSpecificationExamples_2_9(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              end_node};
@@ -496,7 +496,7 @@ static void YtsSpecificationExamples_9(CuTest *tc) {
 /*
  * Example 2.1: Node for Sammy Sosa appears twice in this document
  */
-static void YtsSpecificationExamples_10(CuTest *tc) {
+static void YtsSpecificationExamples_2_10(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              end_node};
@@ -529,8 +529,9 @@ static void YtsSpecificationExamples_10(CuTest *tc) {
 }
 /*
  * Example 2.11: Mapping between sequences
+ * YTS: M5DY
  */
-static void YtsSpecificationExamples_11(CuTest *tc) {
+static void YtsSpecificationExamples_2_11(CuTest *tc) {
   struct test_node seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
                              {T_STR, 0, "Atlanta Braves", NULL, 0},
                              end_node};
@@ -552,11 +553,9 @@ static void YtsSpecificationExamples_11(CuTest *tc) {
   CuStreamCompare(tc,
 
                   /* YAML document */
-                  "? # PLAY SCHEDULE \n"
-                  "  - Detroit Tigers \n"
+                  "? - Detroit Tigers \n"
                   "  - Chicago Cubs \n"
-                  ":   \n"
-                  "  - 2001-07-23 \n"
+                  ": - 2001-07-23 \n"
                   "\n"
                   "? [ New York Yankees, \n"
                   "    Atlanta Braves ] \n"
@@ -569,9 +568,10 @@ static void YtsSpecificationExamples_11(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.12: Sequence key shortcut
+ * Example 2.12: Compact Nested Mapping (was: Sequence key shortcut)
+ * YTS: 9U5K
  */
-static void YtsSpecificationExamples_12(CuTest *tc) {
+static void YtsSpecificationExamples_2_12(CuTest *tc) {
   struct test_node map1[] = {{T_STR, 0, "item", NULL, 0},
                              {T_STR, 0, "Super Hoop", NULL, 0},
                              {T_STR, 0, "quantity", NULL, 0},
@@ -610,9 +610,10 @@ static void YtsSpecificationExamples_12(CuTest *tc) {
 }
 /*
  * Example 2.13: Literal perserves newlines
+ * YTS: 6JQW
  */
-static void YtsSpecificationExamples_13(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "\\//||\\/||\n// ||  ||_\n", NULL, 0},
+static void YtsSpecificationExamples_2_13(CuTest *tc) {
+  struct test_node stream[] = {{T_STR, 0, "\\//||\\/||\n// ||  ||__\n", NULL, 0},
                                end_node};
 
   CuStreamCompare(tc,
@@ -621,7 +622,7 @@ static void YtsSpecificationExamples_13(CuTest *tc) {
                   "# ASCII Art\n"
                   "--- | \n"
                   "  \\//||\\/||\n"
-                  "  // ||  ||_\n",
+                  "  // ||  ||__\n",
 
                   /* C structure of validations */
                   stream);
@@ -630,16 +631,17 @@ static void YtsSpecificationExamples_13(CuTest *tc) {
 }
 /*
  * Example 2.14: Folded treats newlines as a space
+ * YTS: FP8R
  */
-static void YtsSpecificationExamples_14(CuTest *tc) {
+static void YtsSpecificationExamples_2_14(CuTest *tc) {
   struct test_node stream[] = {
-      {T_STR, 0, "Mark McGwire's year was crippled by a knee injury.", NULL, 0},
+      {T_STR, 0, "Mark McGwire's year was crippled by a knee injury.\n", NULL, 0},
       end_node};
 
   CuStreamCompare(tc,
 
                   /* YAML document */
-                  "---\n"
+                  "--- >\n"
                   "  Mark McGwire's\n"
                   "  year was crippled\n"
                   "  by a knee injury.\n",
@@ -651,8 +653,9 @@ static void YtsSpecificationExamples_14(CuTest *tc) {
 }
 /*
  * Example 2.15: Newlines preserved for indented and blank lines
+ * YTS: 6VJK
  */
-static void YtsSpecificationExamples_15(CuTest *tc) {
+static void YtsSpecificationExamples_2_15(CuTest *tc) {
   struct test_node stream[] = {
       {T_STR, 0,
        "Sammy Sosa completed another fine season with great stats.\n\n  63 "
@@ -663,7 +666,7 @@ static void YtsSpecificationExamples_15(CuTest *tc) {
   CuStreamCompare(tc,
 
                   /* YAML document */
-                  "--- > \n"
+                  "> \n"
                   " Sammy Sosa completed another\n"
                   " fine season with great stats.\n"
                   "\n"
@@ -679,8 +682,9 @@ static void YtsSpecificationExamples_15(CuTest *tc) {
 }
 /*
  * Example 2.16: Indentation determines scope
+ * YTS: HMK4
  */
-static void YtsSpecificationExamples_16(CuTest *tc) {
+static void YtsSpecificationExamples_2_16(CuTest *tc) {
   struct test_node map[] = {
       {T_STR, 0, "name", NULL, 0},
       {T_STR, 0, "Mark McGwire", NULL, 0},
@@ -708,9 +712,51 @@ static void YtsSpecificationExamples_16(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 /*
- * Example 2.18: Multiline flow scalars
+ * Example 2.17: Quoted Scalars
+ * YTS: G4RS (fix quoting)
  */
-static void YtsSpecificationExamples_18(CuTest *tc) {
+static void YtsSpecificationExamples_2_17_todo(CuTest *tc) {
+  struct test_node map[] = {
+      {T_STR, 0, "unicode", NULL, 0},
+      {T_STR, 0, "Sosa did fine.\\u263A", NULL, 0},
+#ifdef DEBUG_QUOTE
+      {T_STR, 0, "control", NULL, 0},
+      {T_STR, 0, "\"\\b1998\\t1999\\t2000\\n\"", NULL, 0},
+      {T_STR, 0, "hex esc", NULL, 0},
+      {T_STR, 0, "\"\\r\\n is \\r\\n\"", NULL, 0},
+      {T_STR, 0, "single", NULL, 0},
+      {T_STR, 0, "'\"Howdy!\" he cried.'", NULL, 0},
+      {T_STR, 0, "quoted", NULL, 0},
+      {T_STR, 0, " # Not a ''comment''.", NULL, 0},
+#endif
+      {T_STR, 0, "tie-fighter", NULL, 0},
+      {T_STR, 0, "|\\-*-/|", NULL, 0},
+      end_node};
+  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+
+  CuStreamCompare(tc,
+
+                  /* YAML document */
+                  "unicode: \"Sosa did fine.\\u263A\"\n"
+#ifdef DEBUG_QUOTE
+                  "control: \"\\b1998\\t1999\\t2000\\n\"\n"
+                  "hex esc: \"\x0d\x0a is \\r\\n\"\n"
+                  "\n"
+                  "single: '\"Howdy!\" he cried.'\n"
+                  "quoted: ' # Not a ''comment''.'\n"
+#endif
+                  "tie-fighter: '|\\-*-/|'\n",
+
+                  /* C structure of validations */
+                  stream);
+
+  CuRoundTrip(tc, stream);
+}
+/*
+ * Example 2.18: Multiline flow scalars
+ * YTS: 4CQQ
+ */
+static void YtsSpecificationExamples_2_18(CuTest *tc) {
   struct test_node map[] = {
       {T_STR, 0, "plain", NULL, 0},
       {T_STR, 0, "This unquoted scalar spans many lines.", NULL, 0},
@@ -736,8 +782,9 @@ static void YtsSpecificationExamples_18(CuTest *tc) {
 }
 /*
  * Example 2.19: Integers
+ * YTS: none
  */
-static void YtsSpecificationExamples_19(CuTest *tc) {
+static void YtsSpecificationExamples_2_19(CuTest *tc) {
   struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
                             {T_STR, 0, "12345", NULL, 0},
                             {T_STR, 0, "decimal", NULL, 0},
@@ -745,6 +792,8 @@ static void YtsSpecificationExamples_19(CuTest *tc) {
                             {T_STR, 0, "sexagecimal", NULL, 0},
                             {T_STR, 0, "3:25:45", NULL, 0},
                             {T_STR, 0, "octal", NULL, 0},
+                            {T_STR, 0, "0o14", NULL, 0},
+                            {T_STR, 0, "octal_old", NULL, 0},
                             {T_STR, 0, "014", NULL, 0},
                             {T_STR, 0, "hexadecimal", NULL, 0},
                             {T_STR, 0, "0xC", NULL, 0},
@@ -757,7 +806,8 @@ static void YtsSpecificationExamples_19(CuTest *tc) {
                   "canonical: 12345 \n"
                   "decimal: +12,345 \n"
                   "sexagecimal: 3:25:45\n"
-                  "octal: 014 \n"
+                  "octal: 0o14 \n"
+                  "octal_old: 014 \n"
                   "hexadecimal: 0xC \n",
 
                   /* C structure of validations */
@@ -767,8 +817,9 @@ static void YtsSpecificationExamples_19(CuTest *tc) {
 }
 /*
  * Example 2.20: Floating point
+ * YTS: none
  */
-static void YtsSpecificationExamples_20(CuTest *tc) {
+static void YtsSpecificationExamples_2_20(CuTest *tc) {
   struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
                             {T_STR, 0, "1.23015e+3", NULL, 0},
                             {T_STR, 0, "exponential", NULL, 0},
@@ -801,10 +852,17 @@ static void YtsSpecificationExamples_20(CuTest *tc) {
 }
 /*
  * Example 2.21: Miscellaneous
+ * YTS: none
  */
-static void YtsSpecificationExamples_21(CuTest *tc) {
+static void YtsSpecificationExamples_2_21(CuTest *tc) {
+  struct test_node seq[] = {{T_STR, 0, "true", NULL, 0},
+                            {T_STR, 0, "false", NULL, 0}, end_node};
   struct test_node map[] = {{T_STR, 0, "null", NULL, 0},
                             {T_STR, 0, "~", NULL, 0},
+                            {T_STR, 0, "null", NULL, 0},
+                            {T_STR, 0, "", NULL, 0},
+                            {T_STR, 0, "booleans", NULL, 0},
+                            {T_SEQ, 0, 0, seq, 0},
                             {T_STR, 0, "true", NULL, 0},
                             {T_STR, 0, "y", NULL, 0},
                             {T_STR, 0, "false", NULL, 0},
@@ -817,10 +875,12 @@ static void YtsSpecificationExamples_21(CuTest *tc) {
   CuStreamCompare(tc,
 
                   /* YAML document */
-                  "null: ~ \n"
+                  "null: ~\n"
+                  "null:\n"
+                  "booleans: [ true, false ]\n"
                   "true: y\n"
-                  "false: n \n"
-                  "string: '12345' \n",
+                  "false: n\n"
+                  "string: '12345'\n",
 
                   /* C structure of validations */
                   stream);
@@ -829,15 +889,14 @@ static void YtsSpecificationExamples_21(CuTest *tc) {
 }
 /*
  * Example 2.22: Timestamps
+ * YTS: none
  */
-static void YtsSpecificationExamples_22(CuTest *tc) {
+static void YtsSpecificationExamples_2_22(CuTest *tc) {
   struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
                             {T_STR, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
                             {T_STR, 0, "iso8601", NULL, 0},
                             {T_STR, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
                             {T_STR, 0, "spaced", NULL, 0},
-                            {T_STR, 0, "2001-12-14 21:59:43.10 -05:00", NULL, 0},
-                            {T_STR, 0, "spaced1", NULL, 0},
                             {T_STR, 0, "2001-12-14 21:59:43.10 -5", NULL, 0},
                             {T_STR, 0, "date", NULL, 0},
                             {T_STR, 0, "2002-12-14", NULL, 0},
@@ -849,8 +908,7 @@ static void YtsSpecificationExamples_22(CuTest *tc) {
                   /* YAML document */
                   "canonical: 2001-12-15T02:59:43.1Z\n"
                   "iso8601:  2001-12-14t21:59:43.10-05:00\n"
-                  "spaced:  2001-12-14 21:59:43.10 -05:00\n"
-                  "spaced1:  2001-12-14 21:59:43.10 -5\n"
+                  "spaced:  2001-12-14 21:59:43.10 -5\n"
                   "date:   2002-12-14 # Time is noon UTC\n",
 
                   /* C structure of validations */
@@ -860,9 +918,10 @@ static void YtsSpecificationExamples_22(CuTest *tc) {
 }
 
 /*
- * Example 2.23: Various explicit families
+ * Example 2.23: Various explicit tags (old style)
+ * YTS: none
  */
-static void YtsSpecificationExamples_24(CuTest *tc) {
+static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
   struct test_node map[] = {
       {T_STR, 0, "not-date", NULL, 0},
       {T_STR, "tag:yaml.org,2002:str", "2002-04-28", NULL, 0},
@@ -884,6 +943,7 @@ static void YtsSpecificationExamples_24(CuTest *tc) {
 
                   /* YAML document */
                   "not-date: !str 2002-04-28\n"
+                  "\n"
                   "picture: !binary |\n"
                   " R0lGODlhDAAMAIQAAP//9/X\n"
                   " 17unp5WZmZgAAAOfn515eXv\n"
@@ -902,8 +962,9 @@ static void YtsSpecificationExamples_24(CuTest *tc) {
 }
 /*
  * Example 2.24: Application specific family
+ * YTS: C4HZ (almost)
  */
-static void YtsSpecificationExamples_25(CuTest *tc) {
+static void YtsSpecificationExamples_2_24_old(CuTest *tc) {
   struct test_node point1[] = {{T_STR, 0, "x", NULL, 0},
                                {T_STR, 0, "73", NULL, 0},
                                {T_STR, 0, "y", NULL, 0},
@@ -962,10 +1023,46 @@ static void YtsSpecificationExamples_25(CuTest *tc) {
 
   CuRoundTrip(tc, stream);
 }
+#ifdef DEBUG_SET
+/*
+ * Example 2.25: Unordered Sets
+ * YTS: 2XXW (almost)
+ * FIXME parse
+ */
+static void YtsSpecificationExamples_2_25_old(CuTest *tc) {
+  struct test_node map1[] = {
+      {T_STR, 0, "Mark McGwire", NULL, 0}, {T_STR, 0, "~", NULL, 0}, end_node};
+  struct test_node map2[] = {
+      {T_STR, 0, "Sammy Sosa", NULL, 0}, {T_STR, 0, "~", NULL, 0}, end_node};
+  struct test_node map3[] = {
+      {T_STR, 0, "Ken Griffy", NULL, 0}, {T_STR, 0, "~", NULL, 0}, end_node};
+  struct test_node seq[] = {
+      {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
+  struct test_node stream[] = {{T_SEQ, "tag:yaml.org,2002:set", 0, seq, 0},
+                               end_node};
+
+  CuStreamCompare(tc,
+
+                  /* YAML document */
+                  "# Sets are represented as a\n"
+                  "# Mapping where each key is\n"
+                  "# associated with a null value\n"
+                  "--- !set\n"
+                  "? Mark McGwire\n"
+                  "? Sammy Sosa\n"
+                  "? Ken Griffy\n",
+
+                  /* C structure of validations */
+                  stream);
+
+  CuRoundTrip(tc, stream);
+}
+#endif
 /*
  * Example 2.26: Ordered mappings
+ * YTS: J7PZ (almost)
  */
-static void YtsSpecificationExamples_26(CuTest *tc) {
+static void YtsSpecificationExamples_2_26_old(CuTest *tc) {
   struct test_node map1[] = {
       {T_STR, 0, "Mark McGwire", NULL, 0}, {T_STR, 0, "65", NULL, 0}, end_node};
   struct test_node map2[] = {
@@ -995,8 +1092,9 @@ static void YtsSpecificationExamples_26(CuTest *tc) {
 }
 /*
  * Example 2.27: Invoice
+ * YTS: UGM3 (almost)
  */
-static void YtsSpecificationExamples_27(CuTest *tc) {
+static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
   struct test_node prod1[] = {{T_STR, 0, "sku", NULL, 0},
                               {T_STR, 0, "BL394D", NULL, 0},
                               {T_STR, 0, "quantity", NULL, 0},
@@ -1060,6 +1158,8 @@ static void YtsSpecificationExamples_27(CuTest *tc) {
   CuStreamCompare(tc,
 
                   /* YAML document */
+                  // FIXME
+                 //--- !<tag:clarkevans.com,2002:invoice>
                   "--- !clarkevans.com,2002/^invoice\n"
                   "invoice: 34843\n"
                   "date   : 2001-01-23\n"
@@ -1097,11 +1197,12 @@ static void YtsSpecificationExamples_27(CuTest *tc) {
 }
 /*
  * Example 2.28: Log file
+ * YTS: RZT7
  */
-static void YtsSpecificationExamples_28(CuTest *tc) {
+static void YtsSpecificationExamples_2_28(CuTest *tc) {
   struct test_node map1[] = {
       {T_STR, 0, "Time", NULL, 0},
-      {T_STR, 0, "2001-11-23 15:01:42 -05:00", NULL, 0},
+      {T_STR, 0, "2001-11-23 15:01:42 -5", NULL, 0},
       {T_STR, 0, "User", NULL, 0},
       {T_STR, 0, "ed", NULL, 0},
       {T_STR, 0, "Warning", NULL, 0},
@@ -1109,7 +1210,7 @@ static void YtsSpecificationExamples_28(CuTest *tc) {
       end_node};
   struct test_node map2[] = {
       {T_STR, 0, "Time", NULL, 0},
-      {T_STR, 0, "2001-11-23 15:02:31 -05:00", NULL, 0},
+      {T_STR, 0, "2001-11-23 15:02:31 -5", NULL, 0},
       {T_STR, 0, "User", NULL, 0},
       {T_STR, 0, "ed", NULL, 0},
       {T_STR, 0, "Warning", NULL, 0},
@@ -1132,7 +1233,7 @@ static void YtsSpecificationExamples_28(CuTest *tc) {
   struct test_node stack[] = {
       {T_MAP, 0, 0, file1, 0}, {T_MAP, 0, 0, file2, 0}, end_node};
   struct test_node map3[] = {{T_STR, 0, "Date", NULL, 0},
-                             {T_STR, 0, "2001-11-23 15:03:17 -05:00", NULL, 0},
+                             {T_STR, 0, "2001-11-23 15:03:17 -5", NULL, 0},
                              {T_STR, 0, "User", NULL, 0},
                              {T_STR, 0, "ed", NULL, 0},
                              {T_STR, 0, "Fatal", NULL, 0},
@@ -1147,19 +1248,19 @@ static void YtsSpecificationExamples_28(CuTest *tc) {
 
                   /* YAML document */
                   "---\n"
-                  "Time: 2001-11-23 15:01:42 -05:00\n"
+                  "Time: 2001-11-23 15:01:42 -5\n"
                   "User: ed\n"
                   "Warning: >\n"
                   "  This is an error message\n"
                   "  for the log file\n"
                   "---\n"
-                  "Time: 2001-11-23 15:02:31 -05:00\n"
+                  "Time: 2001-11-23 15:02:31 -5\n"
                   "User: ed\n"
                   "Warning: >\n"
                   "  A slightly different error\n"
                   "  message.\n"
                   "---\n"
-                  "Date: 2001-11-23 15:03:17 -05:00\n"
+                  "Date: 2001-11-23 15:03:17 -5\n"
                   "User: ed\n"
                   "Fatal: >\n"
                   "  Unknown variable \"bar\"\n"
@@ -1178,10 +1279,77 @@ static void YtsSpecificationExamples_28(CuTest *tc) {
 
   CuRoundTrip(tc, stream);
 }
-/*
- * Example : Throwaway comments
+/* TODO
+ * Example 5.1 Byte Order Mark
+ * YTS: none
  */
-static void YtsSpecificationExamples_29(CuTest *tc) {
+static void YtsSpecificationExamples_5_1_todo(CuTest *tc) {
+#ifdef DEBUG_BOM
+  struct test_node stream[] = {
+    {T_STR, 0, "", NULL, 0},
+    end_node};
+  CuStreamCompare(tc, /* UTF-8 YAML document */
+                  "﻿\xef\xbb\xbf# Comment only.\n", stream);
+  CuStreamCompare(tc, /* UTF-16LE YAML document */
+                  "﻿\xff\xfe#\x00", stream);
+  CuStreamCompare(tc, /* UTF-16BE YAML document */
+                  "﻿\xfe\xff\x00#", stream);
+  CuStreamCompare(tc, /* UTF-32BE YAML document */
+                  "﻿\x00\x00\xfe\xff\x00\x00\x00#", stream);
+  CuStreamCompare(tc, /* UTF-32LE YAML document */
+                  "﻿\xff\xfe\x00\x00#\x00\x00\x00", stream);
+  CuRoundTrip(tc, stream);
+#endif
+}
+/* TODO
+ * Example 5.2 Invalid Byte Order Mark
+ * YTS: none
+ */
+static void YtsSpecificationExamples_5_2_todo(CuTest *tc) {
+#ifdef DEBUG_BOM
+  struct test_node stream[] = {end_node};
+  CuStreamCompare(tc, /* UTF-8 YAML document */
+                  "﻿- invalid use of BOM\n\xef\xbb\xbf# Comment only.\n- inside doc", stream);
+  CuStreamCompare(tc, /* UTF-16LE YAML document */
+                  "﻿- invalid use of BOM\n\xff\xfe#\x00\n- inside doc", stream);
+  CuStreamCompare(tc, /* UTF-16BE YAML document */
+                  "﻿- invalid use of BOM\n\xfe\xff\x00#\n- inside doc", stream);
+  CuStreamCompare(tc, /* UTF-32BE YAML document */
+                  "﻿- invalid use of BOM\n\x00\x00\xfe\xff\x00\x00\x00#\n- inside doc", stream);
+  CuStreamCompare(tc, /* UTF-32LE YAML document */
+                  "﻿- invalid use of BOM\n\xff\xfe\x00\x00#\x00\x00\x00\n- inside doc", stream);
+  CuRoundTrip(tc, stream);
+#endif
+}
+/* TODO
+ * Example 5.3 Block Structure Indicators
+ * Example 5.4 Flow Collection Indicators
+ * Example 5.5 Comment Indicator (empty doc, only comments)
+ * Example 5.6 Node Property Indicators
+ * Example 5.7 Block Scalar Indicators
+ * Example 5.8 Quoted Scalar Indicators
+ * Example 5.9 Directive Indicator
+ * Example 5.10 Invalid use of Reserved Indicators
+ * Example 5.11 Line Break Characters
+ * Example 5.12 Tabs and Spaces
+ * Example 5.13 Escaped Characters
+ * Example 5.14 Invalid Escaped Characters
+ * Example 6.1 Indentation Spaces
+ * Example 6.2 Indentation Indicators
+ * Example 6.3 Separation Spaces
+ * Example 6.4 Line Prefixes
+ * Example 6.5 Empty Lines
+ * Example 6.6 Line Folding
+ * Example 6.7 Block Folding
+ * Example 6.8 Flow Folding
+ * Example 6.9 Separated Comment
+ */
+
+/*
+ * Example 6.11 Multi-Line Comments (extended)
+ * YTS: none
+ */
+static void YtsSpecificationExamples_6_11(CuTest *tc) {
   struct test_node map[] = {
       {T_STR, 0, "this", NULL, 0},
       {T_STR, 0,
@@ -1210,10 +1378,97 @@ static void YtsSpecificationExamples_29(CuTest *tc) {
 
   CuRoundTrip(tc, stream);
 }
+
+/* TODO
+ * Example 6.12 Separation Spaces
+ * Example 6.13 Reserved Directives
+ *    Should be ignored with a warning
+ * Example 6.14 “YAML” directive
+ * Example 6.15 Invalid Repeated YAML directive
+ *    Must error
+ * Example 6.16 “TAG” directive
+ * Example 6.17 Invalid Repeated TAG directive
+ *    Must error
+ * Example 6.18 Primary Tag Handle
+ * Example 6.19 Secondary Tag Handle
+ * Example 6.20 Tag Handles
+ * Example 6.21 Local Tag Prefix
+ * Example 6.22 Global Tag Prefix
+ * Example 6.23 Node Properties
+ * Example 6.24 Verbatim Tags
+ * Example 6.25 Invalid Verbatim Tags
+ * Example 6.26 Tag Shorthands
+ * Example 6.27 Invalid Tag Shorthands
+ * Example 6.28 Non-Specific Tags
+ * Example 6.29 Node Anchors
+ * Example 7.1 Alias Nodes
+ * Example 7.2 Empty Content
+ * Example 7.3 Completely Empty Flow Nodes
+ * Example 7.4 Double Quoted Implicit Keys
+ * Example 7.5 Double Quoted Line Breaks
+ * Example 7.6 Double Quoted Lines
+ * Example 7.7 Single Quoted Characters
+ * Example 7.8 Single Quoted Implicit Keys
+ * Example 7.9 Single Quoted Lines
+ * Example 7.10 Plain Characters
+ * Example 7.11 Plain Implicit Keys
+ * Example 7.12 Plain Lines
+ * Example 7.13 Flow Sequence
+ * Example 7.14 Flow Sequence Entries
+ * Example 7.15 Flow Mappings
+ * Example 7.16 Flow Mapping Entries
+ * Example 7.17 Flow Mapping Separate Values
+ * Example 7.18 Flow Mapping Adjacent Values
+ * Example 7.19 Single Pair Flow Mappings
+ * Example 7.20 Single Pair Explicit Entry
+ * Example 7.21 Single Pair Implicit Entries
+ * Example 7.22 Invalid Implicit Keys
+ * Example 7.23 Flow Content
+ * Example 7.24 Flow Nodes
+* Example 8.1 Block Scalar Header
+* Example 8.2 Block Indentation Indicator
+* Example 8.3 Invalid Block Scalar Indentation Indicators
+* Example 8.4 Chomping Final Line Break
+* Example 8.5 Chomping Trailing Lines
+* Example 8.6 Empty Scalar Chomping
+* Example 8.7 Literal Scalar
+* Example 8.8 Literal Content
+* Example 8.9 Folded Scalar
+* Example 8.10 Folded Lines
+* Example 8.11 More Indented Lines
+* Example 8.12 Empty Separation Lines
+* Example 8.13 Final Empty Lines
+* Example 8.14 Block Sequence
+* Example 8.15 Block Sequence Entry Types
+* Example 8.16 Block Mappings
+* Example 8.17 Explicit Block Mapping Entries
+* Example 8.18 Implicit Block Mapping Entries
+* Example 8.19 Compact Block Mappings
+* Example 8.20 Block Node Types
+* Example 8.21 Block Scalar Nodes
+* Example 8.22 Block Collection Nodes
+* Example 9.1 Document Prefix
+* Example 9.2 Document Markers
+* Example 9.3 Bare Documents
+* Example 9.4 Explicit Documents
+* Example 9.5 Directives Documents
+* Example 9.6 Stream
+* Example 10.1 !!map Examples
+* Example 10.2 !!seq Examples
+* Example 10.3 !!str Examples
+* Example 10.4 !!null Examples
+* Example 10.5 !!bool Examples
+* Example 10.6 !!int Examples
+* Example 10.7 !!float Examples
+* Example 10.8 JSON Tag Resolution
+* Example 10.9 Core Tag Resolution
+*/
+
 /*
- * Example : Document with a single value
+ * Example : Zero indented block scalar (was: Document with a single value)
+ * YTS: FP8R
  */
-static void YtsSpecificationExamples_30(CuTest *tc) {
+static void YtsSpecification_FP8R(CuTest *tc) {
   struct test_node stream[] = {
       {T_STR, 0,
        "This YAML stream contains a single text value. The next stream is a "
@@ -1672,6 +1927,40 @@ static void YtsSpecificationExamples_47(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 
+#ifdef DEBUG_NEW
+/*
+ * Example 6.12 Separation Spaces
+ */
+static void YtsSpecificationExamples_6_12(CuTest *tc) {
+  struct test_node map1[] = {
+       {T_MAP, 0, 0, map1, 0},
+       {T_STR, 0, "first", NULL, 0},{T_STR, 0, "Sammy", NULL, 0},
+       {T_STR, 0, "last", NULL, 0},{T_STR, 0, "Sosa", NULL, 0},
+       end_node};
+  struct test_node map2[] = {
+      {T_STR, 0, "hr", NULL, 0},{T_STR, 0, "65", NULL, 0},
+      {T_STR, 0, "avg", NULL, 0},{T_STR, 0, "0.270", NULL, 0},
+      end_node};
+  struct test_node stream[] = {
+      {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
+
+  CuStreamCompare(tc,
+
+                  /* YAML document */
+                  "{ first: Sammy, last: Sosa }:\n"
+                  "# Statistics:\n"
+                  "  hr:  # Home runs\n"
+                  "     65\n"
+                  "  avg: # Average\n"
+                  "   0.278\n",
+
+                  /* C structure of validations */
+                  stream);
+
+  CuRoundTrip(tc, stream);
+}
+#endif
+
 static CuSuite *SyckGetSuite(void) {
   CuSuite *suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, YtsFoldedScalars_7);
@@ -1681,35 +1970,41 @@ static CuSuite *SyckGetSuite(void) {
   SUITE_ADD_TEST(suite, YtsNullsAndEmpties_3);
   SUITE_ADD_TEST(suite, YtsNullsAndEmpties_4);
   SUITE_ADD_TEST(suite, YtsNullsAndEmpties_5);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_0);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_1);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_3);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_4);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_5);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_6);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_7);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_8);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_9);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_10);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_11);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_12);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_13);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_14);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_15);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_16);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_18);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_19);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_20);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_21);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_22);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_24);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_25);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_26);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_27);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_28);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_29);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_30);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_1);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_2);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_3);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_4);
+  SUITE_ADD_TEST(suite, YtsSpecificationLegacy_A5);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_5);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_6);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_7);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_8);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_9);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_10);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_11);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_12);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_13);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_14);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_15);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_16);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_17_todo);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_18);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_19);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_20);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_21);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_22);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_23_old);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_24_old);
+#ifdef DEBUG_SET
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_25_old); // does not poarse yet
+#endif
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_26_old);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_27_old);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_28);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_5_1_todo);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_5_2_todo);
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_6_11);
+  SUITE_ADD_TEST(suite, YtsSpecification_FP8R);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_31);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_32);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_33);
@@ -1723,6 +2018,9 @@ static CuSuite *SyckGetSuite(void) {
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_42);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_43);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_47);
+#ifdef DEBUG_NEW
+  SUITE_ADD_TEST(suite, YtsSpecificationExamples_6_12);
+#endif
   return suite;
 }
 

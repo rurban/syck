@@ -17,7 +17,7 @@ DISTCLEANFILES = gram.c gram.h token.c implicit.c bytecode.c
 
 noinst_LTLIBRARIES = libsyck_nowarn.la
 libsyck_nowarn_la_SOURCES = \
-	gram.c emitter.c bytecode.c
+	gram.c emitter.c bytecode.c token.c
 libsyck_nowarn_la_CFLAGS = $(AM_CFLAGS) @WNO_SWITCH_ENUM@
 
 libsyck_a_SOURCES = \
@@ -25,7 +25,6 @@ libsyck_a_SOURCES = \
 	node.c \
 	syck.c \
 	syck_st.c \
-	token.c \
 	implicit.c \
 	yaml2byte.c
 EXTRA_DIST = bytecode.re \

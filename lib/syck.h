@@ -257,7 +257,7 @@ typedef struct _syck_level SyckLevel;
 typedef SYMID (*SyckNodeHandler)(SyckParser *p, SyckNode *n);
 typedef void (*SyckErrorHandler)(SyckParser *p, const char *);
 typedef SyckNode * (*SyckBadAnchorHandler)(SyckParser *p, const char *);
-typedef long (*SyckIoFileRead)(char *, SyckIoFile *, long, long); 
+typedef long (*SyckIoFileRead)(char *, SyckIoFile *, long, long);
 typedef long (*SyckIoStrRead)(char *, SyckIoStr *, long, long);
 
 enum syck_io_type {
@@ -268,7 +268,9 @@ enum syck_io_type {
 enum syck_parser_input {
     syck_yaml_utf8,
     syck_yaml_utf16,
+    syck_yaml_utf16be,
     syck_yaml_utf32,
+    syck_yaml_utf32be,
     syck_bytecode_utf8
 };
 
@@ -331,7 +333,7 @@ struct _syck_parser {
     SyckErrorHandler error_handler;
     /* InvalidAnchor handler */
     SyckBadAnchorHandler bad_anchor_handler;
-    /* Parser input type */
+    /* Parser input encoding */
     enum syck_parser_input input_type;
     /* IO type */
     enum syck_io_type io_type;

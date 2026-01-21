@@ -139,7 +139,7 @@ CuStreamCompareX(CuTest *tc, struct test_node *s1, struct test_node *s2) {
   int i = 0;
   while (1) {
     CuAssertIntEquals(tc, s1[i].type, s2[i].type);
-    if (s1[i].type == T_END)
+    if (s1[i].type == T_END || s2[i].type == T_END)
       return;
     if (s1[i].tag != 0 && s2[i].tag != 0)
       CuAssertStrEquals(tc, s1[i].tag, (char*)s2[i].tag);

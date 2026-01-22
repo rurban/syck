@@ -36,6 +36,8 @@ lib/gram.output
 lib/libsyck.a
 lib/libsyck.la
 lib/libsyck_nowarn.la
+lib/libsyck_rec16.la
+lib/libsyck_rec32.la
 lib/*.lo
 libtool
 m4/libtool.m4

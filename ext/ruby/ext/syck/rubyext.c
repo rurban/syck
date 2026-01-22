@@ -2075,9 +2075,10 @@ syck_out_mark(VALUE emitter, VALUE node)
     }
 }
 
-static void rb_syck_free_node(void *node)
+static void rb_syck_free_node(void *_node)
 {
-    syck_free_node((SyckNode *)node);
+    SyckNode *node = (SyckNode *)_node;
+    syck_free_node(&node);
 }
 
 /*

@@ -5,25 +5,75 @@
  * $Date: 2005/11/13 23:43:56 $
  *
  * Copyright (C) 2003 why the lucky stiff
+ * Copyright (C) 2026 Reini Urban
  */
 
 #include "syck.h"
 #include <string.h>
+#include <assert.h>
 
-#define YYCTYPE     char
+#if !defined(YYCSZ) || YYCSZ == 8
+#define YYCSZ 8
+#define YYCTYPE     unsigned char
+#elif YYCSZ == 16
+#include <stdint.h>
+#define YYCTYPE     uint16_t
+#elif YYCSZ == 32
+#include <stdint.h>
+#define YYCTYPE     uint32_t
+#endif
+
 #define YYCURSOR    cursor
 #define YYMARKER    marker
 #define YYLIMIT     limit
 #define YYFILL(n)   {}
 
+void try_tag_implicit8( SyckNode *n, int taguri );
+void try_tag_implicit16( SyckNode *n, int taguri );
+void try_tag_implicit32( SyckNode *n, int taguri );
+
+#if YYCSZ == 8
 void
-try_tag_implicit( SyckNode *n, int taguri )
+try_tag_implicit(const SyckParser *p, SyckNode *n )
+{
+    switch(p->input_type) {
+    case syck_yaml_utf8:
+        return try_tag_implicit8(n, p->taguri_expansion);
+    case syck_yaml_utf16:
+        return try_tag_implicit16(n, p->taguri_expansion);
+    case syck_yaml_utf32:
+        return try_tag_implicit32(n, p->taguri_expansion);
+    case syck_bytecode_utf8:
+    case syck_yaml_utf32be:
+    case syck_yaml_utf16be:
+    default:
+        /* unsupported */
+        assert(0);
+        return;
+    }
+}
+#endif
+
+void
+#if YYCSZ == 8
+try_tag_implicit8( SyckNode *n, int taguri )
+#elif YYCSZ == 16
+try_tag_implicit16( SyckNode *n, int taguri )
+#elif YYCSZ == 32
+try_tag_implicit32( SyckNode *n, int taguri )
+#endif
 {
     const char *tid = "";
     switch ( n->kind )
     {
         case syck_str_kind:
-            tid = syck_match_implicit( n->data.str->ptr, n->data.str->len );
+#if YYCSZ == 8
+            tid = syck_match_implicit8( (uint8_t*)n->data.str->ptr, n->data.str->len );
+#elif YYCSZ == 16
+            tid = syck_match_implicit16( (uint16_t*)n->data.str->ptr, n->data.str->len );
+#elif YYCSZ == 32
+            tid = syck_match_implicit32( (uint32_t*)n->data.str->ptr, n->data.str->len );
+#endif
             break;
 
         case syck_seq_kind:
@@ -48,11 +98,19 @@ try_tag_implicit( SyckNode *n, int taguri )
     }
 }
 
-const char *syck_match_implicit( const char *str, size_t len )
+const char*
+#if YYCSZ == 8
+syck_match_implicit8
+#elif YYCSZ == 16
+syck_match_implicit16
+#elif YYCSZ == 32
+syck_match_implicit32
+#endif
+                      ( const YYCTYPE *str, size_t len )
 {
-    char *marker;
-    char *cursor = (char *)str;
-    const char *limit = str + len;
+    YYCTYPE *marker;
+    YYCTYPE *cursor = (YYCTYPE *)str;
+    const YYCTYPE *limit = str + len;
 
 /*!re2c
 
@@ -113,6 +171,7 @@ ANY                 {   return "str"; }
 
 }
 
+#if YYCSZ == 8
 /* Remove ending fragment and compare types */
 int
 syck_tagcmp( const char *tag1, const char *tag2 )
@@ -191,3 +250,4 @@ ANY             {   return syck_taguri( YAML_DOMAIN, type_id, strlen( type_id ) 
 */
 
 }
+#endif

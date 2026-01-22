@@ -16,7 +16,7 @@
 /*
  * They do my bidding...
  */
-#define YYCTYPE     char
+#define YYCTYPE     unsigned char
 #define YYCURSOR    parser->cursor
 #define YYMARKER    parser->marker
 #define YYLIMIT     parser->limit
@@ -491,7 +491,7 @@ ScalarEnd:
             POP_LEVEL();
             if ( parser->implicit_typing == 1 )
             {
-                try_tag_implicit( sycklval->nodeData, parser->taguri_expansion );
+                try_tag_implicit( parser, sycklval->nodeData );
             }
             return YAML_PLAIN;
         }

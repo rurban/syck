@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
 #ifdef HAVE_RUBY_ST_H
@@ -407,6 +408,8 @@ struct _syck_emitter {
     int explicit_typing;
     /* Best width on folded scalars */
     int best_width;
+    /* Parser input encoding */
+    enum syck_parser_input input_type;
     /* Use literal[1] or folded[2] blocks on all text? */
     enum scalar_style style;
     /* Stage of written document */
@@ -497,10 +500,22 @@ EXPORT __attribute__warn_unused_result__
 int syck_try_implicit( SyckNode *n );
 EXPORT __attribute__warn_unused_result__
 char *syck_type_id_to_uri( char *type_id );
-EXPORT void try_tag_implicit( SyckNode *n, int taguri );
+EXPORT void try_tag_implicit( const SyckParser *p, SyckNode *n );
+//EXPORT void try_tag_implicit8( SyckNode *n, int taguri );
+//EXPORT void try_tag_implicit16( SyckNode *n, int taguri );
+//EXPORT void try_tag_implicit132( SyckNode *n, int taguri );
 EXPORT __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 const char *syck_match_implicit( const char *str, size_t len );
+EXPORT __attribute__warn_unused_result__
+__attribute__returns_nonnull__
+const char *syck_match_implicit8( const unsigned char *str, size_t len );
+EXPORT __attribute__warn_unused_result__
+__attribute__returns_nonnull__
+const char *syck_match_implicit16( const uint16_t *str, size_t len );
+EXPORT __attribute__warn_unused_result__
+__attribute__returns_nonnull__
+const char *syck_match_implicit32( const uint32_t *str, size_t len );
 
 /*
  * API prototypes

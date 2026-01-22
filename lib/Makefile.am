@@ -13,12 +13,17 @@ AM_YFLAGS = -d -t -v -p syck
 lib_LTLIBRARIES = libsyck.la
 include_HEADERS = syck.h syck_st.h
 noinst_HEADERS = yamlbyte.h gram.h bytecode.h
-DISTCLEANFILES = gram.c gram.h token.c implicit.c bytecode.c
+DISTCLEANFILES = gram.c gram.h token.c implicit.c bytecode.c \
+	token16.c implicit16.c token32.c implicit32.c
 
-noinst_LTLIBRARIES = libsyck_nowarn.la
+noinst_LTLIBRARIES = libsyck_nowarn.la libsyck_rec16.la libsyck_rec32.la
 libsyck_nowarn_la_SOURCES = \
 	gram.c emitter.c bytecode.c token.c
 libsyck_nowarn_la_CFLAGS = $(AM_CFLAGS) @WNO_SWITCH_ENUM@
+libsyck_rec16_la_SOURCES = token16.c implicit16.c
+libsyck_rec32_la_SOURCES = token32.c implicit32.c
+libsyck_rec16_la_CFLAGS = $(AM_CFLAGS) -DYYCSZ=16 @WNO_SWITCH_ENUM@
+libsyck_rec32_la_CFLAGS = $(AM_CFLAGS) -DYYCSZ=32 @WNO_SWITCH_ENUM@
 
 libsyck_a_SOURCES = \
 	handler.c \
@@ -35,22 +40,38 @@ EXTRA_DIST = bytecode.re \
 libsyck_la_CFLAGS = $(AM_CFLAGS)
 libsyck_la_LDFLAGS = -version-info $(SYCK_SO_VERSION)
 libsyck_la_SOURCES = $(libsyck_a_SOURCES)
-libsyck_la_LIBADD = libsyck_nowarn.la
+libsyck_la_LIBADD = libsyck_nowarn.la libsyck_rec16.la libsyck_rec32.la
 
 .c.i:
 	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
 	$(COMPILE) -E -o $@ $<
 
 REC = @REC@
-.re.c:
-	if test -n "$(REC)"; then \
-	  $(REC) --no-generation-date $< | sed -e's,"<stdout>","$@",' > $@.new && \
-	  chmod +w $@ || true;\
-	  echo "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */" > $@; \
-	  cat $@.new >>$@;\
-	  chmod -w $@;\
-	  rm -f $@.new;\
+RECFLAGS = -g --case-ranges --no-generation-date
+RECSZ = 8
+COMPILE.re = if test -n "$(REC)"; then \
+	  chmod +w $@ 2>/dev/null || true; \
+	  $(REC) $(RECFLAGS) --utf$(RECSZ) $< -o $@ && \
+	  echo -n "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */" > $@.prep && \
+	  if test -n "@UNIFDEF@"; then unifdef -DYYCSZ=$(RECSZ) -m $@; fi; \
+	  cat $@.prep $@ >$@.new && mv $@.new $@; rm $@.prep; chmod -w $@; \
 	fi
+
+.re.c:
+	$(COMPILE.re)
+
+token16.c: RECSZ=16
+token16.c: token.re
+	$(COMPILE.re)
+implicit16.c: RECSZ=16
+implicit16.c: implicit.re
+	$(COMPILE.re)
+token32.c: RECSZ=32
+token32.c: token.re
+	$(COMPILE.re)
+implicit32.c: RECSZ=32
+implicit32.c: implicit.re
+	$(COMPILE.re)
 
 # emacs flymake-mode
 check-syntax:
@@ -84,8 +105,8 @@ gram.c:	gram.y
 	fi
 
 BUILT_SOURCES = gram.c gram.h bytecode.c \
-	token.c \
-	implicit.c
+	token.c token16.c token16.c \
+	implicit.c implicit32.c implicit32.c
 
 .PHONY: sources
 sources:

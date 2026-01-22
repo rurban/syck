@@ -5,6 +5,7 @@
  * $Date: 2005-09-21 02:42:51 +0300 (Wed, 21 Sep 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
+ * Copyright (C) 2026 Reini Urban
  */
 #include "syck.h"
 #include "gram.h"
@@ -12,6 +13,21 @@
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
+
+#define CAT(a, b) a##b
+#define JOIN(a, b) CAT(a, b)
+
+#if !defined(YYCSZ) || YYCSZ == 8
+#define YYCSZ 8
+#define YYCTYPE     unsigned char
+#elif YYCSZ == 16
+#include <stdint.h>
+#define YYCTYPE     uint16_t
+#elif YYCSZ == 32
+#include <stdint.h>
+#define YYCTYPE     uint32_t
+#endif
+
 
 /*
  * Allocate quoted strings in chunks
@@ -21,7 +37,6 @@
 /*
  * They do my bidding...
  */
-#define YYCTYPE     unsigned char
 #define YYCURSOR    parser->cursor
 #define YYMARKER    parser->marker
 #define YYLIMIT     parser->limit
@@ -127,7 +142,7 @@
         sycklval->nodeData = n; \
         if ( parser->implicit_typing == 1 ) \
         { \
-            try_tag_implicit( sycklval->nodeData, parser->taguri_expansion ); \
+            try_tag_implicit( parser, sycklval->nodeData ); \
         } \
         return YAML_PLAIN; \
     }
@@ -271,6 +286,7 @@ escape_seq( char ch )
     }
 }
 
+#if YYCSZ == 8
 /*
  * My own re-entrant sycklex() using re2c.
  * You really get used to the limited regexp.
@@ -287,14 +303,16 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
 
         case syck_yaml_utf16:
         case syck_yaml_utf16be:
+            return sycklex_yaml_utf16( sycklval, parser );
             /* TODO convert it in memory */
-            syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
+            //syckerror( parser, "UTF-16 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
             break;
 
         case syck_yaml_utf32:
         case syck_yaml_utf32be:
+            return sycklex_yaml_utf16( sycklval, parser );
             /* TODO convert it in memory */
-            syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
+            //syckerror( parser, "UTF-32 is not currently supported in Syck.\nPlease contribute code to help this happen!" );
             break;
 
         case syck_bytecode_utf8:
@@ -305,12 +323,19 @@ sycklex( YYSTYPE *sycklval, SyckParser *parser )
     }
     return YAML_DOCSEP;
 }
+#endif
 
 /*
  * Parser for standard YAML [UTF-8]
  */
 int
+#if YYCSZ == 8
 sycklex_yaml_utf8( YYSTYPE *sycklval, SyckParser *parser )
+#elif YYCSZ == 16
+sycklex_yaml_utf16( YYSTYPE *sycklval, SyckParser *parser )
+#elif YYCSZ == 32
+sycklex_yaml_utf32( YYSTYPE *sycklval, SyckParser *parser )
+#endif
 {
     int doc_level = 0;
     if ( YYCURSOR == NULL )
@@ -1170,6 +1195,7 @@ ANY                 {   goto Comment;
 
 }
 
+#if YYCSZ == 8
 int
 syckwrap(void)
 {
@@ -1185,4 +1211,4 @@ syckerror( SyckParser *parser, const char *msg )
     parser->root = parser->root_on_error;
     (parser->error_handler)(parser, msg);
 }
-
+#endif

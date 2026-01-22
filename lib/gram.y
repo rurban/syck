@@ -117,7 +117,7 @@ empty           : indent_open empty indent_end
                    if ( ((SyckParser *)parser)->implicit_typing == 1 )
                    {
                       (void)$1;
-                      try_tag_implicit( $2, ((SyckParser *)parser)->taguri_expansion );
+                      try_tag_implicit( (SyckParser *)parser, $2 );
                    }
                    $$ = $2;
                 }
@@ -179,7 +179,7 @@ word_rep    : YAML_TRANSFER word_rep
                (void)$1;
                if ( ((SyckParser *)parser)->implicit_typing == 1 )
                {
-                  try_tag_implicit( $2, ((SyckParser *)parser)->taguri_expansion );
+                  try_tag_implicit( (SyckParser *)parser, $2 );
                }
                $$ = $2;
             }

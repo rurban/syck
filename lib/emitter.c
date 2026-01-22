@@ -683,15 +683,20 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     if ( str == NULL ) str = "";
 
     /* No empty nulls as map keys */
-    if ( len == 0 && ( parent->status == syck_lvl_map || parent->status == syck_lvl_imap ) && 
-         parent->ncount % 2 == 1 && syck_tagcmp( tag, "tag:yaml.org,2002:null" ) == 0 ) 
+    if ( len == 0 && ( parent->status == syck_lvl_map || parent->status == syck_lvl_imap ) &&
+         parent->ncount % 2 == 1 && syck_tagcmp( tag, "tag:yaml.org,2002:null" ) == 0 )
     {
         str = "~";
         len = 1;
     }
 
     scan = syck_scan_scalar( force_width, str, len );
-    implicit = (char *)syck_match_implicit( str, len );
+    if (e->input_type == syck_yaml_utf8)
+        implicit = (char *)syck_match_implicit8( (unsigned char*)str, len );
+    else if (e->input_type == syck_yaml_utf16 || e->input_type == syck_yaml_utf16be)
+        implicit = (char *)syck_match_implicit16( (uint16_t*)str, len );
+    else if (e->input_type == syck_yaml_utf32 || e->input_type == syck_yaml_utf32be)
+        implicit = (char *)syck_match_implicit32( (uint32_t*)str, len );
 
     /* quote strings which default to implicits */
     implicit = syck_taguri( YAML_DOMAIN, implicit, strlen( implicit ) );
@@ -700,8 +705,8 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     } else {
         /* complex key */
         if ( parent->status == syck_lvl_map && parent->ncount % 2 == 1 &&
-             ( !( tag == NULL || 
-             ( implicit != NULL && syck_tagcmp( tag, implicit ) == 0 && e->explicit_typing == 0 ) ) ) ) 
+             ( !( tag == NULL ||
+             ( implicit != NULL && syck_tagcmp( tag, implicit ) == 0 && e->explicit_typing == 0 ) ) ) )
         {
             syck_emitter_write( e, "? ", 2 );
             parent->status = syck_lvl_mapx;

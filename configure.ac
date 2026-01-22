@@ -49,6 +49,7 @@ AC_CHECK_PROGS(REC, 're2c')
 if test "$REC" != "re2c"; then
   AC_MSG_WARN([re2c not found])
 fi
+AC_CHECK_PROGS(UNIFDEF, 'unifdef')
 
 # Checks for libraries.
 

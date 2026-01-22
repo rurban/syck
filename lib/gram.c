@@ -1544,7 +1544,7 @@ yyreduce:
                    if ( ((SyckParser *)parser)->implicit_typing == 1 )
                    {
                       (void)(yyvsp[-1].name);
-                      try_tag_implicit( (yyvsp[0].nodeData), ((SyckParser *)parser)->taguri_expansion );
+                      try_tag_implicit( (SyckParser *)parser, (yyvsp[0].nodeData) );
                    }
                    (yyval.nodeData) = (yyvsp[0].nodeData);
                 }
@@ -1606,7 +1606,7 @@ yyreduce:
                (void)(yyvsp[-1].name);
                if ( ((SyckParser *)parser)->implicit_typing == 1 )
                {
-                  try_tag_implicit( (yyvsp[0].nodeData), ((SyckParser *)parser)->taguri_expansion );
+                  try_tag_implicit( (SyckParser *)parser, (yyvsp[0].nodeData) );
                }
                (yyval.nodeData) = (yyvsp[0].nodeData);
             }

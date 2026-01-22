@@ -25,9 +25,13 @@
 #include <string.h>
 
 #ifdef HAVE_RUBY_ST_H
-#include <ruby.h>
+# include <ruby.h>
 #else
-#include "syck_st.h"
+# ifndef ST_DATA_T_DEFINED
+typedef unsigned long st_data_t;
+//typedef void * st_data_t;
+# endif
+# include "syck_st.h"
 #endif
 
 #if defined(__cplusplus)
@@ -167,10 +171,6 @@ void syck_assert( const char *file_name, unsigned line_num );
 #define NL_KEEP     50
 
 #define EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES 1
-
-#ifndef ST_DATA_T_DEFINED
-typedef void * st_data_t;
-#endif
 
 #define SYMID unsigned long
 

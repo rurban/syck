@@ -2,8 +2,8 @@
 
 /* static	char	sccsid[] = "@(#) st.c 5.1 89/12/14 Crucible"; */
 
-#include "syck_st.h"
 #include "syck.h"
+#include "syck_st.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>

@@ -237,7 +237,7 @@ syck_st_free( SyckParser *p )
     if ( p->anchors != NULL )
     {
         DPRINTF ((stderr, "DEBUG %s free p->anchors nodes %p\n", __FUNCTION__, p->anchors));
-        st_foreach( p->anchors, syck_st_free_nodes, (void*)0UL );
+        st_foreach( p->anchors, syck_st_free_nodes, 0UL );
         DPRINTF ((stderr, "DEBUG %s free p->anchors table %p\n", __FUNCTION__, p->anchors));
         st_free_table( p->anchors );
         p->anchors = NULL;
@@ -246,7 +246,7 @@ syck_st_free( SyckParser *p )
     if ( p->bad_anchors != NULL )
     {
         DPRINTF ((stderr, "DEBUG %s free p->bad_anchors nodes %p\n", __FUNCTION__, p->bad_anchors));
-        st_foreach( p->bad_anchors, syck_st_free_nodes, (void*)0UL );
+        st_foreach( p->bad_anchors, syck_st_free_nodes, 0UL );
         DPRINTF ((stderr, "DEBUG %s free p->bad_anchors table %p\n", __FUNCTION__, p->bad_anchors));
         st_free_table( p->bad_anchors );
         p->bad_anchors = NULL;

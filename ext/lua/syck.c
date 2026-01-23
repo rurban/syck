@@ -227,7 +227,6 @@ static void lua_syck_mark_emitter(SyckEmitter *e, st_data_t _idx)
 			lua_pushnil(bonus->L);  /* first key */
 			while (lua_next(bonus->L, -2) != 0) {
 				/* `key' is at index -2 and `value' at index -1 */
-				//syck_emitter_mark_node(e, bonus->id++);
 				syck_emitter_mark_node(e, bonus->id++);
 				lua_syck_mark_emitter(e, (st_data_t)-1);
 				lua_pop(bonus->L, 1);

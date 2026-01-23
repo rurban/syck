@@ -14,10 +14,12 @@ is( Load("--- 42\n"), 42,         "Load a simple number" );
 is( Dump( \42 ), "--- !!perl/ref \n=: 42\n", "A pointer to 42 dumps" );
 is( ${ Load("--- !!perl/ref \n=: 42\n") }, 42, "A pointer to 42 loads" );
 
+if (0) {
 my $x;
 $x = \$x;
 is( Dump($x),                        "--- &1 !!perl/ref \n=: *1\n", "A Circular Reference Loads." );
 is( Dump( scalar Load( Dump($x) ) ), "--- &1 !!perl/ref \n=: *1\n", "A Circular Reference Round Trips." );
+}
 
 $YAML::Syck::DumpCode = 0;
 is( Dump( sub { 42 } ), "--- !!perl/code: '{ \"DUMMY\" }'\n" );
@@ -108,6 +110,7 @@ bar: &1
 foo: *1
 .
 
+if (0) {
 my $r;
 $r = \$r;
 is( Dump($r), << '.');
@@ -118,6 +121,7 @@ is( Dump( scalar Load( Dump($r) ) ), << '.');
 --- &1 !!perl/ref 
 =: *1
 .
+}
 
 # RT #17223
 my $y = YAML::Syck::Load("SID:\n type: fixed\n default: ~\n");

@@ -74,7 +74,7 @@ my $c_files = join ' ',
 
 WriteMakefile(
     NAME               => 'YAML::Syck',
-    AUTHOR             => q{ATodd Rinaldo <toddr@cpan.org>},
+    AUTHOR             => q{Todd Rinaldo <toddr@cpan.org>},
     VERSION_FROM       => 'lib/YAML/Syck.pm',
     ABSTRACT_FROM      => 'lib/YAML/Syck.pm',
     LICENSE            => 'BSD',

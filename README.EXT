@@ -439,7 +439,7 @@ become sort of unnecessary.
   of bytes which should be read from the buffer.
 
  void
- syck_emitter_handler( SyckEmitter *e, SyckEmitterHandler
+ syck_emitter_handler( SyckEmitter *e, SyckEmitterHandler hdlr );
 
 
  void

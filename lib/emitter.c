@@ -137,6 +137,7 @@ syck_new_emitter(void)
     e->lvl_capa = ALLOC_CT;
     e->levels = S_ALLOC_N( SyckLevel, e->lvl_capa ); 
     syck_emitter_reset_levels( e );
+    e->permit_duplicate_anchors = EMITTER_PERMIT_DUPLICATE_ANCHORS;
     e->bonus = NULL;
     return e;
 }
@@ -1309,12 +1310,18 @@ void syck_emit_end( SyckEmitter *e )
     }
 }
 
+void
+syck_emitter_permit_duplicates( SyckEmitter *e, int flag )
+{
+    e->permit_duplicates = flag;
+}
+
 /*
  * Fill markers table with emitter nodes in the
  * soon-to-be-emitted tree.
  */
 SYMID
-syck_emitter_mark_node( SyckEmitter *e, st_data_t n, unsigned flags )
+syck_emitter_mark_node( SyckEmitter *e, st_data_t n )
 {
     SYMID oid = 0;
     char *anchor_name = NULL;
@@ -1370,7 +1377,7 @@ syck_emitter_mark_node( SyckEmitter *e, st_data_t n, unsigned flags )
              * Insert into anchors table
              */
             st_insert( e->anchors, (st_data_t)oid, (st_data_t)anchor_name );
-            if (! (flags & EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES) )
+            if (!e->permit_duplicate_anchors )
             {
                 return 0;
             }

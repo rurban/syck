@@ -120,10 +120,10 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
                     p->bad_anchors = st_init_strtable();
                 }
                 assert(p->bad_anchors != NULL);
-                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n )
-                     && p->bad_anchor_handler)
+                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n ) )
                 {
-                    n = (p->bad_anchor_handler)( p, a );
+                    if (p->bad_anchor_handler)
+                        n = (p->bad_anchor_handler)( p, a );
                     st_insert( p->bad_anchors, (st_data_t)a, (st_data_t)n );
                 }
             }

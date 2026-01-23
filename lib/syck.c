@@ -444,7 +444,7 @@ syck_move_tokens( SyckParser *p )
         return 0;
 
     skip = p->limit - p->token;
-    if ( skip < 1 )
+    if ( skip < 1 ) // Note: perl had < 0. but with 0, count = 0
         return 0;
 
     if ( ( count = p->token - p->buffer ) )

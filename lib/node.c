@@ -173,7 +173,7 @@ syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
 void
 syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
 {
-    if ( n->data.str->ptr != NULL )
+    if ( n->data.str && n->data.str->ptr )
     {
         S_FREE( n->data.str->ptr );
         n->data.str->ptr = NULL;

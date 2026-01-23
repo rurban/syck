@@ -65,7 +65,7 @@ static void TestBase64Encode(CuTest *tc) {
       "++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/++f/"
       "++SH+"
       "Dk1hZGUgd2l0aCBHSU1QACwAAAAADAAMAAAFLCAgjoEwnuNAFOhpEMTRiggcz4BNJHrv/"
-      "zCFcLiwMWYNG84BwwEeECcgggoBADs=\n");
+      "zCFcLiwMWYNG84BwwEeECcgggoBADs=");
   S_FREE(enc);
 }
 

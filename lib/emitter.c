@@ -14,7 +14,7 @@
 
 #define DEFAULT_ANCHOR_FORMAT "id%03d"
 
-const char hex_table[] = 
+const char hex_table[] =
 "0123456789ABCDEF";
 static char b64_table[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -49,8 +49,7 @@ syck_base64enc( char *s, long len )
         buff[i++] = padding;
         buff[i++] = padding;
     }
-    buff[i++] = '\n';
-    buff[i] = '\0';
+    buff[i++] = '\0';
     return buff;
 }
 
@@ -371,7 +370,6 @@ syck_emit( SyckEmitter *e, st_data_t n )
     SYMID oid;
     char *anchor_name = NULL;
     int indent = 0;
-    long x = 0;
     SyckLevel *parent;
     SyckLevel *lvl = syck_emitter_current_level( e );
 
@@ -414,7 +412,7 @@ syck_emit( SyckEmitter *e, st_data_t n )
         assert(e->anchored);
         assert(anchor_name);
 
-        if ( ! st_lookup( e->anchored, (st_data_t)anchor_name, (void *)&x ) )
+        if ( ! st_lookup( e->anchored, (st_data_t)anchor_name, 0UL ) )
         {
             char *an = S_ALLOC_N( char, strlen( anchor_name ) + 3 );
             sprintf( an, "&%s ", anchor_name );
@@ -428,8 +426,7 @@ syck_emit( SyckEmitter *e, st_data_t n )
             syck_emitter_write( e, an, strlen( anchor_name ) + 2 );
             S_FREE( an );
 
-            x = 1;
-            st_insert( e->anchored, (st_data_t)anchor_name, (st_data_t)x );
+            st_insert( e->anchored, (st_data_t)anchor_name, 0UL ); // was 1
             lvl->anctag = 1;
         }
         else
@@ -565,23 +562,33 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
 {
     long i = 0, start = 0;
     int flags = SCAN_NONE;
+    const unsigned char ch = (const unsigned char)cursor[0];
 
     if ( len < 1 )  return flags;
 
     /* c-indicators from the spec */
-    if ( cursor[0] == '[' || cursor[0] == ']' ||
-         cursor[0] == '{' || cursor[0] == '}' ||
-         cursor[0] == '!' || cursor[0] == '*' ||
-         cursor[0] == '&' || cursor[0] == '|' ||
-         cursor[0] == '>' || cursor[0] == '\'' ||
-         cursor[0] == '"' || cursor[0] == '#' ||
-         cursor[0] == '%' || cursor[0] == '@' ||
-         cursor[0] == '`' ) {
+    if ( ch == '[' || ch == ']' ||
+         ch == '{' || ch == '}' ||
+         ch == '!' || ch == '*' ||
+         ch == '&' || ch == '|' ||
+         ch == '>' || ch == '\'' ||
+         ch == '"' || ch == '#' ||
+         ch == '%' || ch == '@' ||
+         ch == '`'
+#ifdef PERL
+        // TODO perl has '&' and '^' also
+         || cursor[0] == '&' || cursor[0] == '^'
+#endif
+         ) {
             flags |= SCAN_INDIC_S;
     }
-    if ( ( cursor[0] == '-' || cursor[0] == ':' ||
-           cursor[0] == '?' || cursor[0] == ',' ) &&
-           ( len == 1 || cursor[1] == ' ' || cursor[1] == '\n' ) )
+    if ( ( ch == '-' || ch == ':' ||
+           ch == '?' || ch == ',' ) &&
+           ( len == 1 || cursor[1] == ' ' || cursor[1] == '\n'
+#ifdef PERL
+              || cursor[1] == '\r'
+#endif
+             ) )
     {
             flags |= SCAN_INDIC_S;
     }
@@ -592,8 +599,8 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
     } else if ( len > 1 && cursor[len-2] == '\n' ) {
         flags |= SCAN_MANYNL_E;
     }
-    if ( 
-        ( len > 0 && ( cursor[0] == ' ' || cursor[0] == '\t' ) ) ||
+    if (
+        ( len > 0 && ( ch == ' ' || ch == '\t' ) ) ||
         ( len > 1 && ( cursor[len-1] == ' ' || cursor[len-1] == '\t' ) )
     ) {
         flags |= SCAN_WHITEEDGE;
@@ -605,56 +612,54 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
 
     /* scan string */
     for ( i = 0; i < len; i++ ) {
+        const unsigned char ch0 = cursor[i];
+        const unsigned char ch1 = cursor[i+1];
 
-        if ( ! ( cursor[i] == 0x9 ||
-                 cursor[i] == 0xA ||
-                 cursor[i] == 0xD ||
-               ( cursor[i] >= 0x20 && cursor[i] <= 0x7E ) )
-        ) {
+        if ( ! ( ch0 == 0x09 || ch0 == 0x0A || ch0 == 0x0D ||
+                 ( ch0 >= 0x20 && ch0 <= 0x7E )) )
+        {
             flags |= SCAN_NONPRINT;
         }
-        else if ( cursor[i] == '\n' ) {
+        else if ( ch0 == '\n' ) {
             flags |= SCAN_NEWLINE;
             if ( len - i >= 3 && strncmp( &cursor[i+1], "---", 3 ) == 0 )
                 flags |= SCAN_DOCSEP;
-            if ( cursor[i+1] == ' ' || cursor[i+1] == '\t' ) 
+            if ( ch1 == ' ' || ch1 == '\t' )
                 flags |= SCAN_INDENTED;
             if ( req_width > 0 && i - start > req_width )
                 flags |= SCAN_WIDE;
             start = i;
         }
-        else if ( cursor[i] == '\'' )
+        else if ( ch0 == '\'' )
         {
             flags |= SCAN_SINGLEQ;
         }
-        else if ( cursor[i] == '"' )
+        else if ( ch0 == '"' )
         {
             flags |= SCAN_DOUBLEQ;
         }
-        else if ( cursor[i] == ']' )
+        else if ( ch0 == ']' )
         {
             flags |= SCAN_FLOWSEQ;
         }
-        else if ( cursor[i] == '}' )
+        else if ( ch0 == '}' )
         {
             flags |= SCAN_FLOWMAP;
         }
         /* remember, if plain collections get implemented, to add nb-plain-flow-char */
-        else if ( ( cursor[i] == ' ' && cursor[i+1] == '#' ) ||
-                  ( cursor[i] == ':' && 
-                    ( cursor[i+1] == ' ' || cursor[i+1] == '\n' || i == len - 1 ) ) )
+        else if ( ( ch0 == ' ' && ch1 == '#' ) ||
+                  ( ch0 == ':' && ( ch1 == ' ' || ch1 == '\n' || i == len - 1 ) ) )
         {
             flags |= SCAN_INDIC_C;
         }
-        else if ( cursor[i] == ',' && 
-                  ( cursor[i+1] == ' ' || cursor[i+1] == '\n' || i == len - 1 ) )
+        else if ( ch0 == ',' && ( ch1 == ' ' || ch1 == '\n' || i == len - 1 ) )
         {
             flags |= SCAN_FLOWMAP;
             flags |= SCAN_FLOWSEQ;
         }
     }
 
-    /* printf( "---STR---\n%s\nFLAGS: %d\n", cursor, flags ); */
+    /* DPRINTF((stderr, "SCALAR: %s\nFLAGS: %d\n", cursor, flags )); */
     return flags;
 }
 /*

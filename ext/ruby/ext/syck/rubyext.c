@@ -2213,7 +2213,7 @@ syck_emitter_emit(int argc, VALUE *argv, VALUE self)
     } else {
         symple = rb_funcall( proc, s_call, 1, rb_ivar_get( self, s_out ) );
     }
-    syck_emitter_mark_node( emitter, (st_data_t)symple, 0 );
+    syck_emitter_mark_node( emitter, (st_data_t)symple );
 
     /* Second pass, build emitted string */
     level -= 1;

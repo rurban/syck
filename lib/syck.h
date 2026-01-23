@@ -166,7 +166,9 @@ void syck_assert( const char *file_name, unsigned line_num );
 #define NL_CHOMP    40
 #define NL_KEEP     50
 
-#define EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES 1
+#ifndef EMITTER_PERMIT_DUPLICATE_REFS
+#define EMITTER_PERMIT_DUPLICATE_REFS 1
+#endif
 
 #ifndef ST_DATA_T_DEFINED
 typedef void * st_data_t;
@@ -257,7 +259,7 @@ typedef struct _syck_level SyckLevel;
 typedef SYMID (*SyckNodeHandler)(SyckParser *p, SyckNode *n);
 typedef void (*SyckErrorHandler)(SyckParser *p, const char *);
 typedef SyckNode * (*SyckBadAnchorHandler)(SyckParser *p, const char *);
-typedef long (*SyckIoFileRead)(char *, SyckIoFile *, long, long); 
+typedef long (*SyckIoFileRead)(char *, SyckIoFile *, long, long);
 typedef long (*SyckIoStrRead)(char *, SyckIoStr *, long, long);
 
 enum syck_io_type {
@@ -434,6 +436,7 @@ struct _syck_emitter {
     int lvl_capa;
     int max_depth;
     int depth;
+    int permit_duplicate_refs;
     /* Pointer for extension's use */
     void *bonus;
 };
@@ -514,8 +517,9 @@ EXPORT __attribute__malloc__
 __attribute__warn_unused_result__
 __attribute__returns_nonnull__
 SyckEmitter *syck_new_emitter(void);
+EXPORT void syck_emitter_permit_duplicate_refs( SyckEmitter *e, int );
 EXPORT __attribute__warn_unused_result__
-SYMID syck_emitter_mark_node( SyckEmitter *e, st_data_t, unsigned );
+SYMID syck_emitter_mark_node( SyckEmitter *e, st_data_t );
 EXPORT void syck_emitter_ignore_id( SyckEmitter *e, SYMID );
 EXPORT void syck_output_handler( SyckEmitter *e, SyckOutputHandler );
 EXPORT void syck_emitter_handler( SyckEmitter *e, SyckEmitterHandler );

@@ -14,9 +14,9 @@
 
 #define DEFAULT_ANCHOR_FORMAT "id%03d"
 
-const char hex_table[] = 
+const unsigned char hex_table[] =
 "0123456789ABCDEF";
-static char b64_table[] =
+static unsigned char b64_table[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /*
@@ -27,7 +27,7 @@ syck_base64enc( char *s, long len )
 {
     long i = 0;
     int padding = '=';
-    char *buff = S_ALLOC_N(char, 1 + len * 4 / 3 + 6);
+    char *buff = S_ALLOC_N(char, len * 4 / 3 + 6);
 
     while (len >= 3) {
         buff[i++] = b64_table[077 & (*s >> 2)];
@@ -49,8 +49,7 @@ syck_base64enc( char *s, long len )
         buff[i++] = padding;
         buff[i++] = padding;
     }
-    buff[i++] = '\n';
-    buff[i] = '\0';
+    buff[i++] = '\0';
     return buff;
 }
 
@@ -306,11 +305,11 @@ syck_emitter_write( SyckEmitter *e, const char *str, long len )
      * Flush if at end of buffer
      */
     at = e->marker - e->buffer;
-    if ( (size_t)(len + at) >= e->bufsize - 1)
+    if ( (size_t)(len + at) >= e->bufsize)
     {
         syck_emitter_flush( e, 0 );
 	for (;;) {
-	    long rest = (e->bufsize - 1) - (e->marker - e->buffer);
+	    long rest = e->bufsize - (e->marker - e->buffer);
 	    if (len <= rest) break;
 	    S_MEMCPY( e->marker, str, char, rest );
 	    e->marker += rest;
@@ -339,14 +338,14 @@ syck_emitter_flush( SyckEmitter *e, long check_room )
      */
     if ( check_room > 0 )
     {
-        if ( (e->bufsize - 1) > ( e->marker - e->buffer ) + (size_t)check_room )
+        if ( e->bufsize > ( e->marker - e->buffer ) + (size_t)check_room )
         {
             return;
         }
     }
     else
     {
-        check_room = (e->bufsize - 1);
+        check_room = e->bufsize;
     }
 
     /*
@@ -371,7 +370,6 @@ syck_emit( SyckEmitter *e, st_data_t n )
     SYMID oid;
     char *anchor_name = NULL;
     int indent = 0;
-    long x = 0;
     SyckLevel *parent;
     SyckLevel *lvl = syck_emitter_current_level( e );
 
@@ -414,7 +412,7 @@ syck_emit( SyckEmitter *e, st_data_t n )
         assert(e->anchored);
         assert(anchor_name);
 
-        if ( ! st_lookup( e->anchored, (st_data_t)anchor_name, (void *)&x ) )
+        if ( ! st_lookup( e->anchored, (st_data_t)anchor_name, 0UL ) )
         {
             char *an = S_ALLOC_N( char, strlen( anchor_name ) + 3 );
             sprintf( an, "&%s ", anchor_name );
@@ -428,8 +426,7 @@ syck_emit( SyckEmitter *e, st_data_t n )
             syck_emitter_write( e, an, strlen( anchor_name ) + 2 );
             S_FREE( an );
 
-            x = 1;
-            st_insert( e->anchored, (st_data_t)anchor_name, (st_data_t)x );
+            st_insert( e->anchored, (st_data_t)anchor_name, (void*)1UL );
             lvl->anctag = 1;
         }
         else
@@ -565,23 +562,33 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
 {
     long i = 0, start = 0;
     int flags = SCAN_NONE;
+    const unsigned char ch = (const unsigned char)cursor[0];
 
     if ( len < 1 )  return flags;
 
     /* c-indicators from the spec */
-    if ( cursor[0] == '[' || cursor[0] == ']' ||
-         cursor[0] == '{' || cursor[0] == '}' ||
-         cursor[0] == '!' || cursor[0] == '*' ||
-         cursor[0] == '&' || cursor[0] == '|' ||
-         cursor[0] == '>' || cursor[0] == '\'' ||
-         cursor[0] == '"' || cursor[0] == '#' ||
-         cursor[0] == '%' || cursor[0] == '@' ||
-         cursor[0] == '`' ) {
+    if ( ch == '[' || ch == ']' ||
+         ch == '{' || ch == '}' ||
+         ch == '!' || ch == '*' ||
+         ch == '&' || ch == '|' ||
+         ch == '>' || ch == '\'' ||
+         ch == '"' || ch == '#' ||
+         ch == '%' || ch == '@' ||
+         ch == '`'
+#ifdef PERL
+        // TODO perl has '&' and '^' also
+         || cursor[0] == '&' || cursor[0] == '^'
+#endif
+         ) {
             flags |= SCAN_INDIC_S;
     }
-    if ( ( cursor[0] == '-' || cursor[0] == ':' ||
-           cursor[0] == '?' || cursor[0] == ',' ) &&
-           ( len == 1 || cursor[1] == ' ' || cursor[1] == '\n' ) )
+    if ( ( ch == '-' || ch == ':' ||
+           ch == '?' || ch == ',' ) &&
+           ( len == 1 || cursor[1] == ' ' || cursor[1] == '\n'
+#ifdef PERL
+              || cursor[1] == '\r'
+#endif
+             ) )
     {
             flags |= SCAN_INDIC_S;
     }
@@ -592,8 +599,8 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
     } else if ( len > 1 && cursor[len-2] == '\n' ) {
         flags |= SCAN_MANYNL_E;
     }
-    if ( 
-        ( len > 0 && ( cursor[0] == ' ' || cursor[0] == '\t' ) ) ||
+    if (
+        ( len > 0 && ( ch == ' ' || ch == '\t' ) ) ||
         ( len > 1 && ( cursor[len-1] == ' ' || cursor[len-1] == '\t' ) )
     ) {
         flags |= SCAN_WHITEEDGE;
@@ -605,56 +612,54 @@ syck_scan_scalar( int req_width, const char *cursor, long len )
 
     /* scan string */
     for ( i = 0; i < len; i++ ) {
+        const unsigned char ch0 = cursor[i];
+        const unsigned char ch1 = cursor[i+1];
 
-        if ( ! ( cursor[i] == 0x9 ||
-                 cursor[i] == 0xA ||
-                 cursor[i] == 0xD ||
-               ( cursor[i] >= 0x20 && cursor[i] <= 0x7E ) )
-        ) {
+        if ( ! ( ch0 == 0x09 || ch0 == 0x0A || ch0 == 0x0D ||
+                 ( ch0 >= 0x20 && ch0 <= 0x7E )) )
+        {
             flags |= SCAN_NONPRINT;
         }
-        else if ( cursor[i] == '\n' ) {
+        else if ( ch0 == '\n' ) {
             flags |= SCAN_NEWLINE;
             if ( len - i >= 3 && strncmp( &cursor[i+1], "---", 3 ) == 0 )
                 flags |= SCAN_DOCSEP;
-            if ( cursor[i+1] == ' ' || cursor[i+1] == '\t' ) 
+            if ( ch1 == ' ' || ch1 == '\t' )
                 flags |= SCAN_INDENTED;
             if ( req_width > 0 && i - start > req_width )
                 flags |= SCAN_WIDE;
             start = i;
         }
-        else if ( cursor[i] == '\'' )
+        else if ( ch0 == '\'' )
         {
             flags |= SCAN_SINGLEQ;
         }
-        else if ( cursor[i] == '"' )
+        else if ( ch0 == '"' )
         {
             flags |= SCAN_DOUBLEQ;
         }
-        else if ( cursor[i] == ']' )
+        else if ( ch0 == ']' )
         {
             flags |= SCAN_FLOWSEQ;
         }
-        else if ( cursor[i] == '}' )
+        else if ( ch0 == '}' )
         {
             flags |= SCAN_FLOWMAP;
         }
         /* remember, if plain collections get implemented, to add nb-plain-flow-char */
-        else if ( ( cursor[i] == ' ' && cursor[i+1] == '#' ) ||
-                  ( cursor[i] == ':' && 
-                    ( cursor[i+1] == ' ' || cursor[i+1] == '\n' || i == len - 1 ) ) )
+        else if ( ( ch0 == ' ' && ch1 == '#' ) ||
+                  ( ch0 == ':' && ( ch1 == ' ' || ch1 == '\n' || i == len - 1 ) ) )
         {
             flags |= SCAN_INDIC_C;
         }
-        else if ( cursor[i] == ',' && 
-                  ( cursor[i+1] == ' ' || cursor[i+1] == '\n' || i == len - 1 ) )
+        else if ( ch0 == ',' && ( ch1 == ' ' || ch1 == '\n' || i == len - 1 ) )
         {
             flags |= SCAN_FLOWMAP;
             flags |= SCAN_FLOWSEQ;
         }
     }
 
-    /* printf( "---STR---\n%s\nFLAGS: %d\n", cursor, flags ); */
+    /* DPRINTF((stderr, "SCALAR: %s\nFLAGS: %d\n", cursor, flags )); */
     return flags;
 }
 /*
@@ -682,12 +687,21 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     scan = syck_scan_scalar( force_width, str, len );
     implicit = (char *)syck_match_implicit( str, len );
 
-    /* quote strings which default to implicits */
-    implicit = syck_taguri( YAML_DOMAIN, implicit, strlen( implicit ) );
-    if ( syck_tagcmp( tag, implicit ) != 0 && syck_tagcmp( tag, "tag:yaml.org,2002:str" ) == 0 ) {
-        force_style = scalar_2quote;
+    /* quote strings */
+    if (
+        (
+         (strncmp( implicit, "bool", 4 ) == 0) ||
+         (strncmp( implicit, "null", 4 ) == 0)
+         )
+        &&
+        (force_style != scalar_plain)
+        &&
+        (len > 0)
+        )
+    {
+        force_style = (force_style == scalar_2quote) ? scalar_2quote : scalar_1quote;
     } else {
-        /* complex key */
+        /* complex key - disabled
         if ( parent->status == syck_lvl_map && parent->ncount % 2 == 1 &&
              ( !( tag == NULL || 
              ( implicit != NULL && syck_tagcmp( tag, implicit ) == 0 && e->explicit_typing == 0 ) ) ) ) 
@@ -695,9 +709,9 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
             syck_emitter_write( e, "? ", 2 );
             parent->status = syck_lvl_mapx;
         }
+        */
         syck_emit_tag( e, tag, implicit );
     }
-    S_FREE( implicit );
 
     /* if still arbitrary, sniff a good block style. */
     if ( force_style == scalar_none ) {
@@ -715,7 +729,8 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
     /* Determine block style */
     if ( scan & SCAN_NONPRINT ) {
         force_style = scalar_2quote;
-    } else if ( scan & SCAN_WHITEEDGE ) {
+    } else if ( force_style != scalar_1quote && force_style != scalar_2quote_1 &&
+                (scan & SCAN_WHITEEDGE) ) {
         force_style = scalar_2quote;
     } else if ( force_style != scalar_fold && ( scan & SCAN_INDENTED ) ) {
         force_style = scalar_literal;
@@ -750,7 +765,9 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
 
     /* If the parent is an inline, double quote anything complex */
     if ( parent->status == syck_lvl_imap || parent->status == syck_lvl_iseq ) {
-        if ( force_style != scalar_plain && force_style != scalar_1quote ) {
+        if ( force_style != scalar_plain &&
+             force_style != scalar_1quote &&
+             force_style != scalar_2quote_1) {
             force_style = scalar_2quote;
         }
     }
@@ -762,6 +779,16 @@ void syck_emit_scalar( SyckEmitter *e, const char *tag, enum scalar_style force_
         keep_nl = NL_KEEP;
     }
 
+    /* A key/value like C<foo: :bar> will be interpreted as ":bar" by Perl, but
+     * Ruby will treat it as the symbol :bar. For compatability with Ruby emit
+     * these with quotes.
+     */
+    if ( force_style == scalar_plain &&
+         strncmp( implicit, "str", 4 ) == 0 &&
+         str[0] == ':' ) {
+        force_style = scalar_literal;
+    }
+    
     /* Write the text node */
     switch ( force_style )
     {
@@ -811,7 +838,10 @@ syck_emitter_escape( SyckEmitter *e, const unsigned char *src, long len )
     int i;
     for( i = 0; i < len; i++ )
     {
-        if( (src[i] < 0x20) || (0x7E < src[i]) )
+        /* XXX - scalar_fold overloaded to mean utf8 from Audrey Tang */
+        if( (e->style == scalar_fold)
+                ? ((src[i] < 0x20) && (0 < src[i]))
+                : ((src[i] < 0x20) || (0x7E < src[i])) )
         {
             syck_emitter_write( e, "\\", 1 );
             if( '\0' == src[i] )
@@ -825,7 +855,7 @@ syck_emitter_escape( SyckEmitter *e, const unsigned char *src, long len )
         }
         else
         {
-            syck_emitter_write( e, (char*)&src[i], 1 );
+            syck_emitter_write( e, (char *)&src[i], 1 );
             if( '\\' == src[i] )
                 syck_emitter_write( e, "\\", 1 );
         }
@@ -843,24 +873,37 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
     const char *end = str;
     syck_emitter_write( e, "'", 1 );
     while ( mark < str + len ) {
+#ifndef PERL
         if ( do_indent != 0 ) {
             syck_emit_indent( e );
             do_indent = 0;
         }
+#endif
         switch ( *mark ) {
+#ifndef PERL
+            case '\'':  syck_emitter_write( e, "''", 2 ); break;
+#else
             case '\'':  syck_emitter_write( e, "'", 1 ); break;
+#endif
 
             case '\n':
+#ifndef PERL
                 end = mark + 1;
-                if ( *start != ' ' && *start != '\n' && *end != '\n' && *end != ' ' ) {
+                if ( *start != ' ' && *start != '\n' && *end != '\n' && *end != ' ' )
+#else
+                if ( *start != '\n' || start == str )
+#endif
+                {
                     syck_emitter_write( e, "\n\n", 2 );
                 } else {
                     syck_emitter_write( e, "\n", 1 );
                 }
+#ifndef PERL
                 do_indent = 1;
+#endif
                 start = mark + 1;
             break;
-
+#ifndef PERL
             case ' ':
                 if ( width > 0 && *start != ' ' && mark - end > width ) {
                     do_indent = 1;
@@ -868,8 +911,8 @@ void syck_emit_1quoted( SyckEmitter *e, int width, const char *str, long len )
                 } else {
                     syck_emitter_write( e, " ", 1 );
                 }
-            break;
-
+                break;
+#endif
             default:
                 syck_emitter_write( e, mark, 1 );
             break;
@@ -940,7 +983,7 @@ void syck_emit_2quoted( SyckEmitter *e, int width, const char *str, long len )
 }
 
 /*
- * Outputs a double-quoted block, for perl YAML compat
+ * Outputs a double-quoted block, for perl YAML compat.
  * different \n handling.
  */
 void syck_emit_2quoted_1( SyckEmitter *e, int width, const char *str, long len )
@@ -1155,8 +1198,10 @@ void syck_emit_item( SyckEmitter *e, st_data_t n )
     switch ( lvl->status )
     {
         case syck_lvl_seq:
+#ifndef PERL
         case syck_lvl_seqx:  /* TODO check */
             parent = syck_emitter_parent_level( e );
+#endif
             /* seq-in-map shortcut */
             if ( parent->status == syck_lvl_mapx && lvl->ncount == 0 ) {
                 /* shortcut -- the lvl->anctag check should be unneccesary but
@@ -1263,7 +1308,9 @@ void syck_emit_end( SyckEmitter *e )
     switch ( lvl->status )
     {
         case syck_lvl_seq:
+#ifndef PERL
         case syck_lvl_seqx: /* TODO check */
+#endif
             if ( lvl->ncount == 0 ) {
                 syck_emitter_write( e, "[]\n", 3 );
             } else if ( parent->status == syck_lvl_mapx ) {
@@ -1279,7 +1326,9 @@ void syck_emit_end( SyckEmitter *e )
             break;
 
         case syck_lvl_map:
+#ifndef PERL
         case syck_lvl_mapx:  /* TODO check */
+#endif
             if ( lvl->ncount == 0 ) {
                 syck_emitter_write( e, "{}\n", 3 );
             } else if ( lvl->ncount % 2 == 1 ) {
@@ -1377,11 +1426,9 @@ syck_emitter_mark_node( SyckEmitter *e, st_data_t n )
              * Insert into anchors table
              */
             st_insert( e->anchors, (st_data_t)oid, (st_data_t)anchor_name );
-            if (!e->permit_duplicate_refs )
-            {
-                return 0;
-            }
         }
+        if (!e->permit_duplicate_refs )
+            return 0;
     }
     return oid;
 }

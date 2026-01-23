@@ -64,7 +64,7 @@ if (-f "../../lib/syck.c") {
         copy_with_coda( "../../lib/$c", $to );
     }
     copy_with_coda( "../../config.h", "config.h" );
-    $DEFINE = "-DHAVE_CONFIG_H"
+    $DEFINE = "-DHAVE_CONFIG_H -DPERL"
 }
 
 # One liner stolen from inc/Module/Install/Compiler.pm

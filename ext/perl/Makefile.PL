@@ -42,7 +42,7 @@ sub copy_with_coda {
     open my $from, '<', $from_file
         or die "Could not read $from_file: $!";
     chmod 0666, $to_file if -e $to_file;
-    open my $out, '>>', $to_file
+    open my $out, '>', $to_file
         or die "Could not write $to_file: $!";
     print $out "/* ex: set ro ft=c: -*- mode: c; buffer-read-only: t -*- */\n";
     print $out "/* Auto-copied from syck/lib source tree */\n";

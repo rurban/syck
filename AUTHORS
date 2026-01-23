@@ -22,7 +22,7 @@ Audrey Tang <audreyt@audreyt.org>
        Support recursion safety
 
 Nick Koston <bdraco@gmail.com>
-	Support recursion safety and permit_duplicate fixes.
+	Support recursion safety and no permit_duplicate_refs fixes.
 
 Rasmus Andersson <rasmus@notion.se>
        XCode build fixes

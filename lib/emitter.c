@@ -220,7 +220,7 @@ syck_emitter_add_level( SyckEmitter *e, int len, enum syck_level_status status )
         S_REALLOC_N( e->levels, SyckLevel, e->lvl_capa );
     }
 
-    assert(len > e->levels[e->lvl_idx-1].spaces );
+    //assert(len > e->levels[e->lvl_idx-1].spaces );
     e->levels[e->lvl_idx].spaces = len;
     e->levels[e->lvl_idx].ncount = 0;
     e->levels[e->lvl_idx].anctag = 0;

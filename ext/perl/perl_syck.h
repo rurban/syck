@@ -15,14 +15,14 @@
 #undef PERL_SYCK_EMITTER_HANDLER
 #undef PERL_SYCK_INDENT_LEVEL
 #undef PERL_SYCK_MARK_EMITTER
-#undef PERL_SYCK_EMITTER_PERMIT_DUPLICATE_REFS
+#undef PERL_SYCK_EMITTER_MARK_NODE_FLAGS
 
 #ifdef YAML_IS_JSON
 #  define PACKAGE_NAME  "JSON::Syck"
 #  define NULL_LITERAL  "null"
 #  define NULL_LITERAL_LENGTH 4
 #  define SCALAR_NUMBER scalar_none
-#  define PERL_SYCK_EMITTER_PERMIT_DUPLICATE_REFS 1
+#  define PERL_SYCK_EMITTER_MARK_NODE_FLAGS EMITTER_MARK_NODE_FLAG_PERMIT_DUPLICATE_NODES
 int json_max_depth = 512;
 char json_quote_char = '"';
 static enum scalar_style json_quote_style = scalar_2quote;
@@ -47,7 +47,7 @@ static enum scalar_style json_quote_style = scalar_2quote;
 #  define NULL_LITERAL  "~"
 #  define NULL_LITERAL_LENGTH 1
 #  define SCALAR_NUMBER scalar_none
-#  define PERL_SYCK_EMITTER_PERMIT_DUPLICATE_REFS 0
+#  define PERL_SYCK_EMITTER_MARK_NODE_FLAGS 0
 static enum scalar_style yaml_quote_style = scalar_none;
 #  define SCALAR_STRING yaml_quote_style
 #  define SCALAR_QUOTED scalar_1quote
@@ -435,7 +435,7 @@ yaml_syck_parser_handler
                         /* !perl/array:Foo::Bar blesses into Foo::Bar */
                         type += 6;
                     }
-
+                    
                     /* FIXME deprecated - here compatibility with @Foo::Bar style blessing */
                     while ( *type == '@' ) { type++; }
                 }
@@ -828,7 +828,7 @@ yaml_syck_mark_emitter
     if (SvROK(sv)) {
         PERL_SYCK_MARK_EMITTER(e, SvRV(sv));
 #ifdef YAML_IS_JSON
-        st_insert(e->markers, (st_data_t)sv, 0);
+        st_insert(e->markers, (char *)sv, 0);
         e->depth--;
 #endif
         return;
@@ -868,7 +868,7 @@ yaml_syck_mark_emitter
     }
 
 #ifdef YAML_IS_JSON
-    st_insert(e->markers, (st_data_t)sv, 0);
+    st_insert(e->markers, (char*)sv, 0);
     --e->depth;
 #endif
 }
@@ -893,7 +893,7 @@ yaml_syck_emitter_handler
 #endif
 
 #define OBJECT_TAG     "tag:!perl:"
-
+    
     if (SvMAGICAL(sv)) {
         mg_get(sv);
     }
@@ -1258,7 +1258,6 @@ DumpYAMLImpl
     json_quote_char      = (SvTRUE(singlequote) ? '\'' : '"' );
     json_quote_style     = (SvTRUE(singlequote) ? scalar_2quote_1 : scalar_2quote );
     emitter->indent      = PERL_SYCK_INDENT_LEVEL;
-    emitter->permit_duplicate_refs = PERL_SYCK_EMITTER_PERMIT_DUPLICATE_REFS;
     emitter->max_depth   = SvIOK(max_depth) ? SvIV(max_depth) : json_max_depth;
 #else
     SV *singlequote      = GvSV(gv_fetchpv(form("%s::SingleQuote", PACKAGE_NAME), TRUE, SVt_PV));

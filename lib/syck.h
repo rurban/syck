@@ -166,6 +166,7 @@ void syck_assert( const char *file_name, unsigned line_num );
 #define NL_CHOMP    40
 #define NL_KEEP     50
 
+/* set to 0 to avoid stack-overflows on dumping circular refs */
 #ifndef EMITTER_PERMIT_DUPLICATE_REFS
 #define EMITTER_PERMIT_DUPLICATE_REFS 1
 #endif

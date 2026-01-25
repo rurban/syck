@@ -13,7 +13,6 @@ is( Load("--- 42\n"), 42,         "Load a simple number" );
 
 is( Dump( \42 ), "--- !!perl/ref \n=: 42\n", "A pointer to 42 dumps" );
 is( ${ Load("--- !!perl/ref \n=: 42\n") }, 42, "A pointer to 42 loads" );
-
 if (0) {
 my $x;
 $x = \$x;
@@ -109,7 +108,6 @@ bar: &1
   - troz
 foo: *1
 .
-
 if (0) {
 my $r;
 $r = \$r;
@@ -117,11 +115,11 @@ is( Dump($r), << '.');
 --- &1 !!perl/ref 
 =: *1
 .
+}
 is( Dump( scalar Load( Dump($r) ) ), << '.');
 --- &1 !!perl/ref 
 =: *1
 .
-}
 
 # RT #17223
 my $y = YAML::Syck::Load("SID:\n type: fixed\n default: ~\n");

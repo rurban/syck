@@ -115,7 +115,7 @@ SyckParseString2Handler(SHIM(SyckParser *p), SyckNode *n) {
 }
 
 static enum st_retval
-ListAnchors(const char *key, void *_n, void *_tc) {
+ListAnchors(char *key, char *_n, char *_tc) {
   SyckNode *n = (SyckNode *)_n;
   CuTest *tc = (CuTest *)_tc;
   char *sd = syck_strndup(n->data.str->ptr, n->data.str->len);
@@ -131,7 +131,7 @@ static void TestSyckParseString2(CuTest *tc) {
   syck_parser_handler(parser, SyckParseStringHandler);
   syck_parser_str_auto(parser, "--- {test: 1, and: 2, or: &test 13}", NULL);
   syck_parse(parser);
-  st_foreach(parser->anchors, ListAnchors, tc);
+  st_foreach(parser->anchors, ListAnchors, (char*)tc);
   syck_free_parser(parser);
 }
 

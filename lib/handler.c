@@ -2,16 +2,14 @@
  * handler.c
  *
  * $Author: why $
- * $Date: 2005/09/20 05:21:06 $
+ * $Date: 2005-09-20 13:21:06 +0800 (二, 20  9 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 
 #include "syck.h"
-#include <assert.h>
-extern int syckdebug;
 
-SYMID
+SYMID 
 syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 {
     SYMID id;
@@ -24,33 +22,31 @@ syck_hdlr_add_node( SyckParser *p, SyckNode *n )
 
     if ( n->anchor == NULL )
     {
-        syck_free_node( &n );
+        syck_free_node( n );
     }
     return id;
 }
 
-/* a must be freshly allocated, owned by the node (as n->anchor).
-   n is owned by the parser, not the table.
-   free any previous anchor.
- */
 SyckNode *
 syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
 {
     SyckNode *ntmp = NULL;
 
-    if (n->anchor) {
-        DPRINTF((stderr, "DEBUG %s Free stale anchor '%s' in %p\n", __FUNCTION__, a, n));
-        if (p->anchors) {
-            st_delete(p->anchors, (void*)&(n->anchor), (void*)&n);
-        }
-        S_FREE(n->anchor);
+    if (n->anchor != NULL) {
+        /*
+         * Note: An error should be returned here. But this is better than
+         * not checking at all because it will abort the program with a
+         * memory corruption error.
+         * Happens if you have two anchors after each other or an anchor
+         * before an alias
+         * */
+        return n;
     }
     n->anchor = a;
-    DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->bad_anchors != NULL )
     {
         SyckNode *bad;
-        if ( st_lookup( p->bad_anchors, (st_data_t)a, (void *)&bad ) )
+        if ( st_lookup( p->bad_anchors, a, (st_data_t *)&bad ) )
         {
             if ( n->kind != syck_str_kind )
             {
@@ -63,16 +59,14 @@ syck_hdlr_add_anchor( SyckParser *p, char *a, SyckNode *n )
     {
         p->anchors = st_init_strtable();
     }
-    assert(p->anchors != NULL);
-    if ( st_lookup( p->anchors, (st_data_t)a, (void *)&ntmp ) )
+    if ( st_lookup( p->anchors, a, (st_data_t *)&ntmp ) )
     {
         if ( ntmp != (void *)1 )
         {
-            syck_free_node( &ntmp ); // frees the old node and its anchor
+            syck_free_node( ntmp );
         }
     }
-    // this inserts not an numeric symid, but the pointer to the anchor
-    st_insert( p->anchors, (st_data_t)a, (st_data_t)n );
+    st_insert( p->anchors, a, (st_data_t)n );
     return n;
 }
 
@@ -81,21 +75,18 @@ syck_hdlr_remove_anchor( SyckParser *p, char *a )
 {
     char *atmp = a;
     SyckNode *ntmp;
-    DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->anchors == NULL )
     {
         p->anchors = st_init_strtable();
     }
-    assert(p->anchors != NULL);
-    if ( st_delete( p->anchors, (void *)&atmp, (void *)&ntmp ) )
+    if ( st_delete( p->anchors, &atmp, (st_data_t *)&ntmp ) )
     {
-        DPRINTF(( stderr, "DEBUG Removed anchor '%s'\n", atmp ));
         if ( ntmp != (void *)1 )
         {
-            syck_free_node( &ntmp );
+            syck_free_node( ntmp );
         }
     }
-    st_insert( p->anchors, (st_data_t)a, (st_data_t)1 );
+    st_insert( p->anchors, a, (st_data_t)1 );
 }
 
 SyckNode *
@@ -103,13 +94,12 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
 {
     SyckNode *n = NULL;
 
-    DPRINTF((stderr, "DEBUG %s '%s'\n", __FUNCTION__, a));
     if ( p->anchors != NULL )
     {
-        if ( st_lookup( p->anchors, (st_data_t)a, (void *)&n ) )
+        if ( st_lookup( p->anchors, a, (st_data_t *)&n ) )
         {
             if ( n != (void *)1 )
-            {
+            {    
                 S_FREE( a );
                 return n;
             }
@@ -119,35 +109,24 @@ syck_hdlr_get_anchor( SyckParser *p, char *a )
                 {
                     p->bad_anchors = st_init_strtable();
                 }
-                assert(p->bad_anchors != NULL);
-                if ( ! st_lookup( p->bad_anchors, (st_data_t)a, (void *)&n ) )
+                if ( ! st_lookup( p->bad_anchors, a, (st_data_t *)&n ) )
                 {
-                    if (p->bad_anchor_handler)
-                        n = (p->bad_anchor_handler)( p, a );
-                    st_insert( p->bad_anchors, (st_data_t)a, (st_data_t)n );
+                    n = (p->bad_anchor_handler)( p, a );
+                    st_insert( p->bad_anchors, a, (st_data_t)n );
                 }
             }
         }
     }
 
-    if ( n == NULL || n == (void *)1)
+    if ( n == NULL )
     {
-        if (p->bad_anchor_handler)
-            n = (p->bad_anchor_handler)( p, a );
-        else {
-            n = syck_new_str( "", scalar_plain );
-            n->type_id = syck_taguri( YAML_DOMAIN, "null", 4 );
-            n->anchor = a;
-            DPRINTF(( stderr, "DEBUG Added empty node %p for anchor '%s'\n", n, a));
-            st_insert( p->bad_anchors, (st_data_t)a, (st_data_t)n );
-            return n;
-        }
+        n = (p->bad_anchor_handler)( p, a );
     }
 
-    if ( n->anchor != NULL )
+    if ( n->anchor )
     {
         S_FREE( a );
-    }
+    } 
     else
     {
         n->anchor = a;
@@ -163,6 +142,7 @@ syck_add_transfer( char *uri, SyckNode *n, int taguri )
     {
         S_FREE( n->type_id );
     }
+
     if ( taguri == 0 )
     {
         n->type_id = uri;
@@ -174,7 +154,7 @@ syck_add_transfer( char *uri, SyckNode *n, int taguri )
 }
 
 char *
-syck_xprivate( const char *type_id, int type_len )
+syck_xprivate( char *type_id, int type_len )
 {
     char *uri = S_ALLOC_N( char, type_len + 14 );
     uri[0] = '\0';
@@ -183,8 +163,6 @@ syck_xprivate( const char *type_id, int type_len )
     return uri;
 }
 
-__attribute__malloc__
-__attribute__warn_unused_result__
 char *
 syck_taguri( const char *domain, const char *type_id, int type_len )
 {
@@ -198,9 +176,8 @@ syck_taguri( const char *domain, const char *type_id, int type_len )
 }
 
 int 
-syck_try_implicit( SHIM(SyckNode *n) )
+syck_try_implicit( SyckNode *n )
 {
-    UNUSED(n);
     return 1;
 }
 

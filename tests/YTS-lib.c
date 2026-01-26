@@ -101,8 +101,8 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
 }
 
 enum st_retval
-syck_free_copies(SHIM(const char *key), void *_tn,
-                 SHIM(void *arg)) {
+syck_free_copies(SHIM(char *key), char *_tn,
+                 SHIM(char *arg)) {
   struct test_node_dyn *tn = (struct test_node_dyn *)_tn;
   UNUSED(key);
   UNUSED(arg);
@@ -212,7 +212,7 @@ CuStreamCompare(CuTest *tc, const char *yaml, struct test_node *stream) {
  * Setup for testing N->Y->N.
  */
 void
-test_output_handler(SyckEmitter *emitter, const char *str, long len) {
+test_output_handler(SyckEmitter *emitter, char *str, long len) {
   CuString *dest = (CuString *)emitter->bonus;
   CuStringAppendLen(dest, str, len);
 }
@@ -228,7 +228,7 @@ build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
       i++;
     }
     }
-    return syck_emitter_mark_node(emitter, (st_data_t)node);
+    return syck_emitter_mark_node(emitter, (st_data_t)node, 0);
 
   case T_STR:
   case T_DOC:
@@ -362,7 +362,7 @@ void emit_stream(CuString *cs, struct test_node *s) {
   }
 }
 
-static void yts_parser_error_handler(SyckParser *p, const char *msg) {
+static void yts_parser_error_handler(SyckParser *p, char *msg) {
   // ignore all errors when we know it should fail
   fprintf(stderr, "Error at [Line %d, Col %ld]: %s\n",
         p->linect,

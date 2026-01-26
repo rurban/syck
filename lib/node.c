@@ -2,88 +2,50 @@
  * node.c
  *
  * $Author: why $
- * $Date: 2005/09/16 18:59:53 $
+ * $Date: 2005-09-17 02:59:53 +0800 (六, 17  9 2005) $
  *
  * Copyright (C) 2003 why the lucky stiff
  */
 
 #include "syck.h"
-#include <assert.h>
-
-#ifdef DEBUG
-extern int syckdebug;
-#endif
 
 /*
  * Node allocation functions
  */
-__attribute__malloc__
-static SyckNode *
+SyckNode *
 syck_alloc_node( enum syck_kind_tag type )
 {
     SyckNode *s;
 
     s = S_ALLOC( SyckNode );
-    assert(s != NULL);
     s->kind = type;
     s->id = 0;
     s->type_id = NULL;
     s->anchor = NULL;
     s->shortcut = NULL;
-    DPRINTF((stderr, "DEBUG %s %p\n", __FUNCTION__, s));
 
     return s;
 }
 
-void syck_safe_free_node(SyckParser *parser, SyckNode **np) {
-    SyckNode *n = *np;
-    DPRINTF((stderr, "DEBUG %s %p (%s)\n", __FUNCTION__, n, syck_node_kind(n)));
-    /*if (!n->id) {
-        syck_free_node(np);
-        return;
-    }*/
-    if (parser->anchors)
-        st_cleanup_safe(parser->anchors, (char*)n);
-    if (parser->bad_anchors)
-        st_cleanup_safe(parser->bad_anchors, (char*)n);
-    if (n->shortcut)
-        syck_safe_free_node(parser, (SyckNode**)&n->shortcut);
-    syck_free_node(np);
-}
-
 void
-syck_free_node( SyckNode **np )
+syck_free_node( SyckNode *n )
 {
-    SyckNode *n = *np;
-    DPRINTF((stderr, "DEBUG %s  %p (%s)\n", __FUNCTION__, n, syck_node_kind(n)));
     syck_free_members( n );
-#ifndef HAVE_RUBY_ST_H
-    if ( n->type_id != NULL && n->type_id != (void*)1UL)
+    if ( n->type_id != NULL )
     {
         S_FREE( n->type_id );
         n->type_id = NULL;
     }
     if ( n->anchor != NULL )
     {
-        DPRINTF((stderr, "DEBUG %s Free n->anchor '%s' %p\n", __FUNCTION__, n->anchor, n->anchor));
         S_FREE( n->anchor );
         n->anchor = NULL;
     }
     S_FREE( n );
-    *np = NULL;
-#endif
 }
 
-void
-syck_free_name( char *name )
-{
-    DPRINTF((stderr, "DEBUG %s %s\n", __FUNCTION__, name));
-    S_FREE(name);
-}
-
-__attribute__malloc__
 SyckNode *
-syck_alloc_map(void)
+syck_alloc_map()
 {
     SyckNode *n;
     struct SyckMap *m;
@@ -97,13 +59,12 @@ syck_alloc_map(void)
 
     n = syck_alloc_node( syck_map_kind );
     n->data.pairs = m;
-    DPRINTF((stderr, "DEBUG %s pairs %p\n", __FUNCTION__, m));
-
+    
     return n;
 }
 
 SyckNode *
-syck_alloc_seq(void)
+syck_alloc_seq()
 {
     SyckNode *n;
     struct SyckSeq *s;
@@ -116,14 +77,12 @@ syck_alloc_seq(void)
 
     n = syck_alloc_node( syck_seq_kind );
     n->data.list = s;
-    DPRINTF((stderr, "DEBUG %s list %p\n", __FUNCTION__, s));
 
     return n;
 }
 
-__attribute__malloc__
 SyckNode *
-syck_alloc_str(void)
+syck_alloc_str()
 {
     SyckNode *n;
     struct SyckStr *s;
@@ -135,31 +94,27 @@ syck_alloc_str(void)
 
     n = syck_alloc_node( syck_str_kind );
     n->data.str = s;
-    DPRINTF((stderr, "DEBUG %s str %p\n", __FUNCTION__, s));
-
+    
     return n;
 }
 
 SyckNode *
 syck_new_str( const char *str, enum scalar_style style )
 {
-    return syck_new_str2( (char*)str, strlen( str ), style );
+    return syck_new_str2( str, strlen( str ), style );
 }
 
-__attribute__malloc__
 SyckNode *
-syck_new_str2( char *str, long len, enum scalar_style style )
+syck_new_str2( const char *str, long len, enum scalar_style style )
 {
     SyckNode *n;
 
     n = syck_alloc_str();
-    assert(n != NULL);
     n->data.str->ptr = S_ALLOC_N( char, len + 1 );
     n->data.str->len = len;
     n->data.str->style = style;
     memcpy( n->data.str->ptr, str, len );
     n->data.str->ptr[len] = '\0';
-    DPRINTF((stderr, "DEBUG %s '%s' %p\n", __FUNCTION__, str, n));
 
     return n;
 }
@@ -173,19 +128,17 @@ syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
 void
 syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
 {
-    if ( n->data.str )
+    if ( n->data.str != NULL ) 
     {
         S_FREE( n->data.str->ptr );
         n->data.str->ptr = NULL;
         n->data.str->len = 0;
     }
-    assert(n->data.str != NULL);
     n->data.str->ptr = S_ALLOC_N( char, len + 1 );
     n->data.str->len = len;
     n->data.str->style = style;
     memcpy( n->data.str->ptr, str, len );
     n->data.str->ptr[len] = '\0';
-    DPRINTF((stderr, "DEBUG %s '%s' %p\n", __FUNCTION__, str, n));
 }
 
 void
@@ -209,7 +162,7 @@ syck_str_blow_away_commas( SyckNode *n )
 char *
 syck_str_read( SyckNode *n )
 {
-    assert( n );
+    ASSERT( n != NULL );
     return n->data.str->ptr;
 }
 
@@ -219,7 +172,6 @@ syck_new_map( SYMID key, SYMID value )
     SyckNode *n;
 
     n = syck_alloc_map();
-    assert(n);
     syck_map_add( n, key, value );
 
     return n;
@@ -229,8 +181,8 @@ void
 syck_map_empty( SyckNode *n )
 {
     struct SyckMap *m;
-    assert(n);
-    assert(n->data.list);
+    ASSERT( n != NULL );
+    ASSERT( n->data.list != NULL );
 
     S_FREE( n->data.pairs->keys );
     S_FREE( n->data.pairs->values );
@@ -247,9 +199,9 @@ syck_map_add( SyckNode *map, SYMID key, SYMID value )
     struct SyckMap *m;
     long idx;
 
-    assert(map);
-    assert(map->data.pairs);
-
+    ASSERT( map != NULL );
+    ASSERT( map->data.pairs != NULL );
+    
     m = map->data.pairs;
     idx = m->idx;
     m->idx += 1;
@@ -261,7 +213,6 @@ syck_map_add( SyckNode *map, SYMID key, SYMID value )
     }
     m->keys[idx] = key;
     m->values[idx] = value;
-    DPRINTF((stderr, "DEBUG %s %p [%ld] %lx: %lx\n", __FUNCTION__, map, idx, key, value));
 }
 
 void
@@ -269,13 +220,13 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
 {
     struct SyckMap *m1, *m2;
     long new_idx, new_capa;
-    assert(map1);
-    assert(map2);
+    ASSERT( map1 != NULL );
+    ASSERT( map2 != NULL );
 
     m1 = map1->data.pairs;
     m2 = map2->data.pairs;
     if ( m2->idx < 1 ) return;
-
+        
     new_idx = m1->idx;
     new_idx += m2->idx;
     new_capa = m1->capa;
@@ -291,18 +242,16 @@ syck_map_update( SyckNode *map1, SyckNode *map2 )
     }
     for ( new_idx = 0; new_idx < m2->idx; m1->idx++, new_idx++ )
     {
-        m1->keys[m1->idx] = m2->keys[new_idx];
-        m1->values[m1->idx] = m2->values[new_idx];
-        DPRINTF((stderr, "DEBUG %s %p <= %p: [%ld] %lx: %lx\n", __FUNCTION__, map1,
-                 map2, m1->idx, m2->keys[new_idx], m2->values[new_idx]));
+        m1->keys[m1->idx] = m2->keys[new_idx]; 
+        m1->values[m1->idx] = m2->values[new_idx]; 
     }
 }
 
 long
 syck_map_count( SyckNode *map )
 {
-    assert(map);
-    assert(map->data.pairs);
+    ASSERT( map != NULL );
+    ASSERT( map->data.pairs != NULL );
     return map->data.pairs->idx;
 }
 
@@ -311,18 +260,16 @@ syck_map_assign( SyckNode *map, enum map_part p, long idx, SYMID id )
 {
     struct SyckMap *m;
 
-    assert(map);
+    ASSERT( map != NULL );
     m = map->data.pairs;
-    assert(m);
+    ASSERT( m != NULL );
     if ( p == map_key )
     {
         m->keys[idx] = id;
-        DPRINTF((stderr, "DEBUG %s %p[%lu] key=%lx\n", __FUNCTION__, map, idx, id));
     }
     else
     {
         m->values[idx] = id;
-        DPRINTF((stderr, "DEBUG %s %p[%lu] value=%lx\n", __FUNCTION__, map, idx, id));
     }
 }
 
@@ -331,9 +278,9 @@ syck_map_read( SyckNode *map, enum map_part p, long idx )
 {
     struct SyckMap *m;
 
-    assert( map != NULL );
+    ASSERT( map != NULL );
     m = map->data.pairs;
-    assert( m != NULL );
+    ASSERT( m != NULL );
     if ( p == map_key )
     {
         return m->keys[idx];
@@ -350,9 +297,7 @@ syck_new_seq( SYMID value )
     SyckNode *n;
 
     n = syck_alloc_seq();
-    assert(n != NULL);
     syck_seq_add( n, value );
-    //DPRINTF((stderr, "DEBUG %s %p %lx\n", __FUNCTION__, n, value));
 
     return n;
 }
@@ -361,10 +306,9 @@ void
 syck_seq_empty( SyckNode *n )
 {
     struct SyckSeq *s;
-    assert( n != NULL );
-    assert( n->data.list != NULL );
+    ASSERT( n != NULL );
+    ASSERT( n->data.list != NULL );
 
-    DPRINTF((stderr, "DEBUG %s %p\n", __FUNCTION__, n));
     S_FREE( n->data.list->items );
     s = n->data.list;
     s->idx = 0;
@@ -378,9 +322,9 @@ syck_seq_add( SyckNode *arr, SYMID value )
     struct SyckSeq *s;
     long idx;
 
-    assert( arr != NULL );
-    assert( arr->data.list != NULL );
-
+    ASSERT( arr != NULL );
+    ASSERT( arr->data.list != NULL );
+    
     s = arr->data.list;
     idx = s->idx;
     s->idx += 1;
@@ -390,14 +334,13 @@ syck_seq_add( SyckNode *arr, SYMID value )
         S_REALLOC_N( s->items, SYMID, s->capa );
     }
     s->items[idx] = value;
-    DPRINTF((stderr, "DEBUG %s %p %lx\n", __FUNCTION__, arr, value));
 }
 
 long
 syck_seq_count( SyckNode *seq )
 {
-    assert( seq != NULL );
-    assert( seq->data.list != NULL );
+    ASSERT( seq != NULL );
+    ASSERT( seq->data.list != NULL );
     return seq->data.list->idx;
 }
 
@@ -406,11 +349,10 @@ syck_seq_assign( SyckNode *seq, long idx, SYMID id )
 {
     struct SyckSeq *s;
 
-    assert(seq);
+    ASSERT( map != NULL );
     s = seq->data.list;
-    assert(s);
+    ASSERT( m != NULL );
     s->items[idx] = id;
-    DPRINTF((stderr, "DEBUG %s %p[%lu] = %lx\n", __FUNCTION__, seq, idx, id));
 }
 
 SYMID
@@ -418,25 +360,10 @@ syck_seq_read( SyckNode *seq, long idx )
 {
     struct SyckSeq *s;
 
-    assert( seq != NULL );
+    ASSERT( seq != NULL );
     s = seq->data.list;
-    assert( s != NULL );
+    ASSERT( s != NULL );
     return s->items[idx];
-}
-
-__attribute__warn_unused_result__
-__attribute__returns_nonnull__
-const char *syck_node_kind( SyckNode *n )
-{
-    switch ( n->kind  )
-    {
-    case syck_str_kind: return "str";
-    case syck_seq_kind: return "seq";
-    case syck_map_kind: return "map";
-    default:
-        assert(0);
-        return "(none)";
-    }
 }
 
 void
@@ -447,7 +374,7 @@ syck_free_members( SyckNode *n )
     switch ( n->kind  )
     {
         case syck_str_kind:
-            if ( n->data.str != NULL )
+            if ( n->data.str != NULL ) 
             {
                 S_FREE( n->data.str->ptr );
                 n->data.str->ptr = NULL;
@@ -455,7 +382,7 @@ syck_free_members( SyckNode *n )
                 S_FREE( n->data.str );
                 n->data.str = NULL;
             }
-            break;
+        break;
 
         case syck_seq_kind:
             if ( n->data.list != NULL )
@@ -464,7 +391,7 @@ syck_free_members( SyckNode *n )
                 S_FREE( n->data.list );
                 n->data.list = NULL;
             }
-            break;
+        break;
 
         case syck_map_kind:
             if ( n->data.pairs != NULL )
@@ -474,10 +401,7 @@ syck_free_members( SyckNode *n )
                 S_FREE( n->data.pairs );
                 n->data.pairs = NULL;
             }
-            break;
-
-        default:
-            break;
+        break;
     }
 }
 

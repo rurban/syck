@@ -188,6 +188,8 @@ int main(int argc, char **argv) {
            }
        }
        fclose(testfh);
+   } else {
+       puts(ev->buffer);
    }
 
    CuStringFree(cs);

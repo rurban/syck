@@ -296,10 +296,12 @@ in_implicit_seq : basic_seq
 inline_seq	: '[' in_inline_seq ']'
                 {
                     $$ = $2;
+                    $$->data.list->style = seq_inline;
                 }
 		| '[' ']'
                 {
                     $$ = syck_alloc_seq();
+                    $$->data.list->style = seq_inline;
                 }
                 ;
 
@@ -438,10 +440,12 @@ basic_mapping	: atoms ':' atom_or_empty
 inline_map	: '{' in_inline_map '}'
                 {
                     $$ = $2;
+                    $$->data.pairs->style = map_inline;
                 }
                 | '{' '}'
                 {
                     $$ = syck_alloc_map();
+                    $$->data.pairs->style = map_inline;
                 }
                 ;
 

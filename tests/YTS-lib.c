@@ -477,6 +477,7 @@ int compare_cs(CuTest *tc, FILE *fh, const CuString *cs) {
         CuStringFree(file_cs);
         return 0;
       }
+      // TODO diff
       fprintf(stderr, "expected <\n%s> but was <\n%s>\n", file_cs->buffer, cs->buffer);
       CuStringFree(file_cs);
       return 1;

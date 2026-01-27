@@ -514,8 +514,14 @@ void syck_emit_indent( SyckEmitter *e )
     SyckLevel *lvl = syck_emitter_current_level( e );
     if ( e->bufpos == 0 && ( e->marker - e->buffer ) == 0 ) return;
     if ( lvl->spaces >= 0 ) {
+        // FIXME: should not allocate. rather loop
         char *spcs = S_ALLOC_N( char, lvl->spaces + 2 );
-
+        /* chop ": " to ":" when we add a newline */
+        if ((lvl->status == syck_lvl_map || lvl->status == syck_lvl_seq) &&
+            e->marker - e->buffer > 1 &&
+            e->marker[-2] == ':' && e->marker[-1] == ' ') {
+            e->marker--;
+        }
         spcs[0] = '\n'; spcs[lvl->spaces + 1] = '\0';
         for ( i = 0; i < lvl->spaces; i++ ) spcs[i+1] = ' ';
         syck_emitter_write( e, spcs, lvl->spaces + 1 );

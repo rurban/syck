@@ -133,14 +133,17 @@ syck_free_copies(SHIM(const char *key), void *_tn,
 /*
  * Assertion which compares a YAML document with an
  * equivalent set of test_node structs.
+ * s1 is the expected event stream, s2 the parsed stream.
  */
 void
-CuStreamCompareX(CuTest *tc, struct test_node *s1, struct test_node *s2) {
+CuStreamCompareX(CuTest *tc, const struct test_node *s1, struct test_node *s2) {
   int i = 0;
   while (1) {
     CuAssertIntEquals(tc, s1[i].type, s2[i].type);
     if (s1[i].type == T_END)
       return;
+    if (s2[i].type == T_END)
+      CuFail(tc, "parsed stream ended prematurely");
     if (s1[i].tag != 0 && s2[i].tag != 0)
       CuAssertStrEquals(tc, s1[i].tag, (char*)s2[i].tag);
     switch (s1[i].type) {
@@ -161,7 +164,7 @@ CuStreamCompareX(CuTest *tc, struct test_node *s1, struct test_node *s2) {
 }
 
 void
-CuStreamCompare(CuTest *tc, const char *yaml, struct test_node *stream) {
+CuStreamCompare(CuTest *tc, const char *yaml, const struct test_node *stream) {
   int doc_ct = 0;
   struct test_node *ystream = S_ALLOC_N(struct test_node, doc_ct + 1);
 
@@ -273,6 +276,7 @@ void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
   }
 }
 
+/* round-trip the stream only, not the yaml */
 void
 CuRoundTrip(CuTest *tc, struct test_node *stream) {
   int i = 0;

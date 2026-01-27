@@ -157,7 +157,7 @@ void CuAssertStrEquals(CuTest *tc, const char *expected, char *actual) {
   if (strcmp(expected, actual) == 0)
     return;
   message = CuStringNew();
-  CuStringAppend(message, "expected <");
+  CuStringAppend(message, "expected str <");
   CuStringAppend(message, expected);
   CuStringAppend(message, "> but was <");
   CuStringAppend(message, actual);
@@ -172,7 +172,7 @@ void CuAssertIntEquals(CuTest *tc, int expected, int actual) {
   char buf[STRING_MAX];
   if (expected == actual)
     return;
-  sprintf(buf, "expected <%d> but was <%d>", expected, actual);
+  sprintf(buf, "expected int <%d> but was <%d>", expected, actual);
   CuFail(tc, buf);
 }
 
@@ -198,10 +198,6 @@ void CuTestRun(CuTest *tc) {
   if (setjmp(buf) == 0) {
     tc->ran = 1;
     (tc->function)(tc);
-  }
-  if (tc->ran) {
-    free(tc->message);
-    tc->message = NULL;
   }
   tc->jumpBuf = 0;
 }
@@ -301,6 +297,8 @@ void CuSuiteDetails(CuSuite *testSuite, CuString *details) {
         failCount++;
         CuStringAppendFormat(details, "%d) %s: %s\n", failCount, testCase->name,
                              testCase->message);
+        free(testCase->message);
+        testCase->message = NULL;
       }
     }
     CuStringAppend(details, "\n!!!FAILURES!!!\n");

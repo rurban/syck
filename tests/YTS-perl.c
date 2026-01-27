@@ -137,6 +137,53 @@ static void YtsScalars_14(CuTest *tc) {
   CuStreamCompare(tc, "--- false\n", stream);
   CuRoundTrip(tc, stream);
 }
+/* ext/perl/t/2-scalars.t Various edge cases at grok_number boundary
+ */
+static void YtsScalars_15(CuTest *tc) {
+  TestNode stream1[] = {{T_STR, 0, "42949672", NULL, 0}, end_node};
+  TestNode stream2[] = {{T_STR, 0, "-42949672", NULL, 0}, end_node};
+  TestNode stream3[] = {{T_STR, 0, "429496729", NULL, 0}, end_node};
+  TestNode stream4[] = {{T_STR, 0, "-429496729", NULL, 0}, end_node};
+  TestNode stream5[] = {{T_STR, 0, "4294967296", NULL, 0}, end_node};
+  TestNode stream6[] = {{T_STR, 0, "-4294967296", NULL, 0}, end_node};
+  CuStreamCompare(tc, "--- 42949672\n", stream1);
+  CuRoundTrip(tc, stream1);
+  CuStreamCompare(tc, "--- -42949672\n", stream2);
+  CuRoundTrip(tc, stream2);
+  CuStreamCompare(tc, "--- 429496729\n", stream3);
+  CuRoundTrip(tc, stream3);
+  CuStreamCompare(tc, "--- -429496729\n", stream4);
+  CuRoundTrip(tc, stream4);
+  CuStreamCompare(tc, "--- 4294967296\n", stream5);
+  CuRoundTrip(tc, stream5);
+  CuStreamCompare(tc, "--- -4294967296\n", stream6);
+  CuRoundTrip(tc, stream6);
+}
+/* ext/perl/t/2-scalars.t recursion RT #18752 FIXME
+ */
+static void YtsScalars_16(CuTest *tc) {
+  TestNode stream[] = {{T_STR, 0, "", NULL, 0}, end_node};
+  /* yamlpp-events:
++STR
++DOC ---
++MAP &1
+=VAL :Foo
++MAP
+=VAL :parent
+=ALI *1
+-MAP
+=VAL :Troz
++MAP
+=VAL :parent
+=ALI *1
+-MAP
+-MAP
+-DOC
+-STR
+  */
+  CuStreamCompare(tc, "--- &1\nFoo:\n  parent: *1\nTroz:\n  parent: *1\n", stream);
+  CuRoundTrip(tc, stream);
+}
 
 
 static CuSuite *SyckGetSuite(void) {
@@ -155,6 +202,8 @@ static CuSuite *SyckGetSuite(void) {
   SUITE_ADD_TEST(suite, YtsScalars_12);
   SUITE_ADD_TEST(suite, YtsScalars_13);
   SUITE_ADD_TEST(suite, YtsScalars_14);
+  SUITE_ADD_TEST(suite, YtsScalars_15);
+  SUITE_ADD_TEST(suite, YtsScalars_16);
   return suite;
 }
 

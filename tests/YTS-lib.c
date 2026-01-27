@@ -118,6 +118,7 @@ syck_free_copies(SHIM(const char *key), void *_tn,
       break;
 
     case T_DOC:
+    case T_ALI:
     case T_END:
     default:
       break;
@@ -147,6 +148,7 @@ CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
     if (s1[i].tag != 0 && s2[i].tag != 0)
       CuAssertStrEquals(tc, s1[i].tag, (char*)s2[i].tag);
     switch (s1[i].type) {
+    case T_ALI:
     case T_STR:
       CuAssertStrEquals(tc, s1[i].key, (char*)s2[i].key);
       break;
@@ -235,6 +237,7 @@ build_symbol_table(SyckEmitter *emitter, TestNode *node) {
 
   case T_STR:
   case T_DOC:
+  case T_ALI:
   case T_END:
   default:
     break;
@@ -245,6 +248,7 @@ build_symbol_table(SyckEmitter *emitter, TestNode *node) {
 void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
   TestNode *node = (TestNode *)data;
   switch (node->type) {
+  case T_ALI:
   case T_STR:
     syck_emit_scalar(emitter, node->tag, scalar_none, 0, 0, 0, node->key,
                      strlen(node->key));
@@ -305,7 +309,7 @@ CuRoundTrip(CuTest *tc, TestNode *stream) {
   syck_free_emitter(emitter);
 }
 
-/* TODO: some YTS test.event props missing */
+/* TODO: some YTS test.event props missing. And =ALI for *anchor. */
 void emit_stream(CuString *cs, TestNode *s) {
   int i = 0;
   while (1) {
@@ -355,6 +359,11 @@ void emit_stream(CuString *cs, TestNode *s) {
         CuStringAppend(cs, "+MAP\n");
       emit_stream(cs, n->value);
       CuStringAppend(cs, "-MAP\n");
+      break;
+    case T_ALI:
+      CuStringAppend(cs, "=ALI *");
+      CuStringAppendEscaped(cs, n->key);
+      CuStringAppendLen(cs, "\n", 1);
       break;
     case T_END:
       CuStringAppend(cs, "-DOC\n");

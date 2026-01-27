@@ -9,6 +9,7 @@ enum test_types {
     T_STR,
     T_SEQ,
     T_MAP,
+    T_ALI,
     T_END,
 };
 #define ILEN 2

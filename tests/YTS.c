@@ -16,16 +16,16 @@
 #include "YTS-lib.h"
 #include <string.h>
 
-extern const struct test_node end_node;
+extern const TestNode end_node;
 
 /*
  * Example : Trailing tab in plains
  * YTS: DC7X Various trailing tabs
  */
 static void YtsFoldedScalars_7(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
     {T_STR, 0, "a", NULL, 0}, {T_STR, 0, "b", NULL, 0}, end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -42,10 +42,10 @@ static void YtsFoldedScalars_7(CuTest *tc) {
  * YTS: 7ZZ5 (partially) Empty flow collections
  */
 static void YtsNullsAndEmpties_0(CuTest *tc) {
-  struct test_node seq[] = {end_node};
-  struct test_node map[] = {
+  TestNode seq[] = {end_node};
+  TestNode map[] = {
       {T_STR, 0, "empty", NULL, 0}, {T_SEQ, 0, 0, seq, 0}, end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -62,10 +62,10 @@ static void YtsNullsAndEmpties_0(CuTest *tc) {
  * YTS: 7ZZ5 (partially) Empty flow collections
  */
 static void YtsNullsAndEmpties_1(CuTest *tc) {
-  struct test_node map2[] = {end_node};
-  struct test_node map1[] = {
+  TestNode map2[] = {end_node};
+  TestNode map1[] = {
     {T_STR, 0, "empty", NULL, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map1, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map1, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -82,8 +82,8 @@ static void YtsNullsAndEmpties_1(CuTest *tc) {
  * none in YTS
  */
 static void YtsNullsAndEmpties_2(CuTest *tc) {
-  struct test_node seq[] = {end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode seq[] = {end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -100,8 +100,8 @@ static void YtsNullsAndEmpties_2(CuTest *tc) {
  * none in YTS
  */
 static void YtsNullsAndEmpties_3(CuTest *tc) {
-  struct test_node map[] = {end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode map[] = {end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -118,7 +118,7 @@ static void YtsNullsAndEmpties_3(CuTest *tc) {
  * none in YTS
  */
 static void YtsNullsAndEmpties_4(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "~", NULL, 0}, end_node};
+  TestNode stream[] = {{T_STR, 0, "~", NULL, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -135,7 +135,7 @@ static void YtsNullsAndEmpties_4(CuTest *tc) {
  * none in YTS
  */
 static void YtsNullsAndEmpties_5(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "", NULL, 0}, end_node};
+  TestNode stream[] = {{T_STR, 0, "", NULL, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -152,11 +152,11 @@ static void YtsNullsAndEmpties_5(CuTest *tc) {
  * YTS: FQ7F
  */
 static void YtsSpecificationExamples_2_1(CuTest *tc) {
-  struct test_node seq[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  TestNode seq[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                             {T_STR, 0, "Sammy Sosa", NULL, 0},
                             {T_STR, 0, "Ken Griffey", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -175,14 +175,14 @@ static void YtsSpecificationExamples_2_1(CuTest *tc) {
  * YTS: SYW4
  */
 static void YtsSpecificationExamples_2_2(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "hr", NULL, 0},
                             {T_STR, 0, "65", NULL, 0},
                             {T_STR, 0, "avg", NULL, 0},
                             {T_STR, 0, "0.278", NULL, 0},
                             {T_STR, 0, "rbi", NULL, 0},
                             {T_STR, 0, "147", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -201,20 +201,20 @@ static void YtsSpecificationExamples_2_2(CuTest *tc) {
  * YTS: PBJ2
  */
 static void YtsSpecificationExamples_2_3(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Boston Red Sox", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "Boston Red Sox", NULL, 0},
                              {T_STR, 0, "Detroit Tigers", NULL, 0},
                              {T_STR, 0, "New York Yankees", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "New York Mets", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "New York Mets", NULL, 0},
                              {T_STR, 0, "Chicago Cubs", NULL, 0},
                              {T_STR, 0, "Atlanta Braves", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "american", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "american", NULL, 0},
                             {T_SEQ, 0, 0, seq1, 0},
                             {T_STR, 0, "national", NULL, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -238,22 +238,22 @@ static void YtsSpecificationExamples_2_3(CuTest *tc) {
  * YTS: 229Q
  */
 static void YtsSpecificationExamples_2_4(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "name", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "name", NULL, 0},
                              {T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "65", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
                              {T_STR, 0, "0.278", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "name", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "name", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "63", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
                              {T_STR, 0, "0.288", NULL, 0},
                              end_node};
-  struct test_node seq[] = {{T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode seq[] = {{T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -277,23 +277,23 @@ static void YtsSpecificationExamples_2_4(CuTest *tc) {
  * YTS: similar to M5DY
  */
 static void YtsSpecificationLegacy_A5(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
                              {T_STR, 0, "Atlanta Braves", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "2001-07-02", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "2001-07-02", NULL, 0},
                              {T_STR, 0, "2001-08-12", NULL, 0},
                              {T_STR, 0, "2001-08-14", NULL, 0},
                              end_node};
-  struct test_node seq3[] = {{T_STR, 0, "Detroit Tigers", NULL, 0},
+  TestNode seq3[] = {{T_STR, 0, "Detroit Tigers", NULL, 0},
                              {T_STR, 0, "Chicago Cubs", NULL, 0},
                              end_node};
-  struct test_node seq4[] = {{T_STR, 0, "2001-07-23", NULL, 0}, end_node};
-  struct test_node map[] = {{T_SEQ, 0, 0, seq1, 0},
+  TestNode seq4[] = {{T_STR, 0, "2001-07-23", NULL, 0}, end_node};
+  TestNode map[] = {{T_SEQ, 0, 0, seq1, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             {T_SEQ, 0, 0, seq3, 0},
                             {T_SEQ, 0, 0, seq4, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -321,21 +321,21 @@ static void YtsSpecificationLegacy_A5(CuTest *tc) {
  * YTS: YD5X
  */
 static void YtsSpecificationExamples_2_5(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "name", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "name", NULL, 0},
                              {T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "65", NULL, 0},
                              {T_STR, 0, "0.278", NULL, 0},
                              end_node};
-  struct test_node seq3[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
+  TestNode seq3[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "63", NULL, 0},
                              {T_STR, 0, "0.288", NULL, 0},
                              end_node};
-  struct test_node seq[] = {
+  TestNode seq[] = {
     {T_SEQ, 0, 0, seq1, 0}, {T_SEQ, 0, 0, seq2, 0}, {T_SEQ, 0, 0, seq3, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -354,22 +354,22 @@ static void YtsSpecificationExamples_2_5(CuTest *tc) {
  * YTS: ZF4X
  */
 static void YtsSpecificationExamples_2_6(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "hr", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "65", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
                              {T_STR, 0, "0.278", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "hr", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "hr", NULL, 0},
                              {T_STR, 0, "63", NULL, 0},
                              {T_STR, 0, "avg", NULL, 0},
                              {T_STR, 0, "0.288", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                             {T_MAP, 0, 0, map1, 0},
                             {T_STR, 0, "Sammy Sosa", NULL, 0},
                             {T_MAP, 0, 0, map2, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -390,14 +390,14 @@ static void YtsSpecificationExamples_2_6(CuTest *tc) {
  * YTS: JHB9
  */
 static void YtsSpecificationExamples_2_7(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "Ken Griffey", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Chicago Cubs", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "Chicago Cubs", NULL, 0},
                              {T_STR, 0, "St Louis Cardinals", NULL, 0},
                              end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_SEQ, 0, 0, seq1, 0}, {T_SEQ, 0, 0, seq2, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -424,21 +424,21 @@ static void YtsSpecificationExamples_2_7(CuTest *tc) {
  * YTS: 
  */
 static void YtsSpecificationExamples_2_8(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "time", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "time", NULL, 0},
                              {T_STR, 0, "20:03:20", NULL, 0},
                              {T_STR, 0, "player", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "action", NULL, 0},
                              {T_STR, 0, "strike (miss)", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "time", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "time", NULL, 0},
                              {T_STR, 0, "20:03:47", NULL, 0},
                              {T_STR, 0, "player", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "action", NULL, 0},
                              {T_STR, 0, "grand slam", NULL, 0},
                              end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -464,18 +464,18 @@ static void YtsSpecificationExamples_2_8(CuTest *tc) {
  * Example 2.9: Single document with two comments
  */
 static void YtsSpecificationExamples_2_9(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "Ken Griffey", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "hr", NULL, 0},
                             {T_SEQ, 0, 0, seq1, 0},
                             {T_STR, 0, "rbi", NULL, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -497,18 +497,18 @@ static void YtsSpecificationExamples_2_9(CuTest *tc) {
  * Example 2.1: Node for Sammy Sosa appears twice in this document
  */
 static void YtsSpecificationExamples_2_10(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "Mark McGwire", NULL, 0},
                              {T_STR, 0, "Sammy Sosa", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "Sammy Sosa", NULL, 0},
                              {T_STR, 0, "Ken Griffey", NULL, 0},
                              end_node};
-  struct test_node map[] = {{T_STR, 0, "hr", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "hr", NULL, 0},
                             {T_SEQ, 0, 0, seq1, 0},
                             {T_STR, 0, "rbi", NULL, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -532,23 +532,23 @@ static void YtsSpecificationExamples_2_10(CuTest *tc) {
  * YTS: M5DY
  */
 static void YtsSpecificationExamples_2_11(CuTest *tc) {
-  struct test_node seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
+  TestNode seq1[] = {{T_STR, 0, "New York Yankees", NULL, 0},
                              {T_STR, 0, "Atlanta Braves", NULL, 0},
                              end_node};
-  struct test_node seq2[] = {{T_STR, 0, "2001-07-02", NULL, 0},
+  TestNode seq2[] = {{T_STR, 0, "2001-07-02", NULL, 0},
                              {T_STR, 0, "2001-08-12", NULL, 0},
                              {T_STR, 0, "2001-08-14", NULL, 0},
                              end_node};
-  struct test_node seq3[] = {{T_STR, 0, "Detroit Tigers", NULL, 0},
+  TestNode seq3[] = {{T_STR, 0, "Detroit Tigers", NULL, 0},
                              {T_STR, 0, "Chicago Cubs", NULL, 0},
                              end_node};
-  struct test_node seq4[] = {{T_STR, 0, "2001-07-23", NULL, 0}, end_node};
-  struct test_node map[] = {{T_SEQ, 0, 0, seq3, 0},
+  TestNode seq4[] = {{T_STR, 0, "2001-07-23", NULL, 0}, end_node};
+  TestNode map[] = {{T_SEQ, 0, 0, seq3, 0},
                             {T_SEQ, 0, 0, seq4, 0},
                             {T_SEQ, 0, 0, seq1, 0},
                             {T_SEQ, 0, 0, seq2, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -572,24 +572,24 @@ static void YtsSpecificationExamples_2_11(CuTest *tc) {
  * YTS: 9U5K
  */
 static void YtsSpecificationExamples_2_12(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "item", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "item", NULL, 0},
                              {T_STR, 0, "Super Hoop", NULL, 0},
                              {T_STR, 0, "quantity", NULL, 0},
                              {T_STR, 0, "1", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "item", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "item", NULL, 0},
                              {T_STR, 0, "Basketball", NULL, 0},
                              {T_STR, 0, "quantity", NULL, 0},
                              {T_STR, 0, "4", NULL, 0},
                              end_node};
-  struct test_node map3[] = {{T_STR, 0, "item", NULL, 0},
+  TestNode map3[] = {{T_STR, 0, "item", NULL, 0},
                              {T_STR, 0, "Big Shoes", NULL, 0},
                              {T_STR, 0, "quantity", NULL, 0},
                              {T_STR, 0, "1", NULL, 0},
                              end_node};
-  struct test_node seq[] = {
+  TestNode seq[] = {
     {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -613,7 +613,7 @@ static void YtsSpecificationExamples_2_12(CuTest *tc) {
  * YTS: 6JQW
  */
 static void YtsSpecificationExamples_2_13(CuTest *tc) {
-  struct test_node stream[] = {{T_STR, 0, "\\//||\\/||\n// ||  ||__\n", NULL, 0},
+  TestNode stream[] = {{T_STR, 0, "\\//||\\/||\n// ||  ||__\n", NULL, 0},
                                end_node};
 
   CuStreamCompare(tc,
@@ -634,7 +634,7 @@ static void YtsSpecificationExamples_2_13(CuTest *tc) {
  * YTS: FP8R
  */
 static void YtsSpecificationExamples_2_14(CuTest *tc) {
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_STR, 0, "Mark McGwire's year was crippled by a knee injury.\n", NULL, 0},
       end_node};
 
@@ -656,7 +656,7 @@ static void YtsSpecificationExamples_2_14(CuTest *tc) {
  * YTS: 6VJK
  */
 static void YtsSpecificationExamples_2_15(CuTest *tc) {
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_STR, 0,
        "Sammy Sosa completed another fine season with great stats.\n\n  63 "
        "Home Runs\n  0.288 Batting Average\n\nWhat a year!\n",
@@ -685,7 +685,7 @@ static void YtsSpecificationExamples_2_15(CuTest *tc) {
  * YTS: HMK4
  */
 static void YtsSpecificationExamples_2_16(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "name", NULL, 0},
       {T_STR, 0, "Mark McGwire", NULL, 0},
       {T_STR, 0, "accomplishment", NULL, 0},
@@ -693,7 +693,7 @@ static void YtsSpecificationExamples_2_16(CuTest *tc) {
       {T_STR, 0, "stats", NULL, 0},
       {T_STR, 0, "65 Home Runs\n0.278 Batting Average\n", NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -716,7 +716,7 @@ static void YtsSpecificationExamples_2_16(CuTest *tc) {
  * YTS: G4RS (fix quoting)
  */
 static void YtsSpecificationExamples_2_17_todo(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "unicode", NULL, 0},
       {T_STR, 0, "Sosa did fine.\\u263A", NULL, 0},
 #ifdef DEBUG_QUOTE
@@ -732,7 +732,7 @@ static void YtsSpecificationExamples_2_17_todo(CuTest *tc) {
       {T_STR, 0, "tie-fighter", NULL, 0},
       {T_STR, 0, "|\\-*-/|", NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -757,13 +757,13 @@ static void YtsSpecificationExamples_2_17_todo(CuTest *tc) {
  * YTS: 4CQQ
  */
 static void YtsSpecificationExamples_2_18(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "plain", NULL, 0},
       {T_STR, 0, "This unquoted scalar spans many lines.", NULL, 0},
       {T_STR, 0, "quoted", NULL, 0},
       {T_STR, 0, "So does this quoted scalar.\n", NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -785,7 +785,7 @@ static void YtsSpecificationExamples_2_18(CuTest *tc) {
  * YTS: none
  */
 static void YtsSpecificationExamples_2_19(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "canonical", NULL, 0},
                             {T_STR, 0, "12345", NULL, 0},
                             {T_STR, 0, "decimal", NULL, 0},
                             {T_STR, 0, "+12,345", NULL, 0},
@@ -798,7 +798,7 @@ static void YtsSpecificationExamples_2_19(CuTest *tc) {
                             {T_STR, 0, "hexadecimal", NULL, 0},
                             {T_STR, 0, "0xC", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -820,7 +820,7 @@ static void YtsSpecificationExamples_2_19(CuTest *tc) {
  * YTS: none
  */
 static void YtsSpecificationExamples_2_20(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "canonical", NULL, 0},
                             {T_STR, 0, "1.23015e+3", NULL, 0},
                             {T_STR, 0, "exponential", NULL, 0},
                             {T_STR, 0, "12.3015e+02", NULL, 0},
@@ -833,7 +833,7 @@ static void YtsSpecificationExamples_2_20(CuTest *tc) {
                             {T_STR, 0, "not a number", NULL, 0},
                             {T_STR, 0, ".nan", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -855,9 +855,9 @@ static void YtsSpecificationExamples_2_20(CuTest *tc) {
  * YTS: none
  */
 static void YtsSpecificationExamples_2_21(CuTest *tc) {
-  struct test_node seq[] = {{T_STR, 0, "true", NULL, 0},
+  TestNode seq[] = {{T_STR, 0, "true", NULL, 0},
                             {T_STR, 0, "false", NULL, 0}, end_node};
-  struct test_node map[] = {{T_STR, 0, "null", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "null", NULL, 0},
                             {T_STR, 0, "~", NULL, 0},
                             {T_STR, 0, "null", NULL, 0},
                             {T_STR, 0, "", NULL, 0},
@@ -870,7 +870,7 @@ static void YtsSpecificationExamples_2_21(CuTest *tc) {
                             {T_STR, 0, "string", NULL, 0},
                             {T_STR, 0, "12345", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -892,7 +892,7 @@ static void YtsSpecificationExamples_2_21(CuTest *tc) {
  * YTS: none
  */
 static void YtsSpecificationExamples_2_22(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "canonical", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "canonical", NULL, 0},
                             {T_STR, 0, "2001-12-15T02:59:43.1Z", NULL, 0},
                             {T_STR, 0, "iso8601", NULL, 0},
                             {T_STR, 0, "2001-12-14t21:59:43.10-05:00", NULL, 0},
@@ -901,7 +901,7 @@ static void YtsSpecificationExamples_2_22(CuTest *tc) {
                             {T_STR, 0, "date", NULL, 0},
                             {T_STR, 0, "2002-12-14", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -922,7 +922,7 @@ static void YtsSpecificationExamples_2_22(CuTest *tc) {
  * YTS: none
  */
 static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "not-date", NULL, 0},
       {T_STR, "tag:yaml.org,2002:str", "2002-04-28", NULL, 0},
       {T_STR, 0, "picture", NULL, 0},
@@ -937,7 +937,7 @@ static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
        "documents.\n",
        NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -965,39 +965,39 @@ static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
  * YTS: C4HZ (almost)
  */
 static void YtsSpecificationExamples_2_24_old(CuTest *tc) {
-  struct test_node point1[] = {{T_STR, 0, "x", NULL, 0},
+  TestNode point1[] = {{T_STR, 0, "x", NULL, 0},
                                {T_STR, 0, "73", NULL, 0},
                                {T_STR, 0, "y", NULL, 0},
                                {T_STR, 0, "129", NULL, 0},
                                end_node};
-  struct test_node point2[] = {{T_STR, 0, "x", NULL, 0},
+  TestNode point2[] = {{T_STR, 0, "x", NULL, 0},
                                {T_STR, 0, "89", NULL, 0},
                                {T_STR, 0, "y", NULL, 0},
                                {T_STR, 0, "102", NULL, 0},
                                end_node};
-  struct test_node map1[] = {{T_STR, 0, "center", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "center", NULL, 0},
                              {T_MAP, 0, 0, point1, 0},
                              {T_STR, 0, "radius", NULL, 0},
                              {T_STR, 0, "7", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "start", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "start", NULL, 0},
                              {T_MAP, 0, 0, point1, 0},
                              {T_STR, 0, "finish", NULL, 0},
                              {T_MAP, 0, 0, point2, 0},
                              end_node};
-  struct test_node map3[] = {{T_STR, 0, "start", NULL, 0},
+  TestNode map3[] = {{T_STR, 0, "start", NULL, 0},
                              {T_MAP, 0, 0, point1, 0},
                              {T_STR, 0, "color", NULL, 0},
                              {T_STR, 0, "0xFFEEBB", NULL, 0},
                              {T_STR, 0, "value", NULL, 0},
                              {T_STR, 0, "Pretty vector drawing.", NULL, 0},
                              end_node};
-  struct test_node seq[] = {
+  TestNode seq[] = {
       {T_MAP, "tag:clarkevans.com,2002:graph/circle", 0, map1, 0},
       {T_MAP, "tag:clarkevans.com,2002:graph/line", 0, map2, 0},
       {T_MAP, "tag:clarkevans.com,2002:graph/label", 0, map3, 0},
       end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_SEQ, "tag:clarkevans.com,2002:graph/shape", 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1030,15 +1030,15 @@ static void YtsSpecificationExamples_2_24_old(CuTest *tc) {
  * FIXME parse
  */
 static void YtsSpecificationExamples_2_25_old(CuTest *tc) {
-  struct test_node map1[] = {
+  TestNode map1[] = {
       {T_STR, 0, "Mark McGwire", NULL, 0}, {T_STR, 0, "~", NULL, 0}, end_node};
-  struct test_node map2[] = {
+  TestNode map2[] = {
       {T_STR, 0, "Sammy Sosa", NULL, 0}, {T_STR, 0, "~", NULL, 0}, end_node};
-  struct test_node map3[] = {
+  TestNode map3[] = {
       {T_STR, 0, "Ken Griffy", NULL, 0}, {T_STR, 0, "~", NULL, 0}, end_node};
-  struct test_node seq[] = {
+  TestNode seq[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, "tag:yaml.org,2002:set", 0, seq, 0},
+  TestNode stream[] = {{T_SEQ, "tag:yaml.org,2002:set", 0, seq, 0},
                                end_node};
 
   CuStreamCompare(tc,
@@ -1063,15 +1063,15 @@ static void YtsSpecificationExamples_2_25_old(CuTest *tc) {
  * YTS: J7PZ (almost)
  */
 static void YtsSpecificationExamples_2_26_old(CuTest *tc) {
-  struct test_node map1[] = {
+  TestNode map1[] = {
       {T_STR, 0, "Mark McGwire", NULL, 0}, {T_STR, 0, "65", NULL, 0}, end_node};
-  struct test_node map2[] = {
+  TestNode map2[] = {
       {T_STR, 0, "Sammy Sosa", NULL, 0}, {T_STR, 0, "63", NULL, 0}, end_node};
-  struct test_node map3[] = {
+  TestNode map3[] = {
       {T_STR, 0, "Ken Griffy", NULL, 0}, {T_STR, 0, "58", NULL, 0}, end_node};
-  struct test_node seq[] = {
+  TestNode seq[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, "tag:yaml.org,2002:omap", 0, seq, 0},
+  TestNode stream[] = {{T_SEQ, "tag:yaml.org,2002:omap", 0, seq, 0},
                                end_node};
 
   CuStreamCompare(tc,
@@ -1095,7 +1095,7 @@ static void YtsSpecificationExamples_2_26_old(CuTest *tc) {
  * YTS: UGM3 (almost)
  */
 static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
-  struct test_node prod1[] = {{T_STR, 0, "sku", NULL, 0},
+  TestNode prod1[] = {{T_STR, 0, "sku", NULL, 0},
                               {T_STR, 0, "BL394D", NULL, 0},
                               {T_STR, 0, "quantity", NULL, 0},
                               {T_STR, 0, "4", NULL, 0},
@@ -1104,7 +1104,7 @@ static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
                               {T_STR, 0, "price", NULL, 0},
                               {T_STR, 0, "450.00", NULL, 0},
                               end_node};
-  struct test_node prod2[] = {{T_STR, 0, "sku", NULL, 0},
+  TestNode prod2[] = {{T_STR, 0, "sku", NULL, 0},
                               {T_STR, 0, "BL4438H", NULL, 0},
                               {T_STR, 0, "quantity", NULL, 0},
                               {T_STR, 0, "1", NULL, 0},
@@ -1113,9 +1113,9 @@ static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
                               {T_STR, 0, "price", NULL, 0},
                               {T_STR, 0, "2392.00", NULL, 0},
                               end_node};
-  struct test_node products[] = {
+  TestNode products[] = {
       {T_MAP, 0, 0, prod1, 0}, {T_MAP, 0, 0, prod2, 0}, end_node};
-  struct test_node address[] = {
+  TestNode address[] = {
       {T_STR, 0, "lines", NULL, 0},
       {T_STR, 0, "458 Walkman Dr.\nSuite #292\n", NULL, 0},
       {T_STR, 0, "city", NULL, 0},
@@ -1125,14 +1125,14 @@ static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
       {T_STR, 0, "postal", NULL, 0},
       {T_STR, 0, "48046", NULL, 0},
       end_node};
-  struct test_node id001[] = {{T_STR, 0, "given", NULL, 0},
+  TestNode id001[] = {{T_STR, 0, "given", NULL, 0},
                               {T_STR, 0, "Chris", NULL, 0},
                               {T_STR, 0, "family", NULL, 0},
                               {T_STR, 0, "Dumars", NULL, 0},
                               {T_STR, 0, "address", NULL, 0},
                               {T_MAP, 0, 0, address, 0},
                               end_node};
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "invoice", NULL, 0},
       {T_STR, 0, "34843", NULL, 0},
       {T_STR, 0, "date", NULL, 0},
@@ -1152,7 +1152,7 @@ static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
        "Late afternoon is best. Backup contact is Nancy Billsmer @ 338-4338.\n",
        NULL, 0},
       end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, "tag:clarkevans.com,2002:invoice", 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1200,7 +1200,7 @@ static void YtsSpecificationExamples_2_27_old(CuTest *tc) {
  * YTS: RZT7
  */
 static void YtsSpecificationExamples_2_28(CuTest *tc) {
-  struct test_node map1[] = {
+  TestNode map1[] = {
       {T_STR, 0, "Time", NULL, 0},
       {T_STR, 0, "2001-11-23 15:01:42 -5", NULL, 0},
       {T_STR, 0, "User", NULL, 0},
@@ -1208,7 +1208,7 @@ static void YtsSpecificationExamples_2_28(CuTest *tc) {
       {T_STR, 0, "Warning", NULL, 0},
       {T_STR, 0, "This is an error message for the log file\n", NULL, 0},
       end_node};
-  struct test_node map2[] = {
+  TestNode map2[] = {
       {T_STR, 0, "Time", NULL, 0},
       {T_STR, 0, "2001-11-23 15:02:31 -5", NULL, 0},
       {T_STR, 0, "User", NULL, 0},
@@ -1216,23 +1216,23 @@ static void YtsSpecificationExamples_2_28(CuTest *tc) {
       {T_STR, 0, "Warning", NULL, 0},
       {T_STR, 0, "A slightly different error message.\n", NULL, 0},
       end_node};
-  struct test_node file1[] = {{T_STR, 0, "file", NULL, 0},
+  TestNode file1[] = {{T_STR, 0, "file", NULL, 0},
                               {T_STR, 0, "TopClass.py", NULL, 0},
                               {T_STR, 0, "line", NULL, 0},
                               {T_STR, 0, "23", NULL, 0},
                               {T_STR, 0, "code", NULL, 0},
                               {T_STR, 0, "x = MoreObject(\"345\\n\")\n", NULL, 0},
                               end_node};
-  struct test_node file2[] = {{T_STR, 0, "file", NULL, 0},
+  TestNode file2[] = {{T_STR, 0, "file", NULL, 0},
                               {T_STR, 0, "MoreClass.py", NULL, 0},
                               {T_STR, 0, "line", NULL, 0},
                               {T_STR, 0, "58", NULL, 0},
                               {T_STR, 0, "code", NULL, 0},
                               {T_STR, 0, "foo = bar", NULL, 0},
                               end_node};
-  struct test_node stack[] = {
+  TestNode stack[] = {
       {T_MAP, 0, 0, file1, 0}, {T_MAP, 0, 0, file2, 0}, end_node};
-  struct test_node map3[] = {{T_STR, 0, "Date", NULL, 0},
+  TestNode map3[] = {{T_STR, 0, "Date", NULL, 0},
                              {T_STR, 0, "2001-11-23 15:03:17 -5", NULL, 0},
                              {T_STR, 0, "User", NULL, 0},
                              {T_STR, 0, "ed", NULL, 0},
@@ -1241,7 +1241,7 @@ static void YtsSpecificationExamples_2_28(CuTest *tc) {
                              {T_STR, 0, "Stack", NULL, 0},
                              {T_SEQ, 0, 0, stack, 0},
                              end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, {T_MAP, 0, 0, map3, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1285,7 +1285,7 @@ static void YtsSpecificationExamples_2_28(CuTest *tc) {
  */
 static void YtsSpecificationExamples_5_1_todo(CuTest *tc) {
 #ifdef DEBUG_BOM
-  struct test_node stream[] = {
+  TestNode stream[] = {
     {T_STR, 0, "", NULL, 0},
     end_node};
   CuStreamCompare(tc, /* UTF-8 YAML document */
@@ -1307,7 +1307,7 @@ static void YtsSpecificationExamples_5_1_todo(CuTest *tc) {
  */
 static void YtsSpecificationExamples_5_2_todo(CuTest *tc) {
 #ifdef DEBUG_BOM
-  struct test_node stream[] = {end_node};
+  TestNode stream[] = {end_node};
   CuStreamCompare(tc, /* UTF-8 YAML document */
                   "﻿- invalid use of BOM\n\xef\xbb\xbf# Comment only.\n- inside doc", stream);
   CuStreamCompare(tc, /* UTF-16LE YAML document */
@@ -1350,14 +1350,14 @@ static void YtsSpecificationExamples_5_2_todo(CuTest *tc) {
  * YTS: none
  */
 static void YtsSpecificationExamples_6_11(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "this", NULL, 0},
       {T_STR, 0,
        "contains three lines of text.\nThe third one starts with a\n# "
        "character. This isn't a comment.\n",
        NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1469,7 +1469,7 @@ static void YtsSpecificationExamples_6_11(CuTest *tc) {
  * YTS: FP8R
  */
 static void YtsSpecification_FP8R(CuTest *tc) {
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_STR, 0,
        "This YAML stream contains a single text value. The next stream is a "
        "log file - a sequence of log entries. Adding an entry to the log is a "
@@ -1495,7 +1495,7 @@ static void YtsSpecification_FP8R(CuTest *tc) {
  * Example : Document stream
  */
 static void YtsSpecificationExamples_31(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "at", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "at", NULL, 0},
                              {T_STR, 0, "2001-08-12 09:25:00.00 Z", NULL, 0},
                              {T_STR, 0, "type", NULL, 0},
                              {T_STR, 0, "GET", NULL, 0},
@@ -1504,7 +1504,7 @@ static void YtsSpecificationExamples_31(CuTest *tc) {
                              {T_STR, 0, "url", NULL, 0},
                              {T_STR, 0, "/index.html", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "at", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "at", NULL, 0},
                              {T_STR, 0, "2001-08-12 09:25:10.00 Z", NULL, 0},
                              {T_STR, 0, "type", NULL, 0},
                              {T_STR, 0, "GET", NULL, 0},
@@ -1513,7 +1513,7 @@ static void YtsSpecificationExamples_31(CuTest *tc) {
                              {T_STR, 0, "url", NULL, 0},
                              {T_STR, 0, "/toc.html", NULL, 0},
                              end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1539,14 +1539,14 @@ static void YtsSpecificationExamples_31(CuTest *tc) {
  * Example : Top level mapping
  */
 static void YtsSpecificationExamples_32(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "invoice", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "invoice", NULL, 0},
                             {T_STR, 0, "34843", NULL, 0},
                             {T_STR, 0, "date", NULL, 0},
                             {T_STR, 0, "2001-01-23", NULL, 0},
                             {T_STR, 0, "total", NULL, 0},
                             {T_STR, 0, "4443.52", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1565,9 +1565,9 @@ static void YtsSpecificationExamples_32(CuTest *tc) {
  * Example : Single-line documents
  */
 static void YtsSpecificationExamples_33(CuTest *tc) {
-  struct test_node map[] = {end_node};
-  struct test_node seq[] = {end_node};
-  struct test_node stream[] = {
+  TestNode map[] = {end_node};
+  TestNode seq[] = {end_node};
+  TestNode stream[] = {
       {T_MAP, 0, 0, map, 0}, {T_SEQ, 0, 0, seq, 0}, {T_STR, 0, "", NULL, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1589,17 +1589,17 @@ static void YtsSpecificationExamples_33(CuTest *tc) {
  * Example : Document with pause
  */
 static void YtsSpecificationExamples_34(CuTest *tc) {
-  struct test_node map1[] = {{T_STR, 0, "sent at", NULL, 0},
+  TestNode map1[] = {{T_STR, 0, "sent at", NULL, 0},
                              {T_STR, 0, "2002-06-06 11:46:25.10 Z", NULL, 0},
                              {T_STR, 0, "payload", NULL, 0},
                              {T_STR, 0, "Whatever", NULL, 0},
                              end_node};
-  struct test_node map2[] = {{T_STR, 0, "sent at", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "sent at", NULL, 0},
                              {T_STR, 0, "2002-06-06 12:05:53.47 Z", NULL, 0},
                              {T_STR, 0, "payload", NULL, 0},
                              {T_STR, 0, "Whatever", NULL, 0},
                              end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
 
   CuStreamCompare(
@@ -1627,14 +1627,14 @@ static void YtsSpecificationExamples_34(CuTest *tc) {
  * Example : Explicit typing
  */
 static void YtsSpecificationExamples_35(CuTest *tc) {
-  struct test_node map[] = {{T_STR, 0, "integer", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "integer", NULL, 0},
                             {T_STR, "tag:yaml.org,2002:int", "12", NULL, 0},
                             {T_STR, 0, "also int", NULL, 0},
                             {T_STR, "tag:yaml.org,2002:int", "12", NULL, 0},
                             {T_STR, 0, "string", NULL, 0},
                             {T_STR, "tag:yaml.org,2002:str", "12", NULL, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1652,19 +1652,19 @@ static void YtsSpecificationExamples_35(CuTest *tc) {
  * Example : Private types
  */
 static void YtsSpecificationExamples_36(CuTest *tc) {
-  struct test_node pool[] = {{T_STR, 0, "number", NULL, 0},
+  TestNode pool[] = {{T_STR, 0, "number", NULL, 0},
                              {T_STR, 0, "8", NULL, 0},
                              {T_STR, 0, "color", NULL, 0},
                              {T_STR, 0, "black", NULL, 0},
                              end_node};
-  struct test_node map1[] = {
+  TestNode map1[] = {
       {T_STR, 0, "pool", NULL, 0}, {T_MAP, "x-private:ball", 0, pool, 0}, end_node};
-  struct test_node bearing[] = {
+  TestNode bearing[] = {
       {T_STR, 0, "material", NULL, 0}, {T_STR, 0, "steel", NULL, 0}, end_node};
-  struct test_node map2[] = {{T_STR, 0, "bearing", NULL, 0},
+  TestNode map2[] = {{T_STR, 0, "bearing", NULL, 0},
                              {T_MAP, "x-private:ball", 0, bearing, 0},
                              end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
 
   CuStreamCompare(tc,
@@ -1689,9 +1689,9 @@ static void YtsSpecificationExamples_36(CuTest *tc) {
  * Example : Type family under yaml.org
  */
 static void YtsSpecificationExamples_37(CuTest *tc) {
-  struct test_node seq[] = {
+  TestNode seq[] = {
       {T_STR, "tag:yaml.org,2002:str", "a Unicode string", NULL, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1708,10 +1708,10 @@ static void YtsSpecificationExamples_37(CuTest *tc) {
  * Example : Type family under perl.yaml.org
  */
 static void YtsSpecificationExamples_38(CuTest *tc) {
-  struct test_node map[] = {end_node};
-  struct test_node seq[] = {
+  TestNode map[] = {end_node};
+  TestNode seq[] = {
       {T_MAP, "tag:perl.yaml.org,2002:Text::Tabs", 0, map, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1728,10 +1728,10 @@ static void YtsSpecificationExamples_38(CuTest *tc) {
  * Example : Type family under clarkevans.com
  */
 static void YtsSpecificationExamples_39(CuTest *tc) {
-  struct test_node map[] = {end_node};
-  struct test_node seq[] = {
+  TestNode map[] = {end_node};
+  TestNode seq[] = {
       {T_MAP, "tag:clarkevans.com,2003-02:timesheet", 0, map, 0}, end_node};
-  struct test_node stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
+  TestNode stream[] = {{T_SEQ, 0, 0, seq, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1748,20 +1748,20 @@ static void YtsSpecificationExamples_39(CuTest *tc) {
  * Example : URI Escaping
  */
 static void YtsSpecificationExamples_40(CuTest *tc) {
-  struct test_node same[] = {
+  TestNode same[] = {
       {T_STR, "tag:domain.tld,2002:type0", "value", NULL, 0},
       {T_STR, "tag:domain.tld,2002:type0", "value", NULL, 0},
       end_node};
-  struct test_node diff[] = {
+  TestNode diff[] = {
       {T_STR, "tag:domain.tld,2002:type%30", "value", NULL, 0},
       {T_STR, "tag:domain.tld,2002:type0", "value", NULL, 0},
       end_node};
-  struct test_node map[] = {{T_STR, 0, "same", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "same", NULL, 0},
                             {T_SEQ, 0, 0, same, 0},
                             {T_STR, 0, "different", NULL, 0},
                             {T_SEQ, 0, 0, diff, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1782,7 +1782,7 @@ static void YtsSpecificationExamples_40(CuTest *tc) {
  * Example : Overriding anchors
  */
 static void YtsSpecificationExamples_42(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "anchor", NULL, 0},
       {T_STR, 0, "This scalar has an anchor.", NULL, 0},
       {T_STR, 0, "override", NULL, 0},
@@ -1792,7 +1792,7 @@ static void YtsSpecificationExamples_42(CuTest *tc) {
       {T_STR, 0, "The alias node below is a repeated use of this value.\n",
        NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1812,26 +1812,26 @@ static void YtsSpecificationExamples_42(CuTest *tc) {
  * Example : Flow and block formatting
  */
 static void YtsSpecificationExamples_43(CuTest *tc) {
-  struct test_node empty[] = {end_node};
-  struct test_node flow[] = {
+  TestNode empty[] = {end_node};
+  TestNode flow[] = {
       {T_STR, 0, "one", NULL, 0},   {T_STR, 0, "two", NULL, 0},
       {T_STR, 0, "three", NULL, 0}, {T_STR, 0, "four", NULL, 0},
       {T_STR, 0, "five", NULL, 0},  end_node};
-  struct test_node inblock[] = {{T_STR, 0, "Subordinate sequence entry", NULL, 0},
+  TestNode inblock[] = {{T_STR, 0, "Subordinate sequence entry", NULL, 0},
                                 end_node};
-  struct test_node block[] = {{T_STR, 0, "First item in top sequence", NULL, 0},
+  TestNode block[] = {{T_STR, 0, "First item in top sequence", NULL, 0},
                               {T_SEQ, 0, 0, inblock, 0},
                               {T_STR, 0, "A folded sequence entry\n", NULL, 0},
                               {T_STR, 0, "Sixth item in top sequence", NULL, 0},
                               end_node};
-  struct test_node map[] = {{T_STR, 0, "empty", NULL, 0},
+  TestNode map[] = {{T_STR, 0, "empty", NULL, 0},
                             {T_SEQ, 0, 0, empty, 0},
                             {T_STR, 0, "flow", NULL, 0},
                             {T_SEQ, 0, 0, flow, 0},
                             {T_STR, 0, "block", NULL, 0},
                             {T_SEQ, 0, 0, block, 0},
                             end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1857,7 +1857,7 @@ static void YtsSpecificationExamples_43(CuTest *tc) {
  * Example : Literal combinations
  */
 static void YtsSpecificationExamples_47(CuTest *tc) {
-  struct test_node map[] = {
+  TestNode map[] = {
       {T_STR, 0, "empty", NULL, 0},
       {T_STR, 0, "", NULL, 0},
       {T_STR, 0, "literal", NULL, 0},
@@ -1883,7 +1883,7 @@ static void YtsSpecificationExamples_47(CuTest *tc) {
       {T_STR, 0, "both are equal to", NULL, 0},
       {T_STR, 0, "  This has no newline.", NULL, 0},
       end_node};
-  struct test_node stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
+  TestNode stream[] = {{T_MAP, 0, 0, map, 0}, end_node};
 
   CuStreamCompare(tc,
 
@@ -1932,16 +1932,16 @@ static void YtsSpecificationExamples_47(CuTest *tc) {
  * Example 6.12 Separation Spaces
  */
 static void YtsSpecificationExamples_6_12(CuTest *tc) {
-  struct test_node map1[] = {
+  TestNode map1[] = {
        {T_MAP, 0, 0, map1, 0},
        {T_STR, 0, "first", NULL, 0},{T_STR, 0, "Sammy", NULL, 0},
        {T_STR, 0, "last", NULL, 0},{T_STR, 0, "Sosa", NULL, 0},
        end_node};
-  struct test_node map2[] = {
+  TestNode map2[] = {
       {T_STR, 0, "hr", NULL, 0},{T_STR, 0, "65", NULL, 0},
       {T_STR, 0, "avg", NULL, 0},{T_STR, 0, "0.270", NULL, 0},
       end_node};
-  struct test_node stream[] = {
+  TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
 
   CuStreamCompare(tc,

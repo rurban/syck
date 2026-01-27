@@ -15,7 +15,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-const struct test_node end_node = {T_END, NULL, NULL, NULL, 0};
+const TestNode end_node = {T_END, NULL, NULL, NULL, 0};
 
 int file_exists(const char *fn) {
   struct stat st;
@@ -33,7 +33,7 @@ int dir_exists(const char *fn) {
 SYMID
 syck_copy_handler(SyckParser *p, SyckNode *n) {
   int i = 0;
-  struct test_node *tn = S_ALLOC_N(struct test_node, 1);
+  TestNode *tn = S_ALLOC_N(TestNode, 1);
 
   switch (n->kind) {
   case syck_str_kind:
@@ -44,8 +44,8 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     break;
 
   case syck_seq_kind: {
-    struct test_node *val;
-    struct test_node *seq = S_ALLOC_N(struct test_node, n->data.list->idx + 1);
+    TestNode *val;
+    TestNode *seq = S_ALLOC_N(TestNode, n->data.list->idx + 1);
     tn->type = T_SEQ;
     tn->key = NULL;
     tn->style = (enum scalar_style)n->data.list->style;
@@ -59,9 +59,9 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
   } break;
 
   case syck_map_kind: {
-    struct test_node *val;
-    struct test_node *map =
-        S_ALLOC_N(struct test_node, (n->data.pairs->idx * 2) + 1);
+    TestNode *val;
+    TestNode *map =
+        S_ALLOC_N(TestNode, (n->data.pairs->idx * 2) + 1);
     tn->type = T_MAP;
     tn->key = NULL;
     tn->style = (enum scalar_style)n->data.pairs->style;
@@ -86,7 +86,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
   }
   if (!p->syms) {
-    struct test_node *doc = S_ALLOC_N(struct test_node, 1);
+    TestNode *doc = S_ALLOC_N(TestNode, 1);
     doc->type = T_DOC;
     doc->style = 0;
     doc->tag = NULL;
@@ -103,7 +103,7 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
 enum st_retval
 syck_free_copies(SHIM(const char *key), void *_tn,
                  SHIM(void *arg)) {
-  struct test_node_dyn *tn = (struct test_node_dyn *)_tn;
+  TestNodeDyn *tn = (TestNodeDyn *)_tn;
   UNUSED(key);
   UNUSED(arg);
   if (tn != NULL) {
@@ -136,7 +136,7 @@ syck_free_copies(SHIM(const char *key), void *_tn,
  * s1 is the expected event stream, s2 the parsed stream.
  */
 void
-CuStreamCompareX(CuTest *tc, const struct test_node *s1, struct test_node *s2) {
+CuStreamCompareX(CuTest *tc, const TestNode *s1, TestNode *s2) {
   int i = 0;
   while (1) {
     CuAssertIntEquals(tc, s1[i].type, s2[i].type);
@@ -164,9 +164,9 @@ CuStreamCompareX(CuTest *tc, const struct test_node *s1, struct test_node *s2) {
 }
 
 void
-CuStreamCompare(CuTest *tc, const char *yaml, const struct test_node *stream) {
+CuStreamCompare(CuTest *tc, const char *yaml, const TestNode *stream) {
   int doc_ct = 0;
-  struct test_node *ystream = S_ALLOC_N(struct test_node, doc_ct + 1);
+  TestNode *ystream = S_ALLOC_N(TestNode, doc_ct + 1);
 
   /* Set up parser */
   SyckParser *parser = syck_new_parser();
@@ -178,7 +178,7 @@ CuStreamCompare(CuTest *tc, const char *yaml, const struct test_node *stream) {
 
   /* Parse all streams */
   while (1) {
-    struct test_node *ydoc;
+    TestNode *ydoc;
     SYMID oid = syck_parse(parser);
     int res;
 
@@ -196,7 +196,7 @@ CuStreamCompare(CuTest *tc, const char *yaml, const struct test_node *stream) {
 
     ystream[doc_ct] = ydoc[0];
     doc_ct++;
-    S_REALLOC_N(ystream, struct test_node, doc_ct + 1);
+    S_REALLOC_N(ystream, TestNode, doc_ct + 1);
   }
   ystream[doc_ct] = end_node;
 
@@ -221,7 +221,7 @@ test_output_handler(SyckEmitter *emitter, const char *str, long len) {
 }
 
 SYMID
-build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
+build_symbol_table(SyckEmitter *emitter, TestNode *node) {
   switch (node->type) {
   case T_SEQ:
   case T_MAP: {
@@ -243,7 +243,7 @@ build_symbol_table(SyckEmitter *emitter, struct test_node *node) {
 }
 
 void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
-  struct test_node *node = (struct test_node *)data;
+  TestNode *node = (TestNode *)data;
   switch (node->type) {
   case T_STR:
     syck_emit_scalar(emitter, node->tag, scalar_none, 0, 0, 0, node->key,
@@ -278,7 +278,7 @@ void test_emitter_handler(SyckEmitter *emitter, st_data_t data) {
 
 /* round-trip the stream only, not the yaml */
 void
-CuRoundTrip(CuTest *tc, struct test_node *stream) {
+CuRoundTrip(CuTest *tc, TestNode *stream) {
   int i = 0;
   CuString *cs = CuStringNew();
   SyckEmitter *emitter = syck_new_emitter();
@@ -306,10 +306,10 @@ CuRoundTrip(CuTest *tc, struct test_node *stream) {
 }
 
 /* TODO: some YTS test.event props missing */
-void emit_stream(CuString *cs, struct test_node *s) {
+void emit_stream(CuString *cs, TestNode *s) {
   int i = 0;
   while (1) {
-    struct test_node *n = &s[i];
+    TestNode *n = &s[i];
     if (n->type == T_END)
       return;
     switch (n->type) {
@@ -380,7 +380,7 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
                           int should_fail)
 {
     SyckEmitter *emitter = syck_new_emitter();
-    struct test_node *ystream = S_ALLOC_N(struct test_node, 1);
+    TestNode *ystream = S_ALLOC_N(TestNode, 1);
     int doc_ct = 0;
     int i = 0;
 
@@ -399,7 +399,7 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
 
     /* Parse all streams */
     while (1) {
-        struct test_node *ydoc;
+        TestNode *ydoc;
         SYMID oid = syck_parse(parser);
         int res;
 
@@ -415,7 +415,7 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
 
         ystream[doc_ct] = ydoc[0];
         doc_ct++;
-        S_REALLOC_N(ystream, struct test_node, doc_ct + 1);
+        S_REALLOC_N(ystream, TestNode, doc_ct + 1);
     }
     ystream[doc_ct] = end_node;
 

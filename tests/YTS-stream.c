@@ -83,24 +83,24 @@ int main(int argc, char **argv) {
            char a = files[i]->d_name[0];
            if (a == '.')
                continue;
-           if (!strcmp(files[i]->d_name, "in.yaml")) {
+           if (strEQc(files[i]->d_name, "in.yaml")) {
                if (fh)
                    fclose(fh);
                fh = open_path(fn, "in.yaml");
                found = 1;
            }
-           else if (!strcmp(files[i]->d_name, "out.yaml")) {
+           else if (strEQc(files[i]->d_name, "out.yaml")) {
                outfh = open_path(fn, "out.yaml");
                more++;
            }
-           else if (!strcmp(files[i]->d_name, "test.event")) {
+           else if (strEQc(files[i]->d_name, "test.event")) {
                testfh = open_path(fn, "test.event");
                more++;
            }
-           else if (!should_fail && !strcmp(files[i]->d_name, "error")) {
+           else if (!should_fail && strEQc(files[i]->d_name, "error")) {
                should_fail = 1;
            }
-           else if (!strcmp(files[i]->d_name, "===")) {
+           else if (strEQc(files[i]->d_name, "===")) {
                FILE *cmt = open_path(fn, "===");
                cs = CuSlurpFile(cmt);
                // skip the ending \n

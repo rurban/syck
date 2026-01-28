@@ -90,12 +90,14 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     doc->type = T_DOC;
     doc->style = 0;
     doc->tag = NULL;
+    doc->key = NULL;
+    doc->value = NULL;
     if (p->linectptr >= p->buffer &&
         p->limit - p->linectptr >= 4 &&
         strEQc(p->linectptr, "---\n")) {
       doc->style = 1;
     }
-    (void)syck_add_sym(p, (char *)doc); // symid 1
+    (void)syck_add_sym(p, (char *)doc); // as symid 1
   }
   return syck_add_sym(p, (char *)tn);
 }
@@ -314,8 +316,6 @@ void emit_stream(CuString *cs, TestNode *s) {
   int i = 0;
   while (1) {
     TestNode *n = &s[i];
-    if (n->type == T_END)
-      return;
     switch (n->type) {
     case T_DOC:
       if (n->style)
@@ -370,8 +370,9 @@ void emit_stream(CuString *cs, TestNode *s) {
     default:
       break;
     }
+    if (n->type == T_END)
+      return;
     i++;
-
   }
 }
 
@@ -389,7 +390,7 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
                           int should_fail)
 {
     SyckEmitter *emitter = syck_new_emitter();
-    TestNode *ystream = S_ALLOC_N(TestNode, 1);
+    TestNode *ystream = S_ALLOC_N(TestNode, 2);
     int doc_ct = 0;
     int i = 0;
 
@@ -421,9 +422,19 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
         res = syck_lookup_sym(parser, oid, (char **)&ydoc);
         if (0 == res)
             break;
-
-        ystream[doc_ct] = ydoc[0];
-        doc_ct++;
+        if (res > 1) {
+          TestNode *ydoc1;
+          /* prepend the DOC stream at 1 */
+          res = syck_lookup_sym(parser, 1, (char **)&ydoc1);
+          if (res) {
+            S_REALLOC_N(ystream, TestNode, doc_ct + 2);
+            ystream[doc_ct++] = *ydoc1;
+            ystream[doc_ct++] = *ydoc;
+          }
+        }
+        else {
+          ystream[doc_ct++] = *ydoc;
+        }
         S_REALLOC_N(ystream, TestNode, doc_ct + 1);
     }
     ystream[doc_ct] = end_node;
@@ -440,11 +451,13 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
       emitter->bonus = cs;
       while (ystream[i].type != T_END) {
         syck_emit(emitter, (st_data_t)&ystream[i]);
-        syck_emitter_flush(emitter, 0);
         i++;
       }
+      syck_emit_end(emitter);
+      syck_emitter_flush(emitter, 0);
       //puts("\n--- # Parsed Stream");
       CuStringAppend(ev, "+STR\n");
+      // +DOC should come from emitter_handler
       emit_stream(ev, ystream);
       CuStringAppend(ev, "-STR\n");
     }

@@ -144,9 +144,9 @@ int main(int argc, char **argv) {
        exit(1);
    }
 
-   puts("<\n--- # YAML");
+   puts("<\n");
    puts(yaml);
-   puts("...\n");
+   puts("\n");
 
    cs = CuStringNew();
    ev = CuStringNew();
@@ -172,9 +172,9 @@ int main(int argc, char **argv) {
            retval++;
        }
        else { // have no out.yaml to compare against
-           puts(">\n--- # YAML");
+           puts(">\n");
            puts(cs->buffer);
-           puts("...\n");
+           puts("\n");
        }
    }
 

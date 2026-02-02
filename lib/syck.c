@@ -176,15 +176,15 @@ syck_new_parser(void)
     p->levels = S_ALLOC_N( SyckLevel, p->lvl_capa );
     p->input_type = syck_yaml_utf8;
     p->io_type = syck_io_str;
-    p->io.str = NULL;
-    p->syms = NULL;
-    p->anchors = NULL;
-    p->bad_anchors = NULL;
+    //p->io.str = NULL;
+    //p->syms = NULL;
+    //p->anchors = NULL;
+    //p->bad_anchors = NULL;
     p->implicit_typing = 1;
-    p->taguri_expansion = 0;
+    //p->taguri_expansion = 0;
     p->bufsize = SYCK_BUFFERSIZE;
-    p->buffer = NULL;
-    p->lvl_idx = 0;
+    //p->buffer = NULL;
+    //p->lvl_idx = 0;
     syck_parser_reset_levels( p );
     return p;
 }
@@ -532,6 +532,7 @@ syck_parse( SyckParser *p )
     syck_st_free( p );
     syck_parser_reset_levels( p );
     syckparse( p );
+    DPRINTF ((stderr, "DEBUG %s root=%lu\n", __FUNCTION__, p->root));
     return p->root;
 }
 

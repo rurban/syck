@@ -36,7 +36,7 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n );
     char *name;
 };
 
-%token <name>       YAML_ANCHOR YAML_ALIAS YAML_TRANSFER YAML_TAGURI YAML_ITRANSFER
+%token <name>       YAML_ANCHOR YAML_ALIAS YAML_TRANSFER YAML_TAGURI YAML_ITRANSFER YAML_VERSION_DIR
 %token <nodeData>   YAML_WORD YAML_PLAIN YAML_BLOCK
 %token              YAML_DOCSEP YAML_IOPEN YAML_INDENT YAML_IEND
 
@@ -58,14 +58,41 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n );
 doc     : atoms
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $1 );
+           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
         }
         | YAML_DOCSEP atom_or_empty
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $2 );
+           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+        }
+        | YAML_VERSION_DIR atom_or_empty
+        {
+           int major, minor;
+           if (2 == sscanf($1, "%d.%d", &major, &minor)) {
+               YYDPRINTF ((stderr,"YAML_VERSION_DIR %d.%d\n", major, minor));
+               ((SyckParser *)parser)->version_major = major;
+               ((SyckParser *)parser)->version_minor = minor;
+           }
+           syck_free_name($1);
+           ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $2 );
+           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+        }
+        | YAML_DOCSEP YAML_VERSION_DIR atom_or_empty
+        {
+           int major, minor;
+           if (2 == sscanf($2, "%d.%d", &major, &minor)) {
+               YYDPRINTF ((stderr,"YAML_VERSION_DIR %d.%d\n", major, minor));
+               ((SyckParser *)parser)->version_major = major;
+               ((SyckParser *)parser)->version_minor = minor;
+           }
+           syck_free_name($2);
+           ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $3 );
+           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
         }
         |
         {
            ((SyckParser *)parser)->eof = 1;
+           YYDPRINTF ((stderr, "eof=1\n"));
         }
         ;
 

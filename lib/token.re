@@ -41,7 +41,9 @@
 /*
  * Track line numbers
  */
-#define NEWLINE(ptr)    YYLINEPTR = ptr + newline_len(ptr); if ( YYLINEPTR > YYLINECTPTR ) { YYLINE++; YYLINECTPTR = YYLINEPTR; }
+#define NEWLINE(ptr) \
+        YYLINEPTR = ptr + newline_len(ptr); \
+        if ( YYLINEPTR > YYLINECTPTR ) { YYLINE++; YYLINECTPTR = YYLINEPTR; }
 
 /*
  * I like seeing the level operations as macros...

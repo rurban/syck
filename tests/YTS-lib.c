@@ -407,21 +407,23 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
 
     emitter->headless = 1;
 
-    /* Parse all streams */
+    /* Parse all documents */
     while (1) {
         TestNode *ydoc;
-        SYMID oid = syck_parse(parser);
+        SYMID oid = syck_parse(parser); // ie root node
         int res;
 
         if (!oid) // syntax error, no nodes added
             break;
-        if (parser->eof == 1)
+        if (parser->eof == 1) // no more docs
             break;
 
         /* Add document to stream */
         res = syck_lookup_sym(parser, oid, (char **)&ydoc);
-        if (0 == res)
+        if (0 == res) {
+            fprintf(stderr, "ERROR: no root node %lu found\n", oid);
             break;
+        }
         if (res > 1) {
           TestNode *ydoc1;
           /* prepend the DOC stream at 1 */

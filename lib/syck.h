@@ -322,6 +322,7 @@ struct _syck_level {
     enum syck_level_status status;
 };
 
+/* Represents a YAML document. There may be multiple per stream. */    
 struct _syck_parser {
     /* Root node */
     SYMID root, root_on_error;

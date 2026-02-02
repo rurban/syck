@@ -346,6 +346,7 @@ DIR = "%" YWORDP+ ":" YWORDP+ ;
 YBLOCK = [>|] [-+0-9]* ENDSPC ;
 HEX = [0-9A-Fa-f] ;
 ESCSEQ = ["\\abefnrtv0] ;
+VERSION_DIR = "%YAML " [0-1] "." [0-9] ENDSPC ;
 
 */
 
@@ -396,6 +397,11 @@ NULL                {   SyckLevel *lvl = CURRENT_LEVEL();
                         ENSURE_YAML_IEND(lvl, -1);
                         YYPOS(0);
                         return 0;
+                    }
+
+VERSION_DIR         {   sycklval->name = syck_strndup( YYTOKEN + 6, YYCURSOR - YYTOKEN - 7);
+                        DPRINTF ((stderr, "DEBUG '%%YAML %s'\n", sycklval->name));
+                        return YAML_VERSION_DIR;
                     }
 
 YINDENT             {   GOBBLE_UP_YAML_INDENT( doc_level, YYTOKEN );
@@ -550,6 +556,8 @@ Directive:
 DIR                 {   goto Directive; }
 
 SPCTAB+             {   goto Directive; }
+
+VERSION_DIR         {   goto Directive; }
 
 ANY                 {   YYCURSOR = YYTOKTMP;
                         return YAML_DOCSEP;
@@ -1104,6 +1112,10 @@ NULL                {   YYCURSOR--;
                         }
                     }
 
+VERSION_DIR ENDSPC  {   YYCURSOR = YYTOKEN;
+                        return YAML_VERSION_DIR;
+                    }
+
 ANY                 {   QUOTECAT(qstr, qcapa, qidx, *YYTOKEN);
                         goto ScalarBlock2;
                     }
@@ -1151,6 +1163,7 @@ syckerror( SyckParser *parser, const char *msg )
         parser->error_handler = syck_default_error_handler;
 
     parser->root = parser->root_on_error;
+    DPRINTF ((stderr, "DEBUG %s root=%lu\n", __FUNCTION__, parser->root));
     (parser->error_handler)(parser, msg);
 }
 

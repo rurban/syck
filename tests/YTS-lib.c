@@ -426,7 +426,14 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
         }
         if (res > 1) {
           TestNode *ydoc1;
-          /* prepend the DOC stream at 1 */
+          /* prepend the DOC stream at 1 when not YAML 1.2 */
+          if ((parser->version_major || parser->version_minor)
+              && !(parser->version_major == 1 && parser->version_minor == 2)) {
+            emitter->headless = 0;
+            emitter->use_header = 1;
+            emitter->version_major = parser->version_major;
+            emitter->version_minor = parser->version_minor;
+          }
           res = syck_lookup_sym(parser, 1, (char **)&ydoc1);
           if (res) {
             S_REALLOC_N(ystream, TestNode, doc_ct + 2);

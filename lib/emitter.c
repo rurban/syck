@@ -112,7 +112,8 @@ syck_new_emitter(void)
     e = S_ALLOC( SyckEmitter );
     e->headless = 0;
     e->use_header = 0;
-    e->use_version = 0;
+    e->version_major = 0;
+    e->version_minor = 0;
     e->sort_keys = 0;
     e->anchor_format = NULL;
     e->explicit_typing = 0;
@@ -378,11 +379,12 @@ syck_emit( SyckEmitter *e, st_data_t n )
      */
     if ( e->stage == doc_open && ( e->headless == 0 || e->use_header == 1 ) )
     {
-        if ( e->use_version == 1 )
+        int use_version = e->version_major || e->version_minor;
+        if ( use_version )
         {
             char header[64] = {0};
             snprintf( header, sizeof(header)-1,
-                      "--- %%YAML:%d.%d ", SYCK_YAML_MAJOR, SYCK_YAML_MINOR );
+                      "--- %%YAML %d.%d ", e->version_major, e->version_minor );
             syck_emitter_write( e, header, strlen( header ) );
         }
         else

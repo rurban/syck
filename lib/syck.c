@@ -185,6 +185,8 @@ syck_new_parser(void)
     p->bufsize = SYCK_BUFFERSIZE;
     //p->buffer = NULL;
     //p->lvl_idx = 0;
+    //p->version_major = 0;
+    //p->version_minor = 0;
     syck_parser_reset_levels( p );
     return p;
 }

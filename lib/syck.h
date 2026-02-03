@@ -328,6 +328,7 @@ struct _syck_parser {
     SYMID root, root_on_error;
     /* Implicit typing flag */
     int implicit_typing, taguri_expansion;
+    int version_major, version_minor;
     /* Scripting language function to handle nodes */
     SyckNodeHandler handler;
     /* Error handler */
@@ -397,7 +398,10 @@ struct _syck_emitter {
     /* Force header? */
     int use_header;
     /* Force version? */
-    int use_version;
+    //int use_version;
+    /* from SyckParser */
+    int version_major, version_minor;
+    unsigned doctype;
     /* Sort hash keys */
     int sort_keys;
     /* Anchor format */

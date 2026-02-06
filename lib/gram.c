@@ -1487,7 +1487,7 @@ yyreduce:
 #line 59 "gram.y"
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, (yyvsp[0].nodeData) );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
 #line 1493 "gram.c"
     break;
@@ -1496,7 +1496,7 @@ yyreduce:
 #line 64 "gram.y"
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, (yyvsp[0].nodeData) );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
 #line 1502 "gram.c"
     break;
@@ -1512,7 +1512,7 @@ yyreduce:
            }
            syck_free_name((yyvsp[-1].name));
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, (yyvsp[0].nodeData) );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
 #line 1518 "gram.c"
     break;
@@ -1528,7 +1528,7 @@ yyreduce:
            }
            syck_free_name((yyvsp[-1].name));
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, (yyvsp[0].nodeData) );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
 #line 1534 "gram.c"
     break;

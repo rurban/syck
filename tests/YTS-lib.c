@@ -295,6 +295,7 @@ CuRoundTrip(CuTest *tc, TestNode *stream) {
   /* Build the stream */
   syck_output_handler(emitter, test_output_handler);
   syck_emitter_handler(emitter, test_emitter_handler);
+  emitter->use_header = 1;
   emitter->bonus = cs;
   while (stream[i].type != T_END) {
     syck_emit(emitter, (st_data_t)&stream[i]);

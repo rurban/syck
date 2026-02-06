@@ -58,12 +58,12 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n );
 doc     : atoms
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $1 );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
         | YAML_DOCSEP atom_or_empty
         {
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $2 );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
         | YAML_VERSION_DIR atom_or_empty
         {
@@ -75,7 +75,7 @@ doc     : atoms
            }
            syck_free_name($1);
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $2 );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
         | YAML_DOCSEP YAML_VERSION_DIR atom_or_empty
         {
@@ -87,7 +87,7 @@ doc     : atoms
            }
            syck_free_name($2);
            ((SyckParser *)parser)->root = syck_hdlr_add_node( (SyckParser *)parser, $3 );
-           YYDPRINTF ((stderr, "root=%lu\n", ((SyckParser *)parser)->root));
+           YYDPRINTF ((stderr, "root=%lu (%d)\n", ((SyckParser *)parser)->root, __LINE__));
         }
         |
         {

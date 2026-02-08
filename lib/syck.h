@@ -262,6 +262,14 @@ typedef SyckNode * (*SyckBadAnchorHandler)(SyckParser *p, const char *);
 typedef long (*SyckIoFileRead)(char *, SyckIoFile *, long, long);
 typedef long (*SyckIoStrRead)(char *, SyckIoStr *, long, long);
 
+// used as bitmask for syck_doctype_end
+enum syck_doctype {
+    syck_doctype_none = 0, // no ---
+    syck_doctype_start = 1, // ---\n
+    syck_doctype_start_inline = 2, // --- ATOMS
+    syck_doctype_end = 4// ...\n
+};
+
 enum syck_io_type {
     syck_io_str,
     syck_io_file
@@ -322,12 +330,13 @@ struct _syck_level {
     enum syck_level_status status;
 };
 
-/* Represents a YAML document. There may be multiple per stream. */    
+/* Represents a YAML document. There may be multiple per stream. */
 struct _syck_parser {
     /* Root node */
     SYMID root, root_on_error;
     /* Implicit typing flag */
     int implicit_typing, taguri_expansion;
+    unsigned doctype;
     int version_major, version_minor;
     /* Scripting language function to handle nodes */
     SyckNodeHandler handler;

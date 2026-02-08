@@ -435,6 +435,8 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
             emitter->version_major = parser->version_major;
             emitter->version_minor = parser->version_minor;
           }
+          emitter->doctype = parser->doctype;
+          // we could also check parser->doctype 1 or 2
           res = syck_lookup_sym(parser, 1, (char **)&ydoc1);
           if (res) {
             S_REALLOC_N(ystream, TestNode, doc_ct + 2);
@@ -467,8 +469,12 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
       syck_emitter_flush(emitter, 0);
       //puts("\n--- # Parsed Stream");
       CuStringAppend(ev, "+STR\n");
-      // +DOC should come from emitter_handler
+      // TODO +DOC should come from emitter_handler
+      if (parser->doctype & (syck_doctype_start | syck_doctype_start_inline))
+        CuStringAppend(ev, "+DOC\n");
       emit_stream(ev, ystream);
+      if (parser->doctype & syck_doctype_end)
+        CuStringAppend(ev, "-DOC\n");
       CuStringAppend(ev, "-STR\n");
     }
 

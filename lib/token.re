@@ -376,6 +376,7 @@ Header:
                     }
 
 "..." ENDSPC        {   SyckLevel *lvl = CURRENT_LEVEL();
+                        parser->doctype += syck_doctype_end;
                         if ( lvl->status == syck_lvl_header )
                         {
                             goto Header;
@@ -1099,6 +1100,7 @@ NULL                {   YYCURSOR--;
                             {
                                 qidx -= 1;
                             }
+                            parser->doctype = syck_doctype_start;
                             QUOTECAT(qstr, qcapa, qidx, '\n');
                             POP_LEVEL();
                             YYCURSOR = YYTOKEN;

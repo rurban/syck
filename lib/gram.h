@@ -64,9 +64,10 @@ extern int syckdebug;
     YAML_PLAIN = 265,              /* YAML_PLAIN  */
     YAML_BLOCK = 266,              /* YAML_BLOCK  */
     YAML_DOCSEP = 267,             /* YAML_DOCSEP  */
-    YAML_IOPEN = 268,              /* YAML_IOPEN  */
-    YAML_INDENT = 269,             /* YAML_INDENT  */
-    YAML_IEND = 270                /* YAML_IEND  */
+    YAML_DOCEND = 268,             /* YAML_DOCEND  */
+    YAML_IOPEN = 269,              /* YAML_IOPEN  */
+    YAML_INDENT = 270,             /* YAML_INDENT  */
+    YAML_IEND = 271                /* YAML_IEND  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -81,7 +82,7 @@ union YYSTYPE
     SyckNode *nodeData;
     char *name;
 
-#line 85 "gram.h"
+#line 86 "gram.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

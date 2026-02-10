@@ -371,7 +371,7 @@ Header:
                         {
                             ENSURE_YAML_IEND(lvl, -1);
                             YYPOS(0);
-                            return 0;
+                            return YAML_DOCSEP;
                         }
                     }
 
@@ -385,9 +385,8 @@ Header:
                         {
                             ENSURE_YAML_IEND(lvl, -1);
                             YYPOS(0);
-                            return 0;
                         }
-                        return 0;
+                        return YAML_DOCEND;
                     }
 
 "#"                 {   eat_comments( parser );

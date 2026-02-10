@@ -38,7 +38,7 @@ void apply_seq_in_map( SyckParser *parser, SyckNode *n );
 
 %token <name>       YAML_ANCHOR YAML_ALIAS YAML_TRANSFER YAML_TAGURI YAML_ITRANSFER YAML_VERSION_DIR
 %token <nodeData>   YAML_WORD YAML_PLAIN YAML_BLOCK
-%token              YAML_DOCSEP YAML_IOPEN YAML_INDENT YAML_IEND
+%token              YAML_DOCSEP YAML_DOCEND YAML_IOPEN YAML_INDENT YAML_IEND
 
 %type <nodeId>      doc basic_seq
 %type <nodeData>    atoms word_rep ind_rep struct_rep atom_or_empty empty

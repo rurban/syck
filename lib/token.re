@@ -573,6 +573,7 @@ Plain:
         int qidx = 0;
         int qcapa = 100;
         char *qstr = S_ALLOC_N( char, qcapa );
+        int nl_count = 0;
         SyckLevel *plvl;
         int parentIndent;
 
@@ -587,9 +588,10 @@ Plain3:
 
 /*!re2c
 
-YINDENT             {   int indt_len, nl_count = 0;
+YINDENT             {   int indt_len;
                         char *tok = YYTOKEN;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
+                        nl_count = 0;
 
                         if ( indt_len <= parentIndent )
                         {
@@ -621,7 +623,19 @@ YINDENT             {   int indt_len, nl_count = 0;
                         goto Plain2;
                     }
 
-ALLX                {   RETURN_IMPLICIT(); }
+ALLX                {
+                        /*
+                         * A multiline plain scalar cannot be used as an implicit mapping key.
+                         * Example: yaml-test-suite/2CMS
+                         */
+                        if ( nl_count && plvl->status != syck_lvl_iseq && plvl->status != syck_lvl_imap )
+                        {
+                            S_FREE( qstr );
+                            syckerror( parser, "syntax error" );
+                            return 0;
+                        }
+                        RETURN_IMPLICIT();
+                    }
 
 ICOMMA              {   if ( plvl->status != syck_lvl_iseq && plvl->status != syck_lvl_imap )
                         {
@@ -1002,7 +1016,8 @@ ScalarBlock2:
 
 YINDENT             {   char *pacer;
                         char *tok = YYTOKEN;
-                        int indt_len = 0, nl_count = 0, fold_nl = 0, nl_begin = 0;
+                        int indt_len = 0, fold_nl = 0, nl_begin = 0;
+                        int nl_count = 0;
                         GOBBLE_UP_YAML_INDENT( indt_len, tok );
                         lvl = CURRENT_LEVEL();
 
@@ -1169,4 +1184,3 @@ syckerror( SyckParser *parser, const char *msg )
     DPRINTF ((stderr, "DEBUG %s root=%lu\n", __FUNCTION__, parser->root));
     (parser->error_handler)(parser, msg);
 }
-

@@ -35,6 +35,11 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
   int i = 0;
   TestNode *tn = S_ALLOC_N(TestNode, 1);
 
+  tn->tag = NULL;
+  if (n->type_id != NULL) {
+    tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
+  }
+
   switch (n->kind) {
   case syck_str_kind:
     tn->type = T_STR;
@@ -328,10 +333,9 @@ void emit_stream(CuString *cs, TestNode *s) {
       CuStringAppend(cs, "=VAL ");
       // TODO anchor
       if (n->tag) {
-        // FIXME get rid of x-private internally
-        if (memcmp(n->tag, "x-private:", sizeof("x-private:")-1) == 0)
-          CuStringAppendFormat(cs, "<tag:yaml.org,2002:%s> ", &n->tag[sizeof("x-private:")-1]);
-        else if (memcmp(n->tag, "tag:yaml.org,2002:", sizeof("tag:yaml.org,2002:")-1) != 0)
+        if (strncmp(n->tag, "x-private:", 10) == 0)
+          CuStringAppendFormat(cs, "<tag:yaml.org,2002:%s> ", &n->tag[10]);
+        else
           CuStringAppendFormat(cs, "<%s> ", n->tag);
       }
       if (n->style == scalar_1quote || n->style == scalar_2quote || n->style == scalar_2quote_1)

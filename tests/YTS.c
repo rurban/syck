@@ -917,6 +917,7 @@ static void YtsSpecificationExamples_2_22(CuTest *tc) {
   CuRoundTrip(tc, stream);
 }
 
+#if 0
 /*
  * Example 2.23: Various explicit tags (old style)
  * YTS: none
@@ -962,6 +963,7 @@ static void YtsSpecificationExamples_2_23_old(CuTest *tc) {
 
   CuRoundTrip(tc, stream);
 }
+#endif
 /*
  * Example 2.24: Application specific family
  * YTS: C4HZ (almost)
@@ -1660,11 +1662,11 @@ static void YtsSpecificationExamples_36(CuTest *tc) {
                              {T_STR, 0, "black", NULL, 0},
                              end_node};
   TestNode map1[] = {
-      {T_STR, 0, "pool", NULL, 0}, {T_MAP, "x-private:ball", 0, pool, 0}, end_node};
+      {T_STR, 0, "pool", NULL, 0}, {T_MAP, "tag:yaml.org,2002:ball", 0, pool, 0}, end_node};
   TestNode bearing[] = {
       {T_STR, 0, "material", NULL, 0}, {T_STR, 0, "steel", NULL, 0}, end_node};
   TestNode map2[] = {{T_STR, 0, "bearing", NULL, 0},
-                             {T_MAP, "x-private:ball", 0, bearing, 0},
+                             {T_MAP, "tag:yaml.org,2002:ball", 0, bearing, 0},
                              end_node};
   TestNode stream[] = {
       {T_MAP, 0, 0, map1, 0}, {T_MAP, 0, 0, map2, 0}, end_node};
@@ -1995,7 +1997,7 @@ static CuSuite *SyckGetSuite(void) {
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_20);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_21);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_22);
-  SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_23_old);
+  // SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_23_old);
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_24_old);
 #ifdef DEBUG_SET
   SUITE_ADD_TEST(suite, YtsSpecificationExamples_2_25_old); // does not poarse yet

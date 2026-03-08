@@ -515,6 +515,7 @@ CDELIMS             {   POP_LEVEL();
                         return YAML_ALIAS;
                     }
 
+"!!"                {   goto TransferMethod; }
 "!"                 {   goto TransferMethod; }
 
 "'"                 {   ENSURE_YAML_IOPEN(lvl, doc_level, 1);

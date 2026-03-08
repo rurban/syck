@@ -92,9 +92,9 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     doc->tag = NULL;
     doc->key = NULL;
     doc->value = NULL;
-    if (p->linectptr >= p->buffer &&
-        p->limit - p->linectptr >= 4 &&
-        strEQc(p->linectptr, "---\n")) {
+    if (p->buffer != NULL &&
+        p->limit - p->buffer >= 4 &&
+        strEQc(p->buffer, "---\n")) {
       doc->style = 1;
     }
     (void)syck_add_sym(p, (char *)doc); // as symid 1
@@ -367,7 +367,7 @@ void emit_stream(CuString *cs, TestNode *s) {
       CuStringAppendLen(cs, "\n", 1);
       break;
     case T_END:
-      CuStringAppend(cs, "-DOC\n");
+      return;
     default:
       break;
     }
@@ -425,27 +425,26 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
             fprintf(stderr, "ERROR: no root node %lu found\n", oid);
             break;
         }
-        if (res > 1) {
+        {
           TestNode *ydoc1;
-          /* prepend the DOC stream at 1 when not YAML 1.2 */
-          if ((parser->version_major || parser->version_minor)
-              && !(parser->version_major == 1 && parser->version_minor == 2)) {
-            emitter->headless = 0;
-            emitter->use_header = 1;
-            emitter->version_major = parser->version_major;
-            emitter->version_minor = parser->version_minor;
-          }
-          emitter->doctype = parser->doctype;
-          // we could also check parser->doctype 1 or 2
-          res = syck_lookup_sym(parser, 1, (char **)&ydoc1);
-          if (res) {
+          int has_doc = syck_lookup_sym(parser, 1, (char **)&ydoc1);
+          if (has_doc && ydoc1->type == T_DOC) {
+            /* prepend the DOC stream at 1 when not YAML 1.2 */
+            if ((parser->version_major || parser->version_minor)
+                && !(parser->version_major == 1 && parser->version_minor == 2)) {
+              emitter->headless = 0;
+              emitter->use_header = 1;
+              emitter->version_major = parser->version_major;
+              emitter->version_minor = parser->version_minor;
+            }
+            emitter->doctype = parser->doctype;
             S_REALLOC_N(ystream, TestNode, doc_ct + 2);
             ystream[doc_ct++] = *ydoc1;
             ystream[doc_ct++] = *ydoc;
           }
-        }
-        else {
-          ystream[doc_ct++] = *ydoc;
+          else {
+            ystream[doc_ct++] = *ydoc;
+          }
         }
         S_REALLOC_N(ystream, TestNode, doc_ct + 1);
     }
@@ -461,19 +460,24 @@ void test_yaml_and_stream(CuString *cs, const char *yaml, CuString *ev,
       syck_output_handler(emitter, test_output_handler);
       syck_emitter_handler(emitter, test_emitter_handler);
       emitter->bonus = cs;
-      while (ystream[i].type != T_END) {
-        syck_emit(emitter, (st_data_t)&ystream[i]);
-        i++;
+      {
+          int start = 0;
+          if (ystream[0].type == T_DOC) {
+              if (ystream[0].style) {
+                  syck_emitter_write(emitter, "--- ", 4);
+              }
+              start = 1;
+          }
+          for (i = start; ystream[i].type != T_END; i++) {
+            syck_emit(emitter, (st_data_t)&ystream[i]);
+          }
       }
       syck_emit_end(emitter);
       syck_emitter_flush(emitter, 0);
       //puts("\n--- # Parsed Stream");
       CuStringAppend(ev, "+STR\n");
-      // TODO +DOC should come from emitter_handler
-      if (parser->doctype & (syck_doctype_start | syck_doctype_start_inline))
-        CuStringAppend(ev, "+DOC\n");
       emit_stream(ev, ystream);
-      if (parser->doctype & syck_doctype_end)
+      if (ystream[0].type == T_DOC)
         CuStringAppend(ev, "-DOC\n");
       CuStringAppend(ev, "-STR\n");
     }

@@ -35,11 +35,6 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
   int i = 0;
   TestNode *tn = S_ALLOC_N(TestNode, 1);
 
-  tn->tag = NULL;
-  if (n->type_id != NULL) {
-    tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
-  }
-
   switch (n->kind) {
   case syck_str_kind:
     tn->type = T_STR;
@@ -86,10 +81,6 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
     break;
   }
 
-  tn->tag = NULL;
-  if (n->type_id != NULL) {
-    tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
-  }
   if (!p->syms) {
     TestNode *doc = S_ALLOC_N(TestNode, 1);
     doc->type = T_DOC;
@@ -103,6 +94,11 @@ syck_copy_handler(SyckParser *p, SyckNode *n) {
       doc->style = 1;
     }
     (void)syck_add_sym(p, (char *)doc); // as symid 1
+  }
+
+  tn->tag = NULL;
+  if (n->type_id != NULL) {
+    tn->tag = syck_strndup(n->type_id, strlen(n->type_id));
   }
   return syck_add_sym(p, (char *)tn);
 }

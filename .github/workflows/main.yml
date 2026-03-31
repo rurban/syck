@@ -63,7 +63,7 @@ jobs:
         sudo apt-get -y update
         sudo apt-get -y install flex bison re2c
         rm lib/token.c lib/bytecode.c lib/implicit.c
-    - uses: hendrikmuhs/ccache-action@1bbbcda0748b3e340dee71a314fa68ffcbd6df79 # v1.2.21
+    - uses: hendrikmuhs/ccache-action@33522472633dbd32578e909b315f5ee43ba878ce # v1.2.22
       with:
         create-symlink: true
         key: ${{ github.job }}-${{ matrix.CONFIGURE_ARGS }}
@@ -85,7 +85,7 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-    - uses: hendrikmuhs/ccache-action@1bbbcda0748b3e340dee71a314fa68ffcbd6df79 # v1.2.21
+    - uses: hendrikmuhs/ccache-action@33522472633dbd32578e909b315f5ee43ba878ce # v1.2.22
       with:
         create-symlink: true
         key: ${{ github.job }}-${{ matrix.os }}
@@ -107,7 +107,7 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-    - uses: hendrikmuhs/ccache-action@1bbbcda0748b3e340dee71a314fa68ffcbd6df79 # v1.2.21
+    - uses: hendrikmuhs/ccache-action@33522472633dbd32578e909b315f5ee43ba878ce # v1.2.22
       with:
         create-symlink: false
         key: ${{ github.job }}-${{ matrix.os }}

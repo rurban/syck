@@ -173,14 +173,13 @@ syck_replace_str( SyckNode *n, char *str, enum scalar_style style )
 void
 syck_replace_str2( SyckNode *n, char *str, long len, enum scalar_style style )
 {
-    if ( n->data.str && n->data.str->ptr )
-    {
-        S_FREE( n->data.str->ptr );
-        n->data.str->ptr = NULL;
-        n->data.str->len = 0;
-    }
+    char *newptr;
+
     assert(n->data.str != NULL);
-    n->data.str->ptr = S_ALLOC_N( char, len + 1 );
+    /* realloc(NULL, n) acts as malloc(n), so the old buffer is replaced in
+     * one step: no free-then-use window for the previous pointer. */
+    newptr = (char*)xrealloc( n->data.str->ptr, len + 1 );
+    n->data.str->ptr = newptr;
     n->data.str->len = len;
     n->data.str->style = style;
     memcpy( n->data.str->ptr, str, len );

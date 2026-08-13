@@ -287,7 +287,7 @@ void
     CuStreamCompare( tc,
 
         /* YAML document */ 
-<%= yt['yaml'].gsub( /\\/, '\\\\\\\\' ).gsub( '"', '\"' ).gsub( "\t", "\\t" ).gsub( /^(.*)$/, '"\1\n"' ) %>
+<%= yt['yaml'].gsub( /\\/, '\\\\\&' ).gsub( '"', '\"' ).gsub( "\t", "\\t" ).gsub( /^(.*)$/, '"\1\n"' ) %>
         ,
 
         /* C structure of validations */

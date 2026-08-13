@@ -9,7 +9,7 @@ module Syck
 	#
 	def self.escape( value, skip = "" )
               warn "#{caller[0]}: YAML.escape is deprecated" if $VERBOSE
-		value.gsub( /\\/, "\\\\\\" ).
+		value.gsub( /\\/, '\\\\\&' ).
               gsub( /"/, "\\\"" ).
               gsub( /([\x00-\x1f])/ ) do
                  skip[$&] || ESCAPES[ $&.unpack("C")[0] ]
